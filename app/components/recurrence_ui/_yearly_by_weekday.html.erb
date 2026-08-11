@@ -1,0 +1,55 @@
+  
+<%# app/views/recurrence_ui/_yearly_by_day_of_month.html.erb %>
+<% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
+
+<div class="space-y-4">
+    <div class="flex items-center space-x-2 mb-3">
+        <span class="text-gray-700"><%= t("recurrence_ui.every") %></span>
+        <%= form.number_field :yearly_interval, min: 1, value: 1, 
+            class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+            data: { item: 'interval', action: "input->#{identifier}#updateHiddenHash" } %> 
+        <span class="text-gray-700">
+         <%= t("recurrence_ui.labels.year", count: form.object.try(:yearly_interval) || 1) %>
+        </span>
+    </div>
+      <div data-<%= identifier %>-target="monthSelector" class="flex items-center gap-3">
+        <label class="whitespace-nowrap text-sm font-medium text-gray-600">
+          <%= t("recurrence_ui.labels.choose_month") %>
+        </label>
+        <select data-<%= identifier %>-target="monthInput" data-item="month" data-action="change-><%= identifier %>#updateHiddenHash" class="w-full sm:w-auto rounded-md border-gray-300 py-1.5 text-sm">
+          <% (1..12).each do |m| %>
+            <% month_name = I18n.t("date.standalone_month_names", default: I18n.t("date.month_names"))[m] %>
+            <option value="<%= m %>"><%= month_name %></option>
+          <% end %>
+        </select>
+      </div>
+    <div class="space-y-1">
+    <%# Итерируемся по цифрам, которые являются ключами в YAML %>
+    <% %w[1 2 3 4 5 -1].each do |val| %>
+      <div class="grid grid-cols-8 gap-1 items-center">
+        <div class="col-span-1 text-[10px] text-gray-500 uppercase font-bold text-right pr-1">
+          <%# Прямое обращение к ключу "1", "2" и т.д. %>
+          <%= t("recurrence_ui.nth_names.#{val}") %>
+        </div>
+        
+        <div class="col-span-7 grid grid-cols-7 gap-1">
+          <% days_for_ui.each do |day_idx| %>
+            <% is_selected = selected_nth_days[val.to_s]&.include?(day_idx) %>
+            <button type="button" 
+                    class="w-full py-2 rounded-md flex items-center justify-center text-xs font-medium border transition-all
+                           bg-white text-gray-700 border-gray-300 hover:bg-blue-50
+                           data-[selected='true']:bg-blue-600 data-[selected='true']:text-white data-[selected='true']:border-blue-600"
+                    data-nth="<%= val %>"
+                    data-day="<%= day_idx %>"
+                    data-<%= identifier %>-target="nthDayBtn"
+                    data-selected="<%= !!is_selected %>" 
+                    data-action="click-><%= identifier %>#toggleDay">
+              <%# Важно: всегда указываем scope для дней недели, чтобы не зависеть от локали по умолчанию %>
+              <%= t('date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
+            </button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

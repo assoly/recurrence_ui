@@ -3,7 +3,7 @@ module RecurrenceUi
   class Component < ViewComponent::Base
     attr_reader :form, :record, :field_name, :i18n_prefix, :identifier
 
-    def initialize(form:, record:, field_name: :recurring_rules, i18n_prefix: 'recurrence_ui', week_start_day: :monday)
+    def initialize(form: nil, record:, field_name: :recurring_rules, i18n_prefix: 'recurrence_ui', week_start_day: :monday)
       @form = form
       @record = record
       @field_name = field_name
@@ -80,7 +80,14 @@ module RecurrenceUi
         end
         [n, label]
       end
-    end   
+    end  
+    # Метод генерации текстового описания
+    def recurrence_summary
+      rule_hash = @record.public_send(@field_name)
+      return "" if rule_hash.blank?
+
+      RecurrenceUi::RecurrenceSummaryService.new(rule_hash, I18n.locale).to_s
+    end 
     def identifier
       "recurrence-ui" # Оставляем для Stimulus
     end

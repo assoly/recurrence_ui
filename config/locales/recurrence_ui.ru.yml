@@ -1,0 +1,162 @@
+ru:
+  recurrence_ui:
+    count_label:
+      one: "%{count} раз"
+      few: "%{count} раза"
+      many: "%{count} раз"
+      other: "%{count} раза"
+
+    days_of_month_fmt: "%{list} числа"
+    enter_exception_dates: Введите даты исключений
+    every: Каждый
+    every_week: Каждую
+    
+    in_month_names_yearly:
+    - null
+    - январе
+    - феврале
+    - марте
+    - апреле
+    - мае
+    - июне
+    - июле
+    - августе
+    - сентябре
+    - октябре
+    - ноябре
+    - декабре
+
+    interval:
+      day: день
+      month: месяц
+      week: неделя
+      year: год
+
+    actions:
+      cancel: Отмена
+      save: OK
+
+    labels:
+      add_exception: Добавить исключение
+      exceptions: Исключения
+      frequency: Частота
+      one_time: Без повторения
+      select_dates: Выбрать даты
+      select_nth_day: Выбрать N-й день
+      termination: Завершение задачи
+      choose_month: Выберите месяц
+      times: раз
+      day: день
+      week: неделю
+      month: месяц
+      year: год
+
+    termination_types:
+      never: Бесконечно
+      until: До даты
+      count: Количество раз
+
+    # Плоские ключи для таблицы _monthly_by_weekday.html.erb
+    nth_names:
+      "1": 1-й
+      "2": 2-й
+      "3": 3-й
+      "4": 4-й
+      "5": 5-й
+      "-1": посл.
+      female:
+        "-1": посл.
+        '1': 1-я
+        '2': 2-я
+        '3': 3-я
+        '4': 4-я
+      male:
+        "-1": посл.
+        '1': 1-й
+        '2': 2-й
+        '3': 3-й
+        '4': 4-й
+      neutral:
+        "-1": посл.
+        '1': 1-е
+        '2': 2-е
+        '3': 3-е
+        '4': 4-е
+
+    # Простая группа для метода nth_weeks в компоненте
+    nth_weeks:
+      '1': 1-я
+      '2': 2-я
+      '3': 3-я
+      '4': 4-я
+
+    one_time: Без повторения
+
+    ordinals:
+      day_of_month:
+        other: "%{count}-го"
+      female:
+        other: "%{count}-я"
+      male:
+        other: "%{count}-й"
+      neutral:
+        other: "%{count}-е"
+      weekly_interval:
+        other: "%{count}-ю"
+
+    summary:
+      daily:
+        one: Каждый день %{until}
+        other: Каждый %{count_f} день %{until}
+      weekly:
+        one: Каждую неделю по %{weekdays} %{until}
+        other: Каждую %{count_f} неделю по %{weekdays} %{until}
+      monthly_by_day_of_month:
+        one: 'Каждый месяц: %{days_of_month} %{until}'
+        other: 'Каждый %{count_f} месяц: %{days_of_month} %{until}'
+      monthly_by_weekday:
+        one: 'Каждый месяц: %{weekdays} %{until}'
+        other: 'Каждый %{count_f} месяц: %{weekdays} %{until}'
+      yearly_by_day_of_month:
+        one: 'Каждый год в %{month}: %{days_of_month} %{until}'
+        other: 'Каждый %{count_f} год в %{month}: %{days_of_month} %{until}'
+      yearly_by_weekday:
+        one: 'Каждый год в %{month}: %{weekdays} %{until}'
+        other: 'Каждый %{count_f} год в %{month}: %{weekdays} %{until}'
+
+    types:
+      daily: Ежедневно
+      monthly_by_day_of_month: Ежемесячно (по дню месяца)
+      monthly_by_weekday: Ежемесячно (по дню недели)
+      never: Без повторения
+      weekly: Еженедельно
+      yearly_by_day_of_month: Ежегодно (по дню месяца)
+      yearly_by_weekday: Ежегодно (по дню недели)
+
+    until_label: до %{date}
+
+    weekdays:
+      day_names:
+      - воскресенье
+      - понедельник
+      - вторник
+      - среда
+      - четверг
+      - пятница
+      - суббота
+      day_names_plural:
+      - воскресеньям
+      - понедельникам
+      - вторникам
+      - средам
+      - четвергам
+      - пятницам
+      - субботам
+      weekday_genders:
+      - neutral
+      - male
+      - male
+      - female
+      - male
+      - female
+      - female

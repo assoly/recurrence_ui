@@ -1,5 +1,12 @@
   
 <%# app/views/recurrence_ui/_yearly_by_day_of_month.html.erb %>
+<%# 
+  Tailwind JIT Safelist (чтобы Tailwind не вырезал стили при сборке):
+  bg-blue-600 text-white border-blue-600
+  bg-red-600 border-red-600
+  hidden block flex items-center justify-center text-xs font-medium border transition-all
+  bg-white text-gray-700 border-gray-300 hover:bg-blue-50
+%>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
 
 <div class="space-y-4">

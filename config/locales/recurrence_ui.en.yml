@@ -1,0 +1,154 @@
+en:
+  recurrence_ui:
+    add_exception: Add exception
+    last: "last"
+    times_label: "times"
+    debug_hint: "Hidden field contents. You can edit this directly for testing!"
+
+    count_label:
+      one: "%{count} time"
+      other: "%{count} times"
+
+    days_of_month_fmt: "on the %{list}"
+    enter_exception_dates: Enter exception dates
+    every: Every
+    every_week: Every
+
+    in_month_names_yearly:
+    - null
+    - January
+    - February
+    - March
+    - April
+    - May
+    - June
+    - July
+    - August
+    - September
+    - October
+    - November
+    - December
+
+    interval:
+      day: day
+      month: month
+      week: week
+      year: year
+
+    units:
+      month:
+        one: month
+        other: months
+
+    actions:
+      cancel: Cancel
+      save: OK
+
+    labels:
+      except: Exceptions
+      frequency: Frequency
+      one_time: Does not repeat
+      select_dates: Select dates
+      select_nth_day: Select N-th day
+      termination: Ends
+
+    termination_types:
+      never: Never
+      until: On date
+      count: After number of times
+
+    # Плоские ключи для таблицы _monthly_by_weekday.html.erb
+    nth_names:
+      "1": 1st
+      "2": 2nd
+      "3": 3rd
+      "4": 4th
+      "5": 5th
+      "-1": last
+      male:
+        "-1": last
+        '1': 1st
+        '2': 2nd
+        '3': 3rd
+        '4': 4th
+
+    # Простая группа для метода nth_weeks в компоненте
+    nth_weeks:
+      '1': 1st
+      '2': 2nd
+      '3': 3rd
+      '4': 4th
+
+    one_time: Does not repeat
+
+    ordinals:
+      day_of_month:
+        one: "%{count}st"
+        two: "%{count}nd"
+        few: "%{count}rd"
+        other: "%{count}th"
+      one: "%{count}st"
+      two: "%{count}nd"
+      few: "%{count}rd"
+      other: "%{count}th"
+      male:
+        other: "%{count}"
+      weekly_interval:
+        other: "%{count}"
+
+    summary:
+      daily:
+        one: Every day %{until}
+        other: Every %{count_f} day %{until}
+      weekly:
+        one: Every week on %{weekdays} %{until}
+        other: Every %{count_f} week on %{weekdays} %{until}
+      monthly_by_day_of_month:
+        one: 'Every month on: %{days_of_month} %{until}'
+        other: 'Every %{count_f} month on: %{days_of_month} %{until}'
+      monthly_by_weekday:
+        one: 'Every month on: %{weekdays} %{until}'
+        other: 'Every %{count_f} month on: %{weekdays} %{until}'
+      yearly_by_day_of_month:
+        one: 'Every year in %{month}: %{days_of_month} %{until}'
+        other: 'Every %{count_f} year in %{month}: %{days_of_month} %{until}'
+      yearly_by_weekday:
+        one: 'Every year in %{month}: %{weekdays} %{until}'
+        other: 'Every %{count_f} year in %{month}: %{weekdays} %{until}'
+
+    types:
+      daily: Daily
+      monthly_by_day_of_month: Monthly (by day of month)
+      monthly_by_weekday: Monthly (by day of week)
+      never: Does not repeat
+      weekly: Weekly
+      yearly_by_day_of_month: Yearly (by day of month)
+      yearly_by_weekday: Yearly (by day of week)
+
+    until_label: until %{date}
+
+    weekdays:
+      day_names:
+      - Sunday
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+      day_names_plural:
+      - Sundays
+      - Mondays
+      - Tuesdays
+      - Wednesdays
+      - Thursdays
+      - Fridays
+      - Saturdays
+      weekday_genders:
+      - male
+      - male
+      - male
+      - male
+      - male
+      - male
+      - male

@@ -34,7 +34,7 @@
                     data-selected="<%= !!is_selected %>" 
                     data-action="click-><%= identifier %>#toggleDay">
               <%# Важно: всегда указываем scope для дней недели, чтобы не зависеть от локали по умолчанию %>
-              <%= t('date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
+              <%= t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
             </button>
           <% end %>
         </div>

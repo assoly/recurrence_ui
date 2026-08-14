@@ -67,7 +67,7 @@ module RecurrenceUi
       (0..6).to_a.rotate(shift)
     end
     def months_for_ui
-      (1..12).map { |m| [I18n.t('date.month_names')[m], m] }
+      (1..12).map { |m| [I18n.t('recurrence_ui.date.month_names')[m], m] }
     end
 
     def nth_weeks

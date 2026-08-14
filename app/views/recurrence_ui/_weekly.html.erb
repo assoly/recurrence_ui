@@ -22,7 +22,7 @@
     <div class="grid grid-cols-7 gap-1">
       <% days_for_ui.each do |day_idx| %>
         <%# Берем сокращенное название дня (Пн, Вт...) %>
-        <% day_name = t('date.abbr_day_names', locale: I18n.locale)[day_idx] %>
+        <% day_name = t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %>
         
         <button type="button" 
                 class="w-full py-2 rounded-md flex items-center justify-center text-xs font-medium border transition-all

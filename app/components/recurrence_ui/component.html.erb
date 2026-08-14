@@ -7,6 +7,7 @@
   - rules: хэш с текущими правилами повторения (IceCube)
   - identifier: уникальный идентификатор для Stimulus контроллера
 %>
+<div class="hidden bg-blue-600 text-white border-blue-600"></div>
 <div data-controller="<%= identifier %>" 
      data-<%= identifier %>-time-zone-value="<%= Time.zone&.name || 'UTC' %>"
      data-<%= identifier %>-translations-value="<%= t('recurrence_ui').to_json %>"
@@ -56,6 +57,4 @@
       value: rules_json, 
       data: { "#{identifier}_target": "hiddenField" } 
   %>
-  <%# Временная проверка для Tailwind %>
-<div class="hidden bg-blue-600 text-white border-blue-600">TEST</div>
 </div>

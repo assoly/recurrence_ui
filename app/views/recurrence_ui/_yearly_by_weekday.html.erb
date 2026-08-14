@@ -25,7 +25,7 @@
         </label>
         <select data-<%= identifier %>-target="monthInput" data-item="month" data-action="change-><%= identifier %>#updateHiddenHash" class="w-full sm:w-auto rounded-md border-gray-300 py-1.5 text-sm">
           <% (1..12).each do |m| %>
-            <% month_name = I18n.t("date.standalone_month_names", default: I18n.t("date.month_names"))[m] %>
+            <% month_name = I18n.t("recurrence_ui.date.standalone_month_names", default: I18n.t("recurrence_ui.date.month_names"))[m] %>
             <option value="<%= m %>"><%= month_name %></option>
           <% end %>
         </select>
@@ -52,7 +52,7 @@
                     data-selected="<%= !!is_selected %>" 
                     data-action="click-><%= identifier %>#toggleDay">
               <%# Важно: всегда указываем scope для дней недели, чтобы не зависеть от локали по умолчанию %>
-              <%= t('date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
+              <%= t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
             </button>
           <% end %>
         </div>

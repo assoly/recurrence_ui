@@ -1,18 +1,42 @@
+---
 ru:
+  date:
+    formats:
+      day_month_format: "%-m月%-d日"
+      default: "%Y年%m月%d日"
+      long: "%Y年%m月%d日"
+      month_year: "%Y年%m月"
+      month_year_header: "%Y年%-m月"
+      short: "%m/%d"
+      year_month_day_weekday: "%Y年%m月%d日 (%A)"
   recurrence_ui:
+    actions:
+      cancel: Отмена
+      save: OK
+    add_exception: 'TODO: 例外を追加'
     count_label:
-      one: "%{count} раз"
       few: "%{count} раза"
       many: "%{count} раз"
+      one: "%{count} раз"
       other: "%{count} раза"
-
+    date:
+      abbr_day_names: '["日", "月", "火", "水", "木", "金", "土"]'
+      formats:
+        day_month_format: "%-d %B"
+        default: "%d.%m.%Y"
+        long: "%-d %B %Y"
+        month_year: "%B %Y г."
+        month_year_header: "%B %Y"
+        short: "%d %b"
+        year_month_day_weekday: "%-d %B %Y года, %A"
+      standalone_month_names: '[nil, "1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]'
     days_of_month_fmt: "%{list} числа"
+    debug_hint: 'TODO: 非表示フィールドの内容。テスト用に直接編集できます！'
     enter_exception_dates: Введите даты исключений
     every: Каждый
     every_week: Каждую
-    
     in_month_names_yearly:
-    - null
+    -
     - январе
     - феврале
     - марте
@@ -25,45 +49,34 @@ ru:
     - октябре
     - ноябре
     - декабре
-
     interval:
       day: день
       month: месяц
       week: неделя
       year: год
-
-    actions:
-      cancel: Отмена
-      save: OK
-
     labels:
       add_exception: Добавить исключение
+      choose_month: Выберите месяц
+      day: день
+      except: 'TODO: 例外'
       exceptions: Исключения
       frequency: Частота
+      month: месяц
       one_time: Без повторения
       select_dates: Выбрать даты
       select_nth_day: Выбрать N-й день
       termination: Завершение задачи
-      choose_month: Выберите месяц
       times: раз
-      day: день
       week: неделю
-      month: месяц
       year: год
-
-    termination_types:
-      never: Бесконечно
-      until: До даты
-      count: Количество раз
-
-    # Плоские ключи для таблицы _monthly_by_weekday.html.erb
+    last: 'TODO: 最終'
     nth_names:
-      "1": 1-й
-      "2": 2-й
-      "3": 3-й
-      "4": 4-й
-      "5": 5-й
       "-1": посл.
+      '1': 1-й
+      '2': 2-й
+      '3': 3-й
+      '4': 4-й
+      '5': 5-й
       female:
         "-1": посл.
         '1': 1-я
@@ -82,48 +95,56 @@ ru:
         '2': 2-е
         '3': 3-е
         '4': 4-е
-
-    # Простая группа для метода nth_weeks в компоненте
     nth_weeks:
       '1': 1-я
       '2': 2-я
       '3': 3-я
       '4': 4-я
-
     one_time: Без повторения
-
     ordinals:
       day_of_month:
+        one: "%{count}-го"
         other: "%{count}-го"
       female:
+        one: "%{count}-я"
         other: "%{count}-я"
+      few: 'TODO: %{count}rd'
       male:
+        one: "%{count}-й"
         other: "%{count}-й"
       neutral:
+        one: "%{count}-е"
         other: "%{count}-е"
+      one: "%{count}-й"
+      other: "%{count}-й"
+      two: "%{count}-й"
       weekly_interval:
+        one: "%{count}-ю"
         other: "%{count}-ю"
-
     summary:
       daily:
         one: Каждый день %{until}
         other: Каждый %{count_f} день %{until}
-      weekly:
-        one: Каждую неделю по %{weekdays} %{until}
-        other: Каждую %{count_f} неделю по %{weekdays} %{until}
       monthly_by_day_of_month:
         one: 'Каждый месяц: %{days_of_month} %{until}'
         other: 'Каждый %{count_f} месяц: %{days_of_month} %{until}'
       monthly_by_weekday:
         one: 'Каждый месяц: %{weekdays} %{until}'
         other: 'Каждый %{count_f} месяц: %{weekdays} %{until}'
+      weekly:
+        one: Каждую неделю по %{weekdays} %{until}
+        other: Каждую %{count_f} неделю по %{weekdays} %{until}
       yearly_by_day_of_month:
         one: 'Каждый год в %{month}: %{days_of_month} %{until}'
         other: 'Каждый %{count_f} год в %{month}: %{days_of_month} %{until}'
       yearly_by_weekday:
         one: 'Каждый год в %{month}: %{weekdays} %{until}'
         other: 'Каждый %{count_f} год в %{month}: %{weekdays} %{until}'
-
+    termination_types:
+      count: Количество раз
+      never: Бесконечно
+      until: До даты
+    times_label: раз
     types:
       daily: Ежедневно
       monthly_by_day_of_month: Ежемесячно (по дню месяца)
@@ -132,9 +153,11 @@ ru:
       weekly: Еженедельно
       yearly_by_day_of_month: Ежегодно (по дню месяца)
       yearly_by_weekday: Ежегодно (по дню недели)
-
+    units:
+      month:
+        one: месяц
+        other: месяцев
     until_label: до %{date}
-
     weekdays:
       day_names:
       - воскресенье

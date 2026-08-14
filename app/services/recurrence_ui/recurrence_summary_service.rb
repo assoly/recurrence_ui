@@ -24,8 +24,9 @@ module RecurrenceUi
       count_f = format_interval_number(@interval, interval_gender)
       
       # 2. Окончание (до даты или кол-во раз)
+      format_str = I18n.t("recurrence_ui.date.formats.long", locale: @locale)
       termination = if @hash[:until]
-                      date = I18n.l(Date.parse(@hash[:until].to_s), format: :long, locale: @locale)
+                      date = I18n.l(Date.parse(@hash[:until].to_s), format: format_str, locale: @locale)
                       I18n.t("recurrence_ui.until_label", date: date, locale: @locale)
                     elsif @hash[:count]
                       I18n.t("recurrence_ui.count_label", count: @hash[:count], locale: @locale)
@@ -133,10 +134,10 @@ module RecurrenceUi
 
     def format_exceptions
       return "" if @hash[:exdates].blank?
-      
+      format_str = I18n.t("recurrence_ui.date.formats.long", locale: @locale)
       except_label = I18n.t("recurrence_ui.labels.exceptions", locale: @locale)
       formatted_dates = @hash[:exdates].map { |d| Date.parse(d.to_s) }.sort
-      dates_str = formatted_dates.map { |d| I18n.l(d, format: :long, locale: @locale) }.join(", ")
+      dates_str = formatted_dates.map { |d| I18n.l(d, format: format_str, locale: @locale) }.join(", ")
       
       "<br><span class='text-muted text-sm italic'>#{except_label}: #{dates_str}</span>"
     end

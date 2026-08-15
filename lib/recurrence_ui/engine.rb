@@ -24,6 +24,15 @@ module RecurrenceUi
         )
       end
     end
+    
+    initializer "recurrence_ui.append_routes" do |app|
+      app.routes.append do
+        # Добавляем роуты для тестирования переводов  прямо в основное приложение
+        if Rails.env.development?
+          get '/dev/recurrence_previews', to: 'recurrence_ui/dev/recurrence_previews#index'
+        end
+      end
+    end
     # Автоматически регистрируем файлы переводов гема:
     initializer "recurrence_ui.locales" do |app|
       config.i18n.load_path += Dir[Engine.root.join("config", "locales", "*.{rb,yml}")]

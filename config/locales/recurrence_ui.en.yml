@@ -111,22 +111,22 @@ en:
     summary:
       daily:
         one: Every day %{until}
-        other: Every %{count_f} days %{until}
+        other: Every %{count} days %{until}
       monthly_by_day_of_month:
         one: "Every month on: %{days_of_month} %{until}"
-        other: "Every %{count_f} months on: %{days_of_month} %{until}"
+        other: "Every %{count} months on: %{days_of_month} %{until}"
       monthly_by_weekday:
         one: "Every month on: %{weekdays} %{until}"
-        other: "Every %{count_f} months on: %{weekdays} %{until}"
+        other: "Every %{count} months on: %{weekdays} %{until}"
       weekly:
         one: Every week on %{weekdays} %{until}
-        other: Every %{count_f} weeks on %{weekdays} %{until}
+        other: Every %{count} weeks on %{weekdays} %{until}
       yearly_by_day_of_month:
         one: "Every year in %{month}: %{days_of_month} %{until}"
-        other: "Every %{count_f} years in %{month}: %{days_of_month} %{until}"
+        other: "Every %{count} years in %{month}: %{days_of_month} %{until}"
       yearly_by_weekday:
         one: "Every year in %{month}: %{weekdays} %{until}"
-        other: "Every %{count_f} years in %{month}: %{weekdays} %{until}"
+        other: "Every %{count} years in %{month}: %{weekdays} %{until}"
     termination_types:
       count: After number of times
       never: Never

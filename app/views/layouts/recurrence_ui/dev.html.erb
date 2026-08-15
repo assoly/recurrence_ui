@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Recurrence UI Dev Previews</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <!-- Подключение Tailwind (для красивых таблиц в превью) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Включаем поддержку Importmap или ES-модулей -->
+  <% if defined?(Importmap) %>
+    <%= javascript_importmap_tags %>
+  <% else %>
+    <!-- Если JS подключается прямым тегом, ОБЯЗАТЕЛЬНО нужен type: "module" -->
+    <%= javascript_include_tag "recurrence_ui/application", "data-turbo-track": "reload", type: "module", defer: true %>
+  <% end %>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-7xl mx-auto">
+    <%= yield %>
+  </div>
+</body>
+</html>

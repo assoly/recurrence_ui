@@ -104,22 +104,22 @@ ja:
     summary:
       daily:
         one: 毎日 %{until}
-        other: "%{count_f}日ごと %{until}"
+        other: "%{count}日ごと %{until}"
       monthly_by_day_of_month:
         one: 毎月 %{days_of_month} %{until}
-        other: "%{count_f}か月ごと %{days_of_month} %{until}"
+        other: "%{count}か月ごと %{days_of_month} %{until}"
       monthly_by_weekday:
         one: 毎月 %{weekdays} %{until}
-        other: "%{count_f}か月ごと %{weekdays} %{until}"
+        other: "%{count}か月ごと %{weekdays} %{until}"
       weekly:
         one: 毎週 %{weekdays} %{until}
-        other: "%{count_f}週間ごと %{weekdays} %{until}"
+        other: "%{count}週間ごと %{weekdays} %{until}"
       yearly_by_day_of_month:
         one: 毎年 %{month} %{days_of_month} %{until}
-        other: "%{count_f}年ごと %{month} %{days_of_month} %{until}"
+        other: "%{count}年ごと %{month} %{days_of_month} %{until}"
       yearly_by_weekday:
         one: 毎年 %{month} %{weekdays} %{until}
-        other: "%{count_f}年ごと %{month} %{weekdays} %{until}"
+        other: "%{count}年ごと %{month} %{weekdays} %{until}"
     termination_types:
       count: 回数指定
       never: なし

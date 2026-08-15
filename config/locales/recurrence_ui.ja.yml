@@ -24,6 +24,7 @@ ja:
         month_year_header: "%Y年%-m月"
         short: "%m/%d"
         year_month_day_weekday: "%Y年%m月%d日, %A"
+        recurrence_date: "%Y年%-m月%-d日" # -> 2026年8月22日
       standalone_month_names:
       -
       - 1月
@@ -94,6 +95,8 @@ ja:
       '2': 第2
       '3': 第3
       '4': 第4
+      '5': 第5
+
     one_time: 繰り返しなし
     ordinals:
       day_of_month:

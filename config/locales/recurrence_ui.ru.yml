@@ -27,6 +27,7 @@ ru:
         month_year_header: "%B %Y"
         short: "%d %b"
         year_month_day_weekday: "%-d %B %Y года, %A"
+        recurrence_date: "%-d %B %Y" # -> 31 декабря 2026 (без "г.")
       standalone_month_names:
       -
       - январь
@@ -98,23 +99,28 @@ ru:
         '2': 2-я
         '3': 3-я
         '4': 4-я
+        '5': 5-я
       male:
         "-1": посл.
         '1': 1-й
         '2': 2-й
         '3': 3-й
         '4': 4-й
+        '5': 5-й
       neutral:
         "-1": посл.
         '1': 1-е
         '2': 2-е
         '3': 3-е
         '4': 4-е
+        '5': 5-е
     nth_weeks:
+      "-1": посл.
       '1': 1-я
       '2': 2-я
       '3': 3-я
       '4': 4-я
+      '5': 5-я
     one_time: Без повторения
     ordinals:
       day_of_month:

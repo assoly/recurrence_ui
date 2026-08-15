@@ -24,6 +24,7 @@ en:
         month_year_header: "%B %Y"
         short: "%b %-d"
         year_month_day_weekday: "%A, %-d %B %Y"
+        recurrence_date: "%-d %B %Y" # -> 31 December 2026
       standalone_month_names:
       -
       - January
@@ -90,10 +91,12 @@ en:
       '4': 4th
       '5': 5th
     nth_weeks:
+      "-1": last
       '1': 1st
       '2': 2nd
       '3': 3rd
       '4': 4th
+      '5': 5th
     one_time: Does not repeat
     ordinals:
       day_of_month:

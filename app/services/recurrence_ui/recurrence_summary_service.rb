@@ -24,10 +24,10 @@ module RecurrenceUi
       count_f = format_interval_number(@interval, interval_gender)
       
       # 2. Окончание (до даты или кол-во раз)
-      format_str = I18n.t("recurrence_ui.date.formats.long", locale: @locale)
+      # Используем format_date для :until
       termination = if @hash[:until]
-                      date = I18n.l(Date.parse(@hash[:until].to_s), format: format_str, locale: @locale)
-                      I18n.t("recurrence_ui.until_label", date: date, locale: @locale)
+                      date_str = format_date(@hash[:until])
+                      I18n.t("recurrence_ui.until_label", date: date_str, locale: @locale)
                     elsif @hash[:count]
                       I18n.t("recurrence_ui.count_label", count: @hash[:count], locale: @locale)
                     else
@@ -57,7 +57,18 @@ module RecurrenceUi
     end
 
     private
+    # Единый метод форматирования дат в Ruby
+    def format_date(date_or_string)
+      return '' if date_or_string.blank?
 
+      date = date_or_string.is_a?(String) ? Date.parse(date_or_string) : date_or_string.to_date
+
+      # 1. Считываем строку формата из локали гема
+      format_pattern = I18n.t("recurrence_ui.date.formats.recurrence_date", locale: @locale)
+
+      # 2. Передаем полученную strftime-строку в I18n.l
+      I18n.l(date, format: format_pattern, locale: @locale)
+    end
     def determine_rule_type
       return :never if @hash[:rule_type].blank?
       base = @hash[:rule_type].gsub(/IceCube::|Rule/, "").downcase
@@ -76,14 +87,28 @@ module RecurrenceUi
     end
 
     # Порядковое числительное для N-го дня (например, 1-й вторник, 第1火曜日, 1st Tuesday)
-    def format_ordinal(number, gender)
-      # 1. Точечный перехват (например, nth_names.female.1 -> "1-я" или nth_names.male.-1 -> "посл.")
-      specific = I18n.t("recurrence_ui.nth_names.#{gender}.#{number}", locale: @locale, default: nil)
-      return specific if specific
+    def format_ordinal(number, gender = :male)
+      key = number.to_s
 
-      # 2. Общий фолбек на ordinals
-      ordinal = I18n.t("recurrence_ui.ordinals.#{gender}", count: number, locale: @locale, default: nil)
-      return ordinal if ordinal.is_a?(String)
+      # 1. Сначала ищем точное совпадение с учетом пола (для RU: male/female)
+      if gender.present?
+        specific_gender = I18n.t("recurrence_ui.nth_names.#{gender}.#{key}", locale: @locale, default: nil)
+        return specific_gender if specific_gender.present?
+      end
+
+      # 2. Ищем в общем словаре nth_names (для EN / JA: "1" -> "1st", "-1" -> "last" / "最終")
+      specific_general = I18n.t("recurrence_ui.nth_names.#{key}", locale: @locale, default: nil)
+      return specific_general if specific_general.present?
+
+      # 3. Если специфичного имени нет, используем ordinals
+      ordinal = I18n.t("recurrence_ui.ordinals.#{gender}", count: number, locale: @locale, default: nil) ||
+                I18n.t("recurrence_ui.ordinals", count: number, locale: @locale, default: nil)
+
+      if ordinal.is_a?(String) && ordinal.include?("%{count}")
+        return ordinal.gsub("%{count}", number.to_s)
+      elsif ordinal.is_a?(String)
+        return ordinal
+      end
 
       number.to_s
     end
@@ -139,12 +164,13 @@ module RecurrenceUi
       I18n.t("recurrence_ui.days_of_month_fmt", list: list_str, locale: @locale)
     end
 
+    #  метод форматирования исключений
     def format_exceptions
       return "" if @hash[:exdates].blank?
-      format_str = I18n.t("recurrence_ui.date.formats.long", locale: @locale)
+      
       except_label = I18n.t("recurrence_ui.labels.exceptions", locale: @locale)
-      formatted_dates = @hash[:exdates].map { |d| Date.parse(d.to_s) }.sort
-      dates_str = formatted_dates.map { |d| I18n.l(d, format: format_str, locale: @locale) }.join(", ")
+      formatted_dates = @hash[:exdates].map { |d| format_date(d) }
+      dates_str = formatted_dates.join(", ")
       
       "<br><span class='text-muted text-sm italic'>#{except_label}: #{dates_str}</span>"
     end

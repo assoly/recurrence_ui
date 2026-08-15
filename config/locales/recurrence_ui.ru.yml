@@ -27,7 +27,21 @@ ru:
         month_year_header: "%B %Y"
         short: "%d %b"
         year_month_day_weekday: "%-d %B %Y года, %A"
-        recurrence_date: "%-d %B %Y" # -> 31 декабря 2026 (без "г.")
+        recurrence_date: "%-d %B %Y г." # -> 31 декабря 2026 г.
+      month_names: # Родительный падеж для дат!
+      -
+      - января
+      - февраля
+      - марта
+      - апреля    
+      - мая
+      - июня
+      - июля
+      - августа
+      - сентября
+      - октября
+      - ноября
+      - декабря
       standalone_month_names:
       -
       - январь

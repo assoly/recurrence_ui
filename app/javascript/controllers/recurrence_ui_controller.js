@@ -491,26 +491,32 @@ export default class extends Controller {
     this.toggleEndFields()
   }
 
-  _formatDate(dateStr) {
-    if (!dateStr) return "";
-    const cleanDateStr = dateStr.split('T')[0]; 
-    const [year, month, day] = cleanDateStr.split('-').map(Number);
+  _formatDate(dateString) {
+    if (!dateString) return '';
 
-    if (!year || !month || !day) return dateStr;
-
+    // Парсим дату в UTC, чтобы избежать сдвигов часовых поясов
+    const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
     const date = new Date(Date.UTC(year, month - 1, day));
-    const locale = this.localeValue || 'en';
 
-    try {
-      return new Intl.DateTimeFormat(locale, {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        timeZone: 'UTC'
-      }).format(date);
-    } catch (e) {
-      console.error("Format error:", e);
-      return dateStr;
-    }
+    const y = date.getUTCFullYear();
+    const m = date.getUTCMonth() + 1; // 1..12
+    const d = date.getUTCDate();
+
+    // Берем формат и массив месяцев прямо из переданного YAML
+    const dateConfig = this.translationsValue.date || {};
+    const formatPattern = dateConfig.formats?.recurrence_date || "%Y-%m-%d";
+    const monthNames = dateConfig.month_names || [];
+
+    // Вытягиваем название месяца (учитывая, что 0-й элемент в массиве nil/null)
+    const monthName = monthNames[m] || "";
+
+    // Форматируем строго по шаблону из YAML
+    return formatPattern
+      .replace(/%Y/g, y)
+      .replace(/%-m/g, m)
+      .replace(/%m/g, String(m).padStart(2, '0'))
+      .replace(/%-d/g, d)
+      .replace(/%d/g, String(d).padStart(2, '0'))
+      .replace(/%B/g, monthName);
   }
 }

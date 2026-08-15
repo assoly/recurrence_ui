@@ -25,6 +25,20 @@ en:
         short: "%b %-d"
         year_month_day_weekday: "%A, %-d %B %Y"
         recurrence_date: "%-d %B %Y" # -> 31 December 2026
+      month_names: 
+      -
+      - January
+      - February
+      - March
+      - April
+      - May
+      - June
+      - July
+      - August
+      - September
+      - October
+      - November
+      - December
       standalone_month_names:
       -
       - January

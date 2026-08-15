@@ -40,16 +40,23 @@ module RecurrenceUi
       days_of_month_str = format_days_of_month
 
       # 4. Сборка основного шаблона (передаем count: @interval для плюрализации)
-      main_text = I18n.t("recurrence_ui.summary.#{@type}", 
+      # Определяем суффикс ключа (.one или .other)
+      plural_suffix = @interval == 1 ? "one" : "other"
+      base_key = "recurrence_ui.summary.#{@type}"
+
+      main_text = I18n.t(
+        "#{base_key}.#{plural_suffix}",
         count: @interval,
         count_f: count_f,
         until: termination,
         weekdays: weekdays_str,
         month: month_str,
         days_of_month: days_of_month_str,
-        locale: @locale
+        locale: @locale,
+        default: [base_key.to_sym] # Фоллбэк на основной ключ, если ключей .one/.other нет
       ).to_s.squish
 
+ 
       # 5. Исключения
       exceptions_text = format_exceptions
 

@@ -88,6 +88,13 @@ module RecurrenceUi
       number.to_s
     end
 
+    def sentence_options
+      {
+        words_connector: I18n.t("recurrence_ui.list.words_connector", locale: @locale, default: ", "),
+        two_words_connector: I18n.t("recurrence_ui.list.two_words_connector", locale: @locale, default: " and "),
+        last_word_connector: I18n.t("recurrence_ui.list.last_word_connector", locale: @locale, default: " and ")
+      }
+    end
     def interval_gender
       @type == :weekly ? :weekly_interval : :male
     end
@@ -99,14 +106,14 @@ module RecurrenceUi
           idx = d.is_a?(Symbol) ? DAY_SYMBOL_TO_INDEX[d] : d.to_i
           day_names[idx] if idx
         end.compact
-        names.to_sentence(locale: @locale)
+        names.to_sentence(sentence_options)
       elsif @validations[:day_of_week]
         parts = @validations[:day_of_week].map do |day_idx, nths|
           day_idx = day_idx.is_a?(Symbol) ? DAY_SYMBOL_TO_INDEX[day_idx] : day_idx.to_i
           gender = I18n.t("recurrence_ui.weekdays.weekday_genders", locale: @locale)[day_idx]
           formatted_nths = nths.map { |n| format_ordinal(n, gender) }
           day_name = I18n.t("recurrence_ui.weekdays.day_names", locale: @locale)[day_idx]
-          "#{formatted_nths.to_sentence(locale: @locale)} #{day_name}"
+          "#{formatted_nths.to_sentence(sentence_options)} #{day_name}"
         end
         parts.join("; ")
       end
@@ -127,7 +134,7 @@ module RecurrenceUi
         format_ordinal(d, :day_of_month)
       end
 
-      list_str = formatted_dates.to_sentence(locale: @locale)
+      list_str = formatted_dates.to_sentence(sentence_options)
 
       I18n.t("recurrence_ui.days_of_month_fmt", list: list_str, locale: @locale)
     end

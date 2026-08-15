@@ -3,8 +3,10 @@ PATH
   specs:
     recurrence_ui (0.1.0)
       heroicons-rails (>= 0.3)
+      i18n (>= 1.14)
       ice_cube (~> 0.16)
       rails (>= 7.1.0)
+      rails-i18n
       view_component (>= 3.0)
 
 GEM

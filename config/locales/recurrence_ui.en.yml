@@ -1,14 +1,4 @@
----
 en:
-  date:
-    formats:
-      day_month_format: "%B %-d"
-      default: "%m/%d/%Y"
-      long: "%B %-d, %Y"
-      month_year: "%B %Y"
-      month_year_header: "%B %Y"
-      short: "%b %d"
-      year_month_day_weekday: "%A, %B %-d, %Y"
   recurrence_ui:
     actions:
       cancel: Cancel
@@ -28,12 +18,12 @@ en:
       - Sat
       formats:
         day_month_format: "%-d %B"
-        default: "%d.%m.%Y"
+        default: "%Y-%m-%d"
         long: "%-d %B %Y"
-        month_year: "%B %Y г."
+        month_year: "%B %Y"
         month_year_header: "%B %Y"
-        short: "%d %b"
-        year_month_day_weekday: "%-d %B %Y года, %A"
+        short: "%b %-d"
+        year_month_day_weekday: "%A, %-d %B %Y"
       standalone_month_names:
       -
       - January
@@ -48,7 +38,7 @@ en:
       - October
       - November
       - December
-    days_of_month_fmt: on the %{list}
+    days_of_month_fmt: "on the %{list}"
     debug_hint: Hidden field contents. You can edit this directly for testing!
     enter_exception_dates: Enter exception dates
     every: Every
@@ -88,6 +78,10 @@ en:
       week: week
       year: year
     last: last
+    list:
+      last_word_connector: ", and "
+      two_words_connector: " and "
+      words_connector: ", "
     nth_names:
       "-1": last
       '1': 1st
@@ -95,24 +89,6 @@ en:
       '3': 3rd
       '4': 4th
       '5': 5th
-      female:
-        "-1": last
-        '1': 1st
-        '2': 2nd
-        '3': 3rd
-        '4': 4th
-      male:
-        "-1": last
-        '1': 1st
-        '2': 2nd
-        '3': 3rd
-        '4': 4th
-      neutral:
-        "-1": last
-        '1': 1st
-        '2': 2nd
-        '3': 3rd
-        '4': 4th
     nth_weeks:
       '1': 1st
       '2': 2nd
@@ -121,45 +97,36 @@ en:
     one_time: Does not repeat
     ordinals:
       day_of_month:
-        few: "%{count}rd"
         one: "%{count}st"
-        other: "%{count}th"
         two: "%{count}nd"
-      female:
-        one: 'TODO: %{count}-я'
-        other: 'TODO: %{count}-я'
-      few: "%{count}rd"
-      male:
-        one: "%{count}"
-        other: "%{count}"
-      neutral:
-        one: 'TODO: %{count}-е'
-        other: 'TODO: %{count}-е'
+        few: "%{count}rd"
+        other: "%{count}th"
       one: "%{count}st"
-      other: "%{count}th"
       two: "%{count}nd"
+      few: "%{count}rd"
+      other: "%{count}th"
       weekly_interval:
         one: "%{count}"
         other: "%{count}"
     summary:
       daily:
         one: Every day %{until}
-        other: Every %{count_f} day %{until}
+        other: Every %{count_f} days %{until}
       monthly_by_day_of_month:
-        one: 'Every month on: %{days_of_month} %{until}'
-        other: 'Every %{count_f} month on: %{days_of_month} %{until}'
+        one: "Every month on: %{days_of_month} %{until}"
+        other: "Every %{count_f} months on: %{days_of_month} %{until}"
       monthly_by_weekday:
-        one: 'Every month on: %{weekdays} %{until}'
-        other: 'Every %{count_f} month on: %{weekdays} %{until}'
+        one: "Every month on: %{weekdays} %{until}"
+        other: "Every %{count_f} months on: %{weekdays} %{until}"
       weekly:
         one: Every week on %{weekdays} %{until}
-        other: Every %{count_f} week on %{weekdays} %{until}
+        other: Every %{count_f} weeks on %{weekdays} %{until}
       yearly_by_day_of_month:
-        one: 'Every year in %{month}: %{days_of_month} %{until}'
-        other: 'Every %{count_f} year in %{month}: %{days_of_month} %{until}'
+        one: "Every year in %{month}: %{days_of_month} %{until}"
+        other: "Every %{count_f} years in %{month}: %{days_of_month} %{until}"
       yearly_by_weekday:
-        one: 'Every year in %{month}: %{weekdays} %{until}'
-        other: 'Every %{count_f} year in %{month}: %{weekdays} %{until}'
+        one: "Every year in %{month}: %{weekdays} %{until}"
+        other: "Every %{count_f} years in %{month}: %{weekdays} %{until}"
     termination_types:
       count: After number of times
       never: Never
@@ -195,11 +162,3 @@ en:
       - Thursdays
       - Fridays
       - Saturdays
-      weekday_genders:
-      - male
-      - male
-      - male
-      - male
-      - male
-      - male
-      - male

@@ -1,26 +1,24 @@
 ---
 ru:
-  date:
-    formats:
-      day_month_format: "%-m月%-d日"
-      default: "%Y年%m月%d日"
-      long: "%Y年%m月%d日"
-      month_year: "%Y年%m月"
-      month_year_header: "%Y年%-m月"
-      short: "%m/%d"
-      year_month_day_weekday: "%Y年%m月%d日 (%A)"
   recurrence_ui:
     actions:
       cancel: Отмена
       save: OK
-    add_exception: 'TODO: 例外を追加'
+    add_exception: Добавить исключение
     count_label:
       few: "%{count} раза"
       many: "%{count} раз"
       one: "%{count} раз"
       other: "%{count} раза"
     date:
-      abbr_day_names: '["日", "月", "火", "水", "木", "金", "土"]'
+      abbr_day_names:
+      - вс
+      - пн
+      - вт
+      - ср
+      - чт
+      - пт
+      - сб
       formats:
         day_month_format: "%-d %B"
         default: "%d.%m.%Y"
@@ -29,9 +27,22 @@ ru:
         month_year_header: "%B %Y"
         short: "%d %b"
         year_month_day_weekday: "%-d %B %Y года, %A"
-      standalone_month_names: '[nil, "1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]'
+      standalone_month_names:
+      -
+      - январь
+      - февраль
+      - март
+      - апрель
+      - май
+      - июнь
+      - июль
+      - август
+      - сентябрь
+      - октябрь
+      - ноябрь
+      - декабрь
     days_of_month_fmt: "%{list} числа"
-    debug_hint: 'TODO: 非表示フィールドの内容。テスト用に直接編集できます！'
+    debug_hint: Результирующий JSON для IceCube. Вы можете редактировать его напрямую для тестирования!
     enter_exception_dates: Введите даты исключений
     every: Каждый
     every_week: Каждую
@@ -58,7 +69,7 @@ ru:
       add_exception: Добавить исключение
       choose_month: Выберите месяц
       day: день
-      except: 'TODO: 例外'
+      except: Исключая
       exceptions: Исключения
       frequency: Частота
       month: месяц
@@ -69,7 +80,11 @@ ru:
       times: раз
       week: неделю
       year: год
-    last: 'TODO: 最終'
+    last: последний
+    list:
+      last_word_connector: " и "
+      two_words_connector: " и "
+      words_connector: ", "
     nth_names:
       "-1": посл.
       '1': 1-й
@@ -108,7 +123,6 @@ ru:
       female:
         one: "%{count}-я"
         other: "%{count}-я"
-      few: 'TODO: %{count}rd'
       male:
         one: "%{count}-й"
         other: "%{count}-й"

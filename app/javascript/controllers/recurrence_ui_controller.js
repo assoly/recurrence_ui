@@ -557,12 +557,16 @@ export default class extends Controller {
     }
     this.toggleEndFields() // Обновляем видимость инпутов
   }
- _formatDate(dateStr) {
-    // 1. Избегаем проблем с UTC: заменяем дефисы на слэши.
-    // Это заставляет JS считать строку локальной датой (Midnight local time)
-    const date = new Date(dateStr.replace(/-/g, '/'));
+  _formatDate(dateStr) {
+    // Разбиваем "2026-09-01" или "2026-09-01T23:59:59Z"
+    const cleanDateStr = dateStr.split('T')[0]; 
+    const [year, month, day] = cleanDateStr.split('-').map(Number);
 
-    // 2. Используем переданную локаль, фолбек на английский
+    if (!year || !month || !day) return dateStr;
+
+    // Создаем чистый UTC-объект даты (1 сентября 2026 00:00 UTC)
+    const date = new Date(Date.UTC(year, month - 1, day));
+
     const locale = this.localeValue || 'en-US';
 
     try {
@@ -570,11 +574,11 @@ export default class extends Controller {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        timeZone: this.timeZoneValue // Передаем зону из Rails
+        timeZone: 'UTC' // Календарные даты бессмысленно сдвигать часовым поясом
       }).format(date);
     } catch (e) {
       console.error("Format error:", e);
-      return dateStr; // Фолбек на сырую строку в случае ошибки
+      return dateStr;
     }
   }
 

@@ -155,6 +155,15 @@ search:
 # ignore_missing:
 # - 'errors.messages.{accepted,blank,invalid,too_short,too_long}'
 # - '{devise,simple_form}.*'
+# config/i18n-tasks.yml
+ignore_missing:
+  - 'recurrence_ui.summary.*'
+  # 1. Игнорируем роды и формы плюрализации в ordinals/nth_names для японского
+  - 'recurrence_ui.nth_names.female.*'
+  - 'recurrence_ui.nth_names.male.*'
+  - 'recurrence_ui.nth_names.neutral.*'
+  - 'recurrence_ui.ordinals.*'
+  - 'recurrence_ui.units.*'
 
 ## Consider these keys used:
 # ignore_unused:

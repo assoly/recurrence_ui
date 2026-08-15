@@ -33,7 +33,11 @@ Gem::Specification.new do |spec|
   
   # Иконки
   spec.add_dependency "heroicons-rails", ">= 0.3"
-
+  
+  # Internationalization (I18n) support
+  spec.add_dependency "i18n", ">= 1.14"
+  spec.add_dependency "rails-i18n"
+  
   # ==========================================
   # Зависимости для разработки и тестирования (Опционально)
   # ==========================================

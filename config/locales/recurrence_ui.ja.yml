@@ -1,14 +1,5 @@
 ---
 ja:
-  date:
-    formats:
-      day_month_format: "%-m月%-d日"
-      default: "%Y年%m月%d日"
-      long: "%Y年%m月%d日"
-      month_year: "%Y年%m月"
-      month_year_header: "%Y年%-m月"
-      short: "%m/%d"
-      year_month_day_weekday: "%Y年%m月%d日 (%A)"
   recurrence_ui:
     actions:
       cancel: キャンセル
@@ -26,13 +17,13 @@ ja:
       - 金
       - 土
       formats:
-        day_month_format: "%-d %B"
-        default: "%d.%m.%Y"
-        long: "%-d %B %Y"
-        month_year: "%B %Y г."
-        month_year_header: "%B %Y"
-        short: "%d %b"
-        year_month_day_weekday: "%-d %B %Y года, %A"
+        day_month_format: "%-m月%-d日"
+        default: "%Y年%m月%d日"
+        long: "%Y年%m月%d日"
+        month_year: "%Y年%m月"
+        month_year_header: "%Y年%-m月"
+        short: "%m/%d"
+        year_month_day_weekday: "%Y年%m月%d日, %A"
       standalone_month_names:
       -
       - 1月
@@ -87,6 +78,10 @@ ja:
       week: 週
       year: 年
     last: 最終
+    list:
+      last_word_connector: "、"
+      two_words_connector: "、"
+      words_connector: "、"
     nth_names:
       "-1": 最終
       '1': 第1
@@ -94,24 +89,6 @@ ja:
       '3': 第3
       '4': 第4
       '5': 第5
-      female:
-        "-1": 最終
-        '1': 第1
-        '2': 第2
-        '3': 第3
-        '4': 第4
-      male:
-        "-1": 最終
-        '1': 第1
-        '2': 第2
-        '3': 第3
-        '4': 第4
-      neutral:
-        "-1": 最終
-        '1': 第1
-        '2': 第2
-        '3': 第3
-        '4': 第4
     nth_weeks:
       '1': 第1
       '2': 第2
@@ -121,20 +98,9 @@ ja:
     ordinals:
       day_of_month:
         other: "%{count}日"
-      female:
-        one: 'TODO: %{count}-я'
-        other: 'TODO: %{count}-я'
-      few: 'TODO: TODO: %{count}rd'
-      male:
-        other: "%{count}"
-      neutral:
-        one: 'TODO: %{count}-е'
-        other: 'TODO: %{count}-е'
-      one: 'TODO: TODO: %{count}st'
-      other: "%{count}"
-      two: 'TODO: TODO: %{count}nd'
+      other: "%{count}日"
       weekly_interval:
-        other: "%{count}"
+        other: "%{count}週間"
     summary:
       daily:
         one: 毎日 %{until}

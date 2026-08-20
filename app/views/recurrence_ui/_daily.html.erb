@@ -3,11 +3,10 @@
 <%# БЛОК ОПЦИЙ: Ежедневно (Daily) %>
  <div class="flex items-center space-x-2">
       <span class="text-gray-700"><%= t("recurrence_ui.every") %></span>
-      <%= form.number_field :daily_interval, min: 1, value: 1, 
+      <%= number_field_tag nil, rec_ui.initial_interval, 
+            min: 1, 
             class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
-            data: { 
-              item: "interval",
-              action: "input->#{identifier}#updateHiddenHash"
-            } %> 
+            data: { item: "interval", action: "input->#{identifier}#updateHiddenHash" } 
+      %> 
       <span class="text-gray-700"><%= t("recurrence_ui.labels.day") %></span>
 </div>

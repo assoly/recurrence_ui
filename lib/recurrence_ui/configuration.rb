@@ -1,17 +1,19 @@
 # lib/recurrence_ui/configuration.rb
 module RecurrenceUi
   class Configuration
+    
     SUPPORTED_LOCALES = %w[en ru ja].freeze # Локали, для которых есть yml-файлы в геме
     DEFAULT_LOCALE = 'en'.freeze
     DEFAULT_TIME_ZONE = 'UTC'.freeze
     DEFAULT_WEEK_START = 0
 
-    attr_accessor :locale, :time_zone, :week_start
+    attr_accessor :locale, :time_zone, :week_start, :supported_locales
 
     def initialize
       @locale = nil
       @time_zone = nil
       @week_start = nil
+      @supported_locales = SUPPORTED_LOCALES
     end
 
     # 1. Сначала проверяем явный конфиг гема (если разработчик переопределил)

@@ -1,19 +1,20 @@
 <%# Локальные переменные для удобства %>
-<% selected_days = local_assigns[:selected_weekly_days] || [] %>
-<% interval_value = form.object.try(:weekly_interval) || rec_ui.rules['interval'] || 1 %>
-  
+<% selected_days = local_assigns[:selected_weekly_days] || rec_ui.selected_weekly_days %>
+
+<% I18n.with_locale(rec_ui.locale) do %>
   <div class="flex items-center space-x-2 mb-3">
     <span class="text-gray-700"><%= t("recurrence_ui.every_week") %></span>
-    <%= form.number_field :weekly_interval, 
+    
+    <%= number_field_tag nil, rec_ui.initial_interval, 
           min: 1, 
-          value: interval_value,
           class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
           data: { 
-           item: "interval",
+            item: "interval",
             action: "input->#{identifier}#updateHiddenHash"
           } %> 
+          
     <span class="text-gray-700">
-      <%= t("recurrence_ui.labels.week") %>
+      <%= t("recurrence_ui.labels.week", count: rec_ui.initial_interval) %>
     </span>
   </div>
 
@@ -21,15 +22,15 @@
   <div>
     <div class="grid grid-cols-7 gap-1">
       <% days_for_ui.each do |day_idx| %>
-        <%# Берем сокращенное название дня (Пн, Вт...) %>
-        <% day_name = t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %>
+        <%# Сокращенное название дня (Пн, Вт...) берется с учетом локали компонента %>
+        <% day_name = t('recurrence_ui.date.abbr_day_names')[day_idx] %>
         
         <button type="button" 
                 class="w-full py-2 rounded-md flex items-center justify-center text-xs font-medium border transition-all
                        bg-white text-gray-700 border-gray-300 hover:bg-blue-50 
                        data-[selected='true']:bg-blue-600 data-[selected='true']:text-white data-[selected='true']:border-blue-600"
                 data-value="<%= day_idx %>" 
-                data-selected="<%= !!selected_days.include?(day_idx) %>"
+                data-selected="<%= selected_days.include?(day_idx) %>"
                 data-action="click-><%= identifier %>#toggleDay" 
                 data-<%= identifier %>-target="dayButton">
           <%= day_name %>
@@ -37,3 +38,4 @@
       <% end %>
     </div>
   </div>
+<% end %>

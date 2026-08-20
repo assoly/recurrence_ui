@@ -9,15 +9,19 @@
 %>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
 
+<% I18n.with_locale(rec_ui.locale) do %>
 <div class="space-y-4">
     <div class="flex items-center space-x-2 mb-3">
         <span class="text-gray-700"><%= t("recurrence_ui.every") %></span>
-        <%= form.number_field :yearly_interval, min: 1, value: 1, 
+        <%= number_field_tag nil, rec_ui.initial_interval, 
+            min: 1, 
             class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
-            data: { item: 'interval', action: "input->#{identifier}#updateHiddenHash" } %> 
+            data: { item: 'interval', action: "input->#{identifier}#updateHiddenHash" } %>
+
         <span class="text-gray-700">
-         <%= t("recurrence_ui.labels.year", count: form.object.try(:yearly_interval) || 1) %>
+          <%= t("recurrence_ui.labels.year", count: rec_ui.initial_interval) %>
         </span>
+
     </div>
       <div data-<%= identifier %>-target="monthSelector" class="flex items-center gap-3">
         <label class="whitespace-nowrap text-sm font-medium text-gray-600">
@@ -25,7 +29,7 @@
         </label>
         <select data-<%= identifier %>-target="monthInput" data-item="month" data-action="change-><%= identifier %>#updateHiddenHash" class="w-full sm:w-auto rounded-md border-gray-300 py-1.5 text-sm">
           <% (1..12).each do |m| %>
-            <% month_name = I18n.t("recurrence_ui.date.standalone_month_names", default: I18n.t("recurrence_ui.date.month_names"))[m] %>
+            <% month_name = I18n.t("recurrence_ui.date.standalone_month_names", default: t("recurrence_ui.date.month_names"))[m] %>
             <option value="<%= m %>"><%= month_name %></option>
           <% end %>
         </select>
@@ -52,7 +56,7 @@
                     data-selected="<%= !!is_selected %>" 
                     data-action="click-><%= identifier %>#toggleDay">
               <%# Важно: всегда указываем scope для дней недели, чтобы не зависеть от локали по умолчанию %>
-              <%= t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
+              <%= t('recurrence_ui.date.abbr_day_names')[day_idx] %> 
             </button>
           <% end %>
         </div>
@@ -60,3 +64,4 @@
     <% end %>
   </div>
 </div>
+<% end %>

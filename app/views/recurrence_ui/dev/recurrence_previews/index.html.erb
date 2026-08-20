@@ -16,6 +16,72 @@
 </head>
 <body class="bg-gray-50 p-8">
 <div class="p-8 max-w-7xl mx-auto space-y-12">
+
+
+<!-- Таблица Context Debugger находится выше -->
+
+<!-- СЕКЦИЯ ПРЕВЬЮ ПОЛЯ / КОМПОНЕНТА ГЕМА -->
+<div class="p-6 bg-white rounded-xl border border-slate-200 shadow-sm font-sans">
+  <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-100">
+    <div>
+      <h3 class="text-lg font-bold text-slate-800">Интерактивный UI Превью гема</h3>
+      <p class="text-xs text-slate-500">Компонент отрендерен с учетом финально отрезолвленных параметров</p>
+    </div>
+
+  </div>
+
+  <!-- app/views/recurrence_ui/dev/recurrence_previews/index.html.erb -->
+
+<!-- Таблица отладки находится выше -->
+
+<div class="mt-8 p-6 bg-white rounded-xl border border-slate-200 shadow-sm font-sans space-y-6">
+  <div class="border-b border-slate-100 pb-4">
+    <h3 class="text-lg font-bold text-slate-800">Автоматический рендер UI гема</h3>
+    <p class="text-xs text-slate-500">Компонент вызывается в чистом виде: <code>RecurrenceUi::PickerComponent.new(record: @event)</code></p>
+  </div>
+
+  <% component = RecurrenceUi::PickerComponent.new(record: @event) %>
+
+  <!-- 1. Отображение Recurrence Summary -->
+  <div class="p-4 bg-indigo-50/60 rounded-lg border border-indigo-100">
+    <strong class="block text-xs font-semibold text-indigo-900 uppercase tracking-wider mb-1">
+      Recurrence Summary (Язык: <%= component.locale %>):
+    </strong>
+    <span class="text-sm font-medium text-indigo-950">
+      <%= component.recurrence_summary.presence || "Правило не задано" %>
+    </span>
+  </div>
+
+  <!-- 2. Отображение карточки события и самого поля UI -->
+  <div id="<%= dom_id(@event) %>" class="w-full my-5 space-y-5 p-4 border border-slate-200 rounded-lg bg-slate-50/50">
+    <div>
+      <strong class="block text-xs text-slate-500 mb-1">Title:</strong>
+      <div class="text-sm font-semibold text-slate-800"><%= @event.title %></div>
+    </div>
+    
+    <div>
+      <strong class="block text-xs text-slate-500 mb-1">Description:</strong>
+      <div class="text-sm text-slate-700"><%= @event.description %></div>
+    </div>
+
+    <div>
+      <strong class="block text-xs text-slate-500 mb-1">Recurring rules (Raw Data):</strong>
+      <code class="block p-2 bg-slate-100 text-slate-700 rounded text-xs font-mono">
+        <%= @event.recurring_rules.to_json %>
+      </code>
+    </div>
+
+    <div>
+      <strong class="block text-xs text-slate-500 mb-2">Picker Component Rendering:</strong>
+      <!-- Вызов рендера вашего ViewComponent -->
+      <div class="bg-white p-4 border rounded-md shadow-sm">
+        <%= render component %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200 font-sans">
   <div class="flex items-center justify-between mb-4">
     <div>

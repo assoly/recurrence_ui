@@ -31,9 +31,6 @@ Gem::Specification.new do |spec|
   # Работа с расписаниями
   spec.add_dependency "ice_cube", "~> 0.16"
   
-  # Иконки
-  spec.add_dependency "heroicons-rails", ">= 0.3"
-  
   # Internationalization (I18n) support
   spec.add_dependency "i18n", ">= 1.14"
   spec.add_dependency "rails-i18n"

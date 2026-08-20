@@ -4,9 +4,18 @@ module RecurrenceUi
         class RecurrencePreviewsController < ActionController::Base  
             layout "recurrence_ui/dev"          
             def index
-                @locales = [:en, :ru, :ja]
+                @locales = RecurrenceUi.config.supported_locales
                 raw_locale = params[:locale].presence || session[:locale].presence || RecurrenceUi.config.locale&.to_s || I18n.locale&.to_s
-                
+                # 1. Создаем тестовую модель прямо в памяти (без сохранения в БД)
+                @event = Event.new(
+                title: "Встреча команды",
+                description: "Обсуждение релиза гема",
+                recurring_rules: {
+                    rule_type: "IceCube::WeeklyRule",
+                    interval: 1,
+                    validations: { day: [1, 3, 5] } # Пн, Ср, Пт
+                }
+                )
                 
                 # Набор тестовых правил (Daily, Weekly, Monthly, Yearly + крайние случаи)
                 @rule_cases = [
@@ -97,12 +106,12 @@ module RecurrenceUi
                         note: "Явный перехват из Query String адресной строки"
                     },
                     resolved: {
-                        title: "ИТОГО (FINAL RESOLVED)",
-                        file: "RecurrenceUi.config.resolved_*",
-                        locale: params[:locale].presence || session[:locale].presence || RecurrenceUi.config.resolved_locale,
-                        time_zone: params[:time_zone].presence || session[:time_zone].presence || RecurrenceUi.config.resolved_time_zone,
-                        week_start: params[:week_start].presence || session[:week_start].presence || RecurrenceUi.config.resolved_week_start,
-                        note: "Финальные значения, попавшие в компонент"
+                        title: "FINAL RESOLVED (Результат)",
+                        file: "RecurrenceUi.config.resolved_locale",
+                        locale: RecurrenceUi.config.resolved_locale(raw_locale), # вернет 'en'
+                        time_zone: RecurrenceUi.config.resolved_time_zone(params[:time_zone]),
+                        week_start: RecurrenceUi.config.resolved_week_start(params[:week_start]),
+                        note: raw_locale == 'fr' ? "Запрошен 'fr' (не поддерживается) -> сброшено на 'en'" : "Готово к рендеру"
                     }
                 }
 

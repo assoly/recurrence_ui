@@ -18,46 +18,55 @@
 <div class="p-8 max-w-7xl mx-auto space-y-12">
 <div class="mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200 font-sans">
   <div class="flex items-center justify-between mb-4">
-    <h2 class="text-xl font-bold text-slate-800"> Context Debugger (Источники параметров)</h2>
-    <div class="text-sm bg-white px-3 py-1 rounded border border-slate-300">
-      Текущее время: <strong class="text-indigo-600"><%= @current_time.strftime("%Y-%m-%d %H:%M:%S (%Z z)") %></strong>
+    <div>
+      <h2 class="text-xl font-bold text-slate-800">Иерархия конфигурации гема</h2>
+      <p class="text-xs text-slate-500">Приоритет возрастает сверху вниз (URL и Session перекрывают настройки гема и приложения)</p>
+    </div>
+    <div class="text-xs bg-white px-3 py-1.5 rounded border border-slate-300 shadow-sm">
+      Время приложения: <strong class="text-indigo-600"><%= @current_time.strftime("%Y-%m-%d %H:%M:%S (%Z)") %></strong>
     </div>
   </div>
 
-  <!-- Таблица сравнения -->
   <div class="overflow-x-auto">
-    <table class="w-full text-left text-sm border-collapse bg-white rounded-lg shadow-sm">
+    <table class="w-full text-left text-xs border-collapse bg-white rounded-lg shadow-sm">
       <thead>
-        <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
-          <th class="p-3">Источник</th>
-          <th class="p-3">Locale (`locale`)</th>
-          <th class="p-3">Time Zone (`time_zone`)</th>
-          <th class="p-3">First Day of Week (`week_start`)</th>
+        <tr class="bg-slate-100 text-slate-600 border-b border-slate-200 uppercase font-semibold">
+          <th class="p-3">Уровень / Название</th>
+          <th class="p-3">Файл / Источник</th>
+          <th class="p-3">Locale</th>
+          <th class="p-3">Time Zone</th>
+          <th class="p-3">First Day</th>
+          <th class="p-3">Примечание</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-100">
         <% @context_sources.each do |key, source| %>
           <% is_resolved = key == :resolved %>
-          <tr class="<%= is_resolved ? 'bg-indigo-50/70 font-semibold text-indigo-950' : 'text-slate-700' %>">
-            <td class="p-3">
+          <tr class="<%= is_resolved ? 'bg-indigo-50/90 font-bold text-indigo-950 border-t-2 border-indigo-200' : 'text-slate-700 hover:bg-slate-50/50' %>">
+            <td class="p-3 font-semibold">
               <%= source[:title] %>
             </td>
-            <td class="p-3">
-              <%= source[:locale].present? ? source[:locale] : content_tag(:span, "— (nil)", class: "text-slate-400 italic") %>
+            <td class="p-3 font-mono text-[11px] text-slate-500">
+              <%= source[:file] %>
             </td>
             <td class="p-3">
-              <%= source[:time_zone].present? ? source[:time_zone] : content_tag(:span, "— (nil)", class: "text-slate-400 italic") %>
+              <%= source[:locale].present? ? content_tag(:span, source[:locale], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
             </td>
             <td class="p-3">
-              <%= source[:week_start].present? ? source[:week_start] : content_tag(:span, "— (nil)", class: "text-slate-400 italic") %>
+              <%= source[:time_zone].present? ? content_tag(:span, source[:time_zone], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
+            </td>
+            <td class="p-3">
+              <%= source[:week_start].present? ? content_tag(:span, source[:week_start], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
+            </td>
+            <td class="p-3 text-slate-500 italic text-[11px]">
+              <%= source[:note] %>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
-
-  <!-- Быстрые ссылки для тестирования переключения через URL -->
+    <!-- Быстрые ссылки для тестирования переключения через URL -->
   <div class="mt-4 flex flex-wrap gap-2 text-xs">
     <span class="text-slate-500 self-center">Быстрые тесты URL:</span>
     <%= link_to "Токио / Японский (Mon)", url_for(time_zone: "Asia/Tokyo", locale: "ja", week_start: 1), class: "px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-50 text-indigo-600" %>
@@ -66,6 +75,7 @@
     <%= link_to "Сбросить URL параметры", url_for(locale: nil, time_zone: nil, week_start: nil), class: "px-2 py-1 bg-red-50 border border-red-200 rounded text-red-600 hover:bg-red-100" %>
   </div>
 </div>
+
   <h1 class="text-3xl font-bold">Recurrence Summary: Ruby vs JS Parity Matrix</h1>
 
   <% @locales.each do |locale| %>

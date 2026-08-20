@@ -5,6 +5,8 @@ module RecurrenceUi
             layout "recurrence_ui/dev"          
             def index
                 @locales = [:en, :ru, :ja]
+                raw_locale = params[:locale].presence || session[:locale].presence || RecurrenceUi.config.locale&.to_s || I18n.locale&.to_s
+                
                 
                 # Набор тестовых правил (Daily, Weekly, Monthly, Yearly + крайние случаи)
                 @rule_cases = [
@@ -54,36 +56,53 @@ module RecurrenceUi
                     }
                 ]
                 @context_sources = {
-                    url: {
-                        title: "URL Parameters (params)",
-                        locale: params[:locale],
-                        time_zone: params[:time_zone],
-                        week_start: params[:week_start]
+                    gem_defaults: {
+                        title: "1. Дефолты гема",
+                        file: "lib/recurrence_ui/configuration.rb",
+                        locale: RecurrenceUi::Configuration::DEFAULT_LOCALE,
+                        time_zone: RecurrenceUi::Configuration::DEFAULT_TIME_ZONE,
+                        week_start: RecurrenceUi::Configuration::DEFAULT_WEEK_START,
+                        note: "Зашитые базовые значения гема на крайний случай"
+                    },
+                    app_defaults: {
+                        title: "2. Параметры приложения",
+                        file: "dummy/config/application.rb",
+                        locale: I18n.default_locale&.to_s,
+                        time_zone: Rails.application.config.time_zone,
+                        week_start: (Date.beginning_of_week == :monday ? 1 : 0),
+                        note: "Глобальные настройки самого Rails-приложения"
+                    },
+                    gem_initializer: {
+                        title: "3. Параметры гема в приложении",
+                        file: "dummy/config/initializers/recurrence_ui.rb",
+                        locale: RecurrenceUi.config.locale&.to_s,
+                        time_zone: RecurrenceUi.config.time_zone,
+                        week_start: RecurrenceUi.config.week_start,
+                        note: "Точечное переопределение параметров гема через RecurrenceUi.configure"
                     },
                     session: {
-                        title: "Session (session)",
-                        locale: session[:locale],
-                        time_zone: session[:time_zone],
-                        week_start: session[:week_start]
+                        title: "4. Параметры в сессии",
+                        file: "session[:locale], session[:time_zone]...",
+                        locale: session[:locale].presence,
+                        time_zone: session[:time_zone].presence,
+                        week_start: session[:week_start].presence,
+                        note: "Данные текущей пользовательской сессии"
                     },
-                    app: {
-                        title: "Rails Application (I18n / Time.zone)",
-                        locale: I18n.locale&.to_s,
-                        time_zone: Time.zone&.name,
-                        # Приводим к числу: 0 - Воскресенье, 1 - Понедельник
-                        week_start: (Date.beginning_of_week == :sunday ? 0 : 1)
-                        },
-                    gem: {
-                        title: "Gem Configuration (RecurrenceUi.config)",
-                        locale: RecurrenceUi.config.locale,
-                        time_zone: RecurrenceUi.config.time_zone,
-                        week_start: RecurrenceUi.config.week_start
+                    url: {
+                        title: "5. Параметры в URL",
+                        file: "params[:locale], params[:time_zone]...",
+                        locale: params[:locale].presence,
+                        time_zone: params[:time_zone].presence,
+                        week_start: params[:week_start].presence,
+                        note: "Явный перехват из Query String адресной строки"
                     },
                     resolved: {
-                        title: "FINAL RESOLVED (Результат)",
-                        locale: resolve_locale(params[:locale] || session[:locale]),
-                        time_zone: resolve_time_zone(params[:time_zone] || session[:time_zone]),
-                        week_start: resolve_week_start(params[:week_start] || session[:week_start])
+                        title: "ИТОГО (FINAL RESOLVED)",
+                        file: "RecurrenceUi.config.resolved_*",
+                        locale: params[:locale].presence || session[:locale].presence || RecurrenceUi.config.resolved_locale,
+                        time_zone: params[:time_zone].presence || session[:time_zone].presence || RecurrenceUi.config.resolved_time_zone,
+                        week_start: params[:week_start].presence || session[:week_start].presence || RecurrenceUi.config.resolved_week_start,
+                        note: "Финальные значения, попавшие в компонент"
                     }
                 }
 

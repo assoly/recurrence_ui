@@ -4,7 +4,7 @@
   <div data-<%= identifier %>-target="exdatesContainer" class="flex flex-wrap gap-2 mb-4">
     <% exdates.each do |date_str| %>
       <%# Рендерим начальные данные через хелпер, чтобы не дублировать верстку плашки вручную %>
-      <%= render "recurrence_ui/exdate_badge", date: date_str.to_date, identifier: identifier %>
+      <%= render "recurrence_ui/exdate_badge", date: date_str.to_date, identifier: identifier, rec_ui: rec_ui %>
     <% end %>
   </div>
 

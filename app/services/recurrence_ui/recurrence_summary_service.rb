@@ -9,9 +9,14 @@ module RecurrenceUi
       sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6
     }.freeze
 
-    def initialize(rule_hash, locale = I18n.locale)
+    def initialize(rule_hash, options = {})
       @hash = rule_hash.with_indifferent_access
-      @locale = locale.to_sym
+      
+      # 1. Приоритет вычисления настроек (Опции метода -> Инициализатор -> Дефолты гема/Rails)
+      @locale     = resolve_locale(options[:locale])
+      @time_zone  = resolve_time_zone(options[:time_zone])
+      @week_start = resolve_week_start(options[:week_start])
+
       @validations = @hash[:validations] || {}
       @type = determine_rule_type
       @interval = (@hash[:interval] || 1).to_i
@@ -64,6 +69,22 @@ module RecurrenceUi
     end
 
     private
+    # Обрабатываем параметры конфигурации: locale, time_zone, week_start
+    # Используем приоритет: переданный параметр -> конфиг RecurrenceUi -> дефолт Rails/I18n
+    # Приоритет: переданный locale -> config.locale -> I18n.locale -> :en
+    def resolve_locale(passed_locale)
+      passed_locale || RecurrenceUi.config.resolved_locale
+    end
+
+    def resolve_time_zone(passed_tz)
+      passed_tz || RecurrenceUi.config.resolved_time_zone
+    end
+
+    def resolve_week_start(passed_ws)
+      return passed_ws.to_i if passed_ws.present?
+      RecurrenceUi.config.resolved_week_start
+    end
+    
     # Единый метод форматирования дат в Ruby
     def format_date(date_or_string)
       return '' if date_or_string.blank?
@@ -76,6 +97,7 @@ module RecurrenceUi
       # 2. Передаем полученную strftime-строку в I18n.l
       I18n.l(date, format: format_pattern, locale: @locale)
     end
+
     def determine_rule_type
       return :never if @hash[:rule_type].blank?
       base = @hash[:rule_type].gsub(/IceCube::|Rule/, "").downcase

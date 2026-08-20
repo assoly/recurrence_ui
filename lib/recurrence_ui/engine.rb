@@ -1,4 +1,5 @@
 # recurrence_ui/lib/recurrence_ui/engine.rb
+require "recurrence_ui" # <-- Гарантирует, что lib/recurrence_ui.rb загружен
 module RecurrenceUi
   class Engine < ::Rails::Engine
     isolate_namespace RecurrenceUi

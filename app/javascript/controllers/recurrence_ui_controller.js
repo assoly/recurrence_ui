@@ -3,10 +3,11 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static classes = [ "selected" ]
-  static values = { 
-    translations: Object,
-    locale: { type: String, default: 'en' },
-    timeZone: { type: String, default: 'UTC' }
+  static values = {
+    locale: String,
+    timeZone: String,
+    weekStart: Number,
+    translations: Object
   }
 
   static targets = [
@@ -41,6 +42,10 @@ export default class extends Controller {
     this.toggleTerminationBlock() 
     this.updateSummary()
     this.isInitializing = false
+    // В JS сразу доступны готовые значения:
+    console.log(this.localeValue)    // например: "ru"
+    console.log(this.timeZoneValue)  // например: "Europe/Moscow"
+    console.log(this.weekStartValue) // например: 1
   }
 
   // ИНИЦИАЛИЗАЦИЯ
@@ -489,6 +494,9 @@ export default class extends Controller {
       this.endTypeTarget.value = 'never'
     }
     this.toggleEndFields()
+  }
+  _getFirstDayOfWeek() {
+    return this.weekStartValue; // 0 или 1
   }
 
   _formatDate(dateString) {

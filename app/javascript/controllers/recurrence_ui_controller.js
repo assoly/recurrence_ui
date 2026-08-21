@@ -305,20 +305,29 @@ export default class extends Controller {
         const names = vals.day.map(i => this.translationsValue.weekdays?.day_names_plural?.[i]);
         weekdays = listFormatter.format(names.filter(Boolean));
       } else if (vals.day_of_week) {
-        const parts = Object.keys(vals.day_of_week).map(dayKey => {
-          const dayIdx = parseInt(dayKey);
-          const gender = this.translationsValue.weekdays?.weekday_genders?.[dayIdx] || 'male';
-          
-          const nths = vals.day_of_week[dayKey].map(n => {
-            const specificName = this.translationsValue.nth_names?.[n.toString()] || 
-                                 this.translationsValue.nth_names?.[gender]?.[n.toString()];
-            return specificName || this.formatOrdinal(n, gender);
+          const parts = Object.keys(vals.day_of_week).map(dayKey => {
+            const dayIdx = parseInt(dayKey);
+            const gender = this.translationsValue.weekdays?.weekday_genders?.[dayIdx] || 'male';
+            
+            const nths = vals.day_of_week[dayKey].map(n => {
+              const nStr = n.toString();
+              
+              // 1. Сначала ищем точное совпадение с учетом ПОЛА (например: nth_names.female['2'] -> "2-я", nth_names.neuter['5'] -> "5-е")
+              const genderSpecific = this.translationsValue.nth_names?.[gender]?.[nStr];
+              if (genderSpecific) return genderSpecific;
+
+              // 2. Ищем в общем словаре nth_names (для EN / JA)
+              const generalSpecific = this.translationsValue.nth_names?.[nStr];
+              if (generalSpecific) return generalSpecific;
+
+              // 3. Используем formatOrdinal с учетом конкретного рода (male, female, neuter)
+              return this.formatOrdinal(n, gender);
+            });
+            
+            return `${listFormatter.format(nths)} ${this.translationsValue.weekdays?.day_names?.[dayIdx]}`;
           });
-          
-          return `${listFormatter.format(nths)} ${this.translationsValue.weekdays?.day_names?.[dayIdx]}`;
-        });
-        weekdays = parts.join('; ');
-      }
+          weekdays = parts.join('; ');
+        }
     }
 
     const month = (vals.month_of_year) ? 
@@ -385,18 +394,22 @@ export default class extends Controller {
   }
 
   formatOrdinal(number, gender = 'male') {
-    const locale = this.localeValue;
+    const locale = this.localeValue || 'en';
     const ruleType = locale.startsWith('en') ? 'ordinal' : 'cardinal';
     const pr = new Intl.PluralRules(locale, { type: ruleType });
     const rule = pr.select(number);
 
     const ordinals = this.translationsValue.ordinals || {};
-    const genderGroup = ordinals[gender] || ordinals;
-
-    let template = (typeof genderGroup === 'object' && genderGroup !== null) ? (genderGroup[rule] || genderGroup['other']) : null;
     
-    if (!template && ordinals['other']) {
-      template = ordinals['other'];
+    // Вытягиваем группу по полу из YAML (ordinals.female, ordinals.neuter, ordinals.male)
+    let template = null;
+    if (ordinals[gender] && typeof ordinals[gender] === 'object') {
+      template = ordinals[gender][rule] || ordinals[gender]['other'];
+    }
+
+    // Если не нашли специфичную по полу группу, берем из корня ordinals
+    if (!template) {
+      template = ordinals[rule] || ordinals['other'];
     }
 
     if (typeof template !== 'string') {

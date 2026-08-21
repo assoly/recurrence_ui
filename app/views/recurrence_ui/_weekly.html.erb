@@ -1,7 +1,5 @@
 <%# Локальные переменные для удобства %>
 <% selected_days = local_assigns[:selected_weekly_days] || rec_ui.selected_weekly_days %>
-
-<% I18n.with_locale(rec_ui.locale) do %>
   <div class="flex items-center space-x-2 mb-3">
     <span class="text-gray-700"><%= t("recurrence_ui.every_week") %></span>
     
@@ -38,4 +36,3 @@
       <% end %>
     </div>
   </div>
-<% end %>

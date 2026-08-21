@@ -1,9 +1,15 @@
 <%# app/components/recurrence_ui/picker_component.html.erb %>
+<div> TEST 
+Locale: <%= locale %> | Time zone: <%= Time.zone&.name %> | Week start: <%= week_start %>
+</div>
+<div> TEST 2
+Locale: <%= locale %> | Time zone: <%= time_zone %> | Week start: <%= week_start %>
+</div>
 <% I18n.with_locale(locale) do %>
 <div class="hidden bg-blue-600 text-white border-blue-600"></div>
 <div data-controller="<%= identifier %>" 
-     data-<%= identifier %>-time-zone-value="<%= Time.zone&.name || 'UTC' %>"
-     data-<%= identifier %>-translations-value="<%= t('recurrence_ui').to_json %>"
+     data-<%= identifier %>-time-zone-value="<%= time_zone %>"
+     data-<%= identifier %>-translations-value="<%= t('recurrence_ui', locale: locale).to_json %>"
      data-<%= identifier %>-locale-value="<%= locale %>"
      data-<%= identifier %>-selected-class="bg-blue-600 text-white border-blue-600"
      class="space-y-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">  

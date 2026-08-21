@@ -8,8 +8,6 @@
   bg-white text-gray-700 border-gray-300 hover:bg-blue-50
 %>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
-
-<% I18n.with_locale(rec_ui.locale) do %>
 <div class="space-y-4">
     <div class="flex items-center space-x-2 mb-3">
         <span class="text-gray-700"><%= t("recurrence_ui.every") %></span>
@@ -64,4 +62,3 @@
     <% end %>
   </div>
 </div>
-<% end %>

@@ -1,7 +1,7 @@
 # app/controllers/recurrence_ui/dev/previews_controller.rb
 module RecurrenceUi
     module Dev
-        class RecurrencePreviewsController < ActionController::Base  
+        class RecurrencePreviewsController < ApplicationController 
             layout "recurrence_ui/dev"          
             def index
                 @locales = RecurrenceUi.config.supported_locales
@@ -55,6 +55,10 @@ module RecurrenceUi
                     name: "Monthly by weekday (1st & last Mon)",
                     hash: { rule_type: "IceCube::MonthlyRule", interval: 1, validations: { day_of_week: { "1" => [1, -1] } } }
                     },
+                    { 
+                    name: "Every month on: 1st and last Sunday; 3rd and 4th Monday; 2nd and 5th Tuesday; 1st and last Wednesday; 1st and 3rd Thursday; 3rd and last Friday; 2nd and 5th Saturday",
+                    hash: {"rule_type":"IceCube::MonthlyRule","interval":1,"validations":{"day_of_week":{"0":[1,-1],"1":[3,4],"2":[2,5],"3":[1,-1],"4":[1,3],"5":[3,-1],"6":[2,5]}}}
+                    },
                     {
                     name: "Yearly by day of month in Nov",
                     hash: { rule_type: "IceCube::YearlyRule", interval: 5, validations: { day_of_month: [19], month_of_year: [11] }, until: "2026-09-01T23:59:59Z" }
@@ -62,6 +66,10 @@ module RecurrenceUi
                     {
                     name: "With Exdates",
                     hash: { rule_type: "IceCube::DailyRule", interval: 1, exdates: ["2026-08-22", "2026-08-28"] }
+                    },
+                    {  
+                    name: "Every 3 years in January: 5th and last Sunday; 3rd and last Monday; 1st Tuesday; 2nd Wednesday; 1st and 5th Thursday; 3rd and last Saturday",
+                    hash:  {"rule_type":"IceCube::YearlyRule","interval":3,"validations":{"day_of_week":{"0":[5,-1],"1":[3,-1],"2":[1],"3":[2],"4":[1,5],"6":[3,-1]},"month_of_year":[1]}}
                     }
                 ]
                 @context_sources = {

@@ -20,8 +20,12 @@ module RecurrenceUi
       # Гем АВТОМАТИЧЕСКИ подтягивает актуальные отрезолвленные параметры из окружения/конфигов,
       # если они не перекрыты явными пропами выше.
       @locale     = RecurrenceUi.config.resolved_locale(locale)
+      # Логируем выбранную локаль в dev-режиме, в любом случае, чтобы разработчик видел, что происходит.
+      Rails.logger.debug("[RecurrenceUi] Using locale: #{@locale}") if Rails.env.development?
       @time_zone  = RecurrenceUi.config.resolved_time_zone(time_zone)
+      Rails.logger.debug("[RecurrenceUi] Using time zone: #{@time_zone}") if Rails.env.development?
       @week_start = RecurrenceUi.config.resolved_week_start(week_start)
+      Rails.logger.debug("[RecurrenceUi] Using week start: #{@week_start}") if Rails.env.development?
     end
     
     # Если @raw_form равен nil, автоматически создаем виртуальный FormBuilder
@@ -75,11 +79,8 @@ module RecurrenceUi
     def selected_nth_days     = validations[:day_of_week] || {}
 
     def rule_options
-      # Используем отвалидированную локаль компонента
-      I18n.with_locale(@locale) do
-        %w[never daily weekly monthly_by_day_of_month monthly_by_weekday yearly_by_day_of_month yearly_by_weekday].map do |type|
-          [I18n.t("#{@i18n_prefix}.types.#{type}"), type]
-        end
+      %w[never daily weekly monthly_by_day_of_month monthly_by_weekday yearly_by_day_of_month yearly_by_weekday].map do |type|
+        [I18n.t("#{@i18n_prefix}.types.#{type}", locale: @locale), type]
       end
     end
 

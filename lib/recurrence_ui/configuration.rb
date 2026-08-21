@@ -16,14 +16,12 @@ module RecurrenceUi
       @supported_locales = SUPPORTED_LOCALES
     end
 
-    # 1. Сначала проверяем явный конфиг гема (если разработчик переопределил)
-    # 2. Если nil -> берём из I18n приложения
-    # 3. Если и там nil -> берем дефолт гема ('en')
     def resolved_locale(requested = nil)
       # 1. Собираем кандидатную локаль
+      # Приоритет: requested -> I18n.locale -> @locale
       candidate = requested&.to_s.presence ||
-                  @locale&.to_s.presence ||
-                  (defined?(I18n) && I18n.locale&.to_s.presence)
+                  (defined?(I18n) && I18n.locale&.to_s.presence) ||
+                  @locale&.to_s.presence
 
       # 2. Валидируем против поддерживаемых гемом
       if SUPPORTED_LOCALES.include?(candidate)
@@ -36,12 +34,11 @@ module RecurrenceUi
       end
     end
 
-    # 1. Сначала конфиг гема
-    # 2. Если nil -> берем текущую Time.zone из Rails
-    # 3. Если nil -> берем дефолт ('UTC')
     def resolved_time_zone(requested = nil)
-        candidate = requested.presence || @time_zone.presence || (defined?(Time) && Time.respond_to?(:zone) && Time.zone&.name.presence)
-        
+      # Приоритет: requested -> Time.zone -> @time_zone
+      candidate = requested.presence ||
+                  (defined?(Time) && Time.respond_to?(:zone) && Time.zone&.name.presence) ||
+                  @time_zone.presence
         # Проверяем, существует ли такой часовой пояс в Rails
         if candidate.present? && defined?(ActiveSupport::TimeZone) && ActiveSupport::TimeZone[candidate].present?
             candidate
@@ -50,16 +47,16 @@ module RecurrenceUi
         end
     end
 
-
-
-    # 1. Сначала конфиг гема
-    # 2. Если nil -> определяем из Rails (Date.beginning_of_week)
-    # 3. Если nil -> берем дефолт (0 - Sunday)
     def resolved_week_start(requested = nil)
-  raw = requested.presence || @week_start.presence || (defined?(Date) && Date.respond_to?(:beginning_of_week) && (Date.beginning_of_week == :monday ? 1 : 0))
+      # Приоритет: requested -> Date.beginning_of_week -> @week_start
+      rails_week_start = defined?(Date) && Date.respond_to?(:beginning_of_week) ? (Date.beginning_of_week == :monday ? 1 : 0) : nil
+
+      raw = requested.presence ||
+            rails_week_start ||
+            @week_start.presence
   
-  normalized = normalize_week_start(raw)
-  [0, 1].include?(normalized) ? normalized : DEFAULT_WEEK_START
+      normalized = normalize_week_start(raw)
+      [0, 1].include?(normalized) ? normalized : DEFAULT_WEEK_START
     end
 
     private

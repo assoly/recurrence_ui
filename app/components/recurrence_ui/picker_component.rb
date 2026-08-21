@@ -1,7 +1,7 @@
 # app/components/recurrence_ui/picker_component.rb
 module RecurrenceUi
   class PickerComponent < ViewComponent::Base
-    attr_reader  :record, :field_name, :i18n_prefix, :identifier, :locale, :time_zone, :week_start
+    attr_reader  :record, :field_name, :i18n_prefix, :identifier, :locale, :time_zone, :week_start, :enabled_rule_types
     def initialize(
       record:,
       form: nil,
@@ -9,13 +9,17 @@ module RecurrenceUi
       i18n_prefix: 'recurrence_ui',
       locale: nil,
       time_zone: nil,
-      week_start: nil
+      week_start: nil,
+      enabled_rule_types: nil
     )
       @raw_form    = form
       @record      = record
       @field_name  = field_name
       @i18n_prefix = i18n_prefix
       @identifier  = "recurrence-ui"
+
+      # Резолвим enabled_rule_types с учетом фильтрации допустимых значений и сохранения порядка
+      @enabled_rule_types = RecurrenceUi.config.resolved_enabled_rule_types(enabled_rule_types)
 
       # Гем АВТОМАТИЧЕСКИ подтягивает актуальные отрезолвленные параметры из окружения/конфигов,
       # если они не перекрыты явными пропами выше.
@@ -78,8 +82,9 @@ module RecurrenceUi
     # Исправляем извлечение nth_days (в IceCube это Hash: { "1" => [1] })
     def selected_nth_days     = validations[:day_of_week] || {}
 
+    # Массив формируется ровно в том порядке, который передан в @enabled_rule_types!
     def rule_options
-      %w[never daily weekly monthly_by_day_of_month monthly_by_weekday yearly_by_day_of_month yearly_by_weekday].map do |type|
+      enabled_rule_types.map do |type|
         [I18n.t("#{@i18n_prefix}.types.#{type}", locale: @locale), type]
       end
     end

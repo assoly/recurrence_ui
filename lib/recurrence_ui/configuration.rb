@@ -6,14 +6,24 @@ module RecurrenceUi
     DEFAULT_LOCALE = 'en'.freeze
     DEFAULT_TIME_ZONE = 'UTC'.freeze
     DEFAULT_WEEK_START = 0
+    ALL_RULE_TYPES = %w[
+          never
+          daily
+          weekly
+          monthly_by_day_of_month
+          monthly_by_weekday
+          yearly_by_day_of_month
+          yearly_by_weekday
+        ].freeze
 
-    attr_accessor :locale, :time_zone, :week_start, :supported_locales
+    attr_accessor :enabled_rule_types, :locale, :time_zone, :week_start, :supported_locales
 
     def initialize
       @locale = nil
       @time_zone = nil
       @week_start = nil
       @supported_locales = SUPPORTED_LOCALES
+      @enabled_rule_types = ALL_RULE_TYPES.dup
     end
 
     def resolved_locale(requested = nil)
@@ -57,6 +67,16 @@ module RecurrenceUi
   
       normalized = normalize_week_start(raw)
       [0, 1].include?(normalized) ? normalized : DEFAULT_WEEK_START
+    end
+    
+    # Метод резолва с фильтрацией валидных типов и сохранением заданного пользователем порядка
+    def resolved_enabled_rule_types(passed_types = nil)
+      candidate = passed_types.presence || @enabled_rule_types.presence || ALL_RULE_TYPES
+      candidate = Array(candidate).map(&:to_s)
+
+      # Оставляем только допустимые значения, сохраняя порядок, заданный пользователем
+      valid_types = candidate.select { |t| ALL_RULE_TYPES.include?(t) }
+      valid_types.presence || ALL_RULE_TYPES
     end
 
     private

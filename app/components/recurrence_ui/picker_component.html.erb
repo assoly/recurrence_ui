@@ -44,11 +44,15 @@
     <div data-<%= identifier %>-target="exceptionsBlock" class="pt-4 border-t border-gray-100 hidden">
       <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
     </div>
-
+    <%# 6. Секция "Дополнительные даты" %>
+    <div data-<%= identifier %>-target="rdatesBlock" class="pt-4 border-t border-gray-100 hidden">
+      <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+    </div>
+    <%# 7. Секция "Окончание формы" %>
     <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
   </div>
 
-  <%# 6. СКРЫТОЕ ПОЛЕ: Настоящее поле модели, куда сохраняется итоговый JSON %>
+    <%# 8. СКРЫТОЕ ПОЛЕ: Настоящее поле модели, куда сохраняется итоговый JSON %>
   <%= form.hidden_field field_name, value: rules_json, data: { "#{identifier}_target": "hiddenField" } %>
 </div>
 <% end %>

@@ -70,8 +70,14 @@ module RecurrenceUi
                     {  
                     name: "Every 3 years in January: 5th and last Sunday; 3rd and last Monday; 1st Tuesday; 2nd Wednesday; 1st and 5th Thursday; 3rd and last Saturday",
                     hash:  {"rule_type":"IceCube::YearlyRule","interval":3,"validations":{"day_of_week":{"0":[5,-1],"1":[3,-1],"2":[1],"3":[2],"4":[1,5],"6":[3,-1]},"month_of_year":[1]}}
+                    },
+                    {  
+                    name: "Every month on: on the 1st, 10th, 16th, and 17th until 29 July 2026 Exceptions: 19 August 2026, 20 August 2026 Additional Dates: 26 August 2026, 28 August 2026",
+                    hash:  {"rule_type"=>"IceCube::MonthlyRule", "interval"=>1, "validations"=>{"day_of_month"=>[1, 10, 16, 17]}, "exdates"=>["2026-08-19", "2026-08-20"], "rdates"=>["2026-08-26", "2026-08-28"], "until"=>"2026-07-29T23:59:59Z"} 
                     }
                 ]
+                # Приводим все кейсы и их вложенные хэши к indifferent access
+                @rule_cases = @rule_cases.map(&:with_indifferent_access)
                 @context_sources = {
                     gem_defaults: {
                         title: "1. Дефолты гема",

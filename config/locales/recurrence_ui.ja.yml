@@ -65,10 +65,12 @@ ja:
       year: 年
     labels:
       add_exception: 例外を追加
+      add_rdate: 追加日を追加
       choose_month: 月を選択
       day: 日
       except: 例外
       exceptions: 例外
+      rdates: 追加日
       frequency: 頻度
       month: 月
       one_time: 繰り返しなし

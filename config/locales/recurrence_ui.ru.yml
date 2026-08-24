@@ -82,10 +82,12 @@ ru:
       year: год
     labels:
       add_exception: Добавить исключение
+      add_rdate: Добавить дополнительную дату
       choose_month: Выберите месяц
       day: день
       except: Исключая
       exceptions: Исключения
+      rdates: Дополнительные даты
       frequency: Частота
       month: месяц
       one_time: Без повторения

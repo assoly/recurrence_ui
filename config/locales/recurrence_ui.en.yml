@@ -79,9 +79,11 @@ en:
       year: year
     labels:
       add_exception: Add exception
+      add_rdate: Add additional date
       choose_month: Choose month
       day: Day
       except: Exceptions
+      rdates: Additional Dates
       exceptions: Exceptions
       frequency: Frequency
       month: Month

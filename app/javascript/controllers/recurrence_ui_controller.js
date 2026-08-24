@@ -29,7 +29,10 @@ export default class extends Controller {
     "terminationBlock", "endType", "endDate", "endCount", "endCountInput",
     
     // Исключения
-    "exceptionsBlock", "exdatesContainer", "exdateInput", "exdateTemplate"
+    "exceptionsBlock", "exdatesContainer", "exdateInput", "exdateTemplate",
+
+    // Дополнения (даты, в которые событие также должно срабатывать, даже если они не попадают под правило)
+    "rdatesBlock", "rdatesContainer", "rdateInput", "rdateTemplate"
   ]
 
   ruleSnapshot = null
@@ -39,6 +42,7 @@ export default class extends Controller {
     this.initializeState()
     this.syncButtonsUI()
     this.toggleExceptionsBlock() 
+    this.toggleRdatesBlock()
     this.toggleTerminationBlock() 
     this.updateSummary()
     this.isInitializing = false
@@ -134,6 +138,7 @@ export default class extends Controller {
     const selectedValue = this.ruleTypeTarget.value
     this.specificFieldsTargets.forEach(el => el.classList.toggle('hidden', el.dataset.rule !== selectedValue))
     this.toggleExceptionsBlock()
+    this.toggleRdatesBlock()
     this.toggleTerminationBlock() 
     this.updateHiddenHash()
   }
@@ -172,6 +177,35 @@ export default class extends Controller {
     return Array.from(this.exdatesContainerTarget.querySelectorAll('[data-exdate-value]'))
                 .map(el => el.dataset.exdateValue);
   }
+ // Дополнения (rdates)
+  addRdate(e) {
+    e.preventDefault();
+    const input = this.rdateInputTarget;
+    const dateValue = input.value;
+    if (!dateValue || this._getRdatesArray().includes(dateValue)) return;
+
+    const content = this.rdateTemplateTarget.innerHTML
+      .replace(/VALUE/g, dateValue)
+      .replace(/LABEL/g, this._formatDate(dateValue));
+
+    this.rdatesContainerTarget.insertAdjacentHTML('beforeend', content);
+    input.value = "";
+    this.updateHiddenHash();
+  }
+
+  removeRdate(e) {
+    e.preventDefault();
+    e.target.closest('[data-rdate-value]').remove();
+    this.updateHiddenHash();
+  }
+
+  _getRdatesArray() {
+    if (!this.hasRdatesContainerTarget) return []
+    return Array.from(this.rdatesContainerTarget.querySelectorAll('[data-rdate-value]'))
+                .map(el => el.dataset.rdateValue);
+  }
+
+
 
   // Окончание повторения (termination)
   toggleTerminationBlock() {
@@ -209,7 +243,8 @@ export default class extends Controller {
       rule_type: iceCubeType, 
       interval: parseInt(container.querySelector('[data-item="interval"]')?.value) || 1, 
       validations: {},
-      exdates: this._getExdatesArray()
+      exdates: this._getExdatesArray(),
+      rdates: this._getRdatesArray()
     }
 
     if (ruleType === 'weekly') {
@@ -258,7 +293,7 @@ export default class extends Controller {
 
     if (Object.keys(ruleHash.validations).length === 0) delete ruleHash.validations
     if (ruleHash.exdates.length === 0) delete ruleHash.exdates
-
+    if (ruleHash.rdates.length === 0) delete ruleHash.rdates
     const json = JSON.stringify(ruleHash, null, 2)
     this.hiddenFieldTarget.value = json
     
@@ -362,8 +397,18 @@ export default class extends Controller {
 
       exceptionsHtml = `<br><span class="text-muted text-sm italic">${exceptLabel}: ${formattedExdates}</span>`;
     }
+    let rdatesHtml = "";
+    if (hash.rdates && hash.rdates.length > 0) {
+      const rdateLabel = this.t('labels.rdates');
+      const formattedRdates = hash.rdates
+        .sort((a, b) => new Date(a) - new Date(b))
+        .map(d => this._formatDate(d))
+        .join(', ');
 
-    this.summaryTextTarget.innerHTML = mainText + exceptionsHtml;
+      rdatesHtml = `<br><span class="text-muted text-sm italic">${rdateLabel}: ${formattedRdates}</span>`;
+    }
+    this.summaryTextTarget.innerHTML = mainText + exceptionsHtml + rdatesHtml;
+
   }
 
   t(path, params = {}) {
@@ -439,6 +484,12 @@ export default class extends Controller {
     const ruleType = this.ruleTypeTarget.value
     const isHidden = (ruleType === 'never' || ruleType === '')
     this.exceptionsBlockTarget.classList.toggle('hidden', isHidden)
+  }
+  toggleRdatesBlock() {
+    if (!this.hasRdatesBlockTarget || !this.hasRuleTypeTarget) return
+    const ruleType = this.ruleTypeTarget.value
+    const isHidden = (ruleType === 'never' || ruleType === '')
+    this.rdatesBlockTarget.classList.toggle('hidden', isHidden)
   }
 
   updateHiddenFromDebug() {

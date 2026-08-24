@@ -64,8 +64,11 @@ module RecurrenceUi
  
       # 5. Исключения
       exceptions_text = format_exceptions
+      
+      # 6. Дополнения (rdates)
+      rdates_text = format_rdates
 
-      "#{main_text}#{exceptions_text}".strip.html_safe
+      "#{main_text}#{exceptions_text}#{rdates_text}".strip.html_safe
     end
 
     private
@@ -119,17 +122,19 @@ module RecurrenceUi
     def format_ordinal(number, gender = :male)
       key = number.to_s
 
-      # 1. Сначала ищем точное совпадение с учетом пола (для RU: male/female)
+      # 1. Поиск точного совпадения с учетом контекста/пола (например, :day_of_month, :female и т.д.)
       if gender.present?
         specific_gender = I18n.t("recurrence_ui.nth_names.#{gender}.#{key}", locale: @locale, default: nil)
         return specific_gender if specific_gender.present?
       end
 
-      # 2. Ищем в общем словаре nth_names (для EN / JA: "1" -> "1st", "-1" -> "last" / "最終")
-      specific_general = I18n.t("recurrence_ui.nth_names.#{key}", locale: @locale, default: nil)
-      return specific_general if specific_general.present?
+      # 2. Ищем в общем nth_names ТОЛЬКО для дней недели (когда gender НЕ :day_of_month)
+      if gender != :day_of_month
+        specific_general = I18n.t("recurrence_ui.nth_names.#{key}", locale: @locale, default: nil)
+        return specific_general if specific_general.present?
+      end
 
-      # 3. Если специфичного имени нет, используем ordinals
+      # 3. Форматирование через ordinals (для чисел месяца и обычных интервалов)
       ordinal = I18n.t("recurrence_ui.ordinals.#{gender}", count: number, locale: @locale, default: nil) ||
                 I18n.t("recurrence_ui.ordinals", count: number, locale: @locale, default: nil)
 
@@ -141,7 +146,6 @@ module RecurrenceUi
 
       number.to_s
     end
-
     def sentence_options
       {
         words_connector: I18n.t("recurrence_ui.list.words_connector", locale: @locale, default: ", "),
@@ -202,6 +206,16 @@ module RecurrenceUi
       dates_str = formatted_dates.join(", ")
       
       "<br><span class='text-muted text-sm italic'>#{except_label}: #{dates_str}</span>"
+    end
+    #  метод форматирования дополнений (rdates)
+    def format_rdates
+      return "" if @hash[:rdates].blank?
+      
+      rdate_label = I18n.t("recurrence_ui.labels.rdates", locale: @locale)
+      formatted_dates = @hash[:rdates].map { |d| format_date(d) }
+      dates_str = formatted_dates.join(", ")
+      
+      "<br><span class='text-muted text-sm italic'>#{rdate_label}: #{dates_str}</span>"
     end
   end
 end

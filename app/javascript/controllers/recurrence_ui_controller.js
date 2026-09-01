@@ -14,7 +14,7 @@ export default class extends Controller {
     "hiddenField", "displayMode", "editMode", "summaryText",
     "rulesContainer", "ruleCardTemplate", "ruleCard",
     "exceptionsBlock", "exdatesContainer", "exdateInput", "exdateTemplate",
-    "rdatesBlock", "rdatesContainer", "rdateInput", "rdateTemplate"
+    "rdatesBlock", "rdatesContainer", "rdateInput", "rdateTemplate", "iceCubeField"
   ]
 
   ruleSnapshot = null
@@ -22,6 +22,7 @@ export default class extends Controller {
   connect() {
     this.isInitializing = true
     this.initializeState()
+    this.updateDebugField()
     this.isInitializing = false
   }
 
@@ -31,7 +32,36 @@ export default class extends Controller {
 
   initializeState() {
     const jsonString = this.hiddenFieldTarget.value
-    this.rulesContainerTarget.innerHTML = ""
+
+    // Check if the rules container exists before trying to update it
+    if (this.hasRulesContainerTarget) {
+      this.rulesContainerTarget.innerHTML = "...";
+    }
+  
+    // Update the summary text if the target exists
+    if (this.hasSummaryTextTarget) {
+      this.updateSummary();
+    }
+
+    // Update the rules list only if the corresponding container exists
+  if (this.hasRulesContainerTarget) {
+    this.renderRules();
+  }
+
+  // Update exception dates (exdates) only if their container exists
+  if (this.hasExdatesContainerTarget) {
+    this.renderExdates();
+  }
+
+  // Update additional dates (rdates) only if their container exists
+  if (this.hasRdatesContainerTarget) {
+    this.renderRdates();
+  }
+
+  // Update the summary text only if there is a target to display it in
+  if (this.hasSummaryTextTarget) {
+    this.renderSummary();
+  }
 
     if (jsonString && jsonString.length > 2) {
       try {
@@ -219,6 +249,7 @@ export default class extends Controller {
 
     this.hiddenFieldTarget.value = JSON.stringify(schedule)
     this.updateSummary()
+    this.updateDebugField()
   }
 
   updateSummary() {
@@ -266,10 +297,31 @@ export default class extends Controller {
     this.summaryTextTarget.innerHTML = mainText + exceptionsHtml + rdatesHtml
   }
 
+  // Updates the debug textarea with the current JSON from the hidden field
+  updateDebugField() {
+    if (this.hasIceCubeFieldTarget) {
+      this.iceCubeFieldTarget.value = this.hiddenFieldTarget.value
+    }
+  }
+
+  // Allows editing the JSON directly in the debug textarea
+  updateHiddenFromDebug() {
+    if (!this.hasIceCubeFieldTarget) return
+    try {
+      JSON.parse(this.iceCubeFieldTarget.value)
+      this.hiddenFieldTarget.value = this.iceCubeFieldTarget.value
+      this.initializeState()
+    } catch (e) {
+      // If the JSON is invalid, we can choose to ignore or show an error. For now, we'll just ignore it.
+    }
+  }
+
   // ==========================================
   // HELPERS & PRIVATE METHODS
   // ==========================================
 
+
+  
   _buildSingleRuleHash(card) {
     const typeSelect = card.querySelector('[data-item="ruleType"]')
     if (!typeSelect) return null

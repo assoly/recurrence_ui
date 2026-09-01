@@ -1,232 +1,269 @@
-<!-- app/views/dev/recurrence_previews/index.html.erb -->
-
+<!-- app/views/recurrence_ui/dev/recurrence_previews/index.html.erb -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>Recurrence UI Parity Preview</title>
   
-  <%# Включаем теги импорта JS и CSS вашего движка/приложения %>
+  <%# Include CSRF and CSP tags %>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   
-  <%# Подключаем стили и JS (укажите ваши asset-хелперы) %>
+  <%# Include application styles and javascript %>
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
 </head>
-<body class="bg-gray-50 p-8">
-<div class="p-8 max-w-7xl mx-auto space-y-12">
+<body class="bg-gray-50 text-slate-800 antialiased p-8">
+<div class="max-w-7xl mx-auto space-y-12">
 
-
-<!-- Таблица Context Debugger находится выше -->
-
-<!-- СЕКЦИЯ ПРЕВЬЮ ПОЛЯ / КОМПОНЕНТА ГЕМА -->
-<div class="p-6 bg-white rounded-xl border border-slate-200 shadow-sm font-sans">
-  <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-100">
+  <!-- TOP HEADER & LOCALE SWITCHER -->
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-slate-200 gap-4">
     <div>
-      <h3 class="text-lg font-bold text-slate-800">Интерактивный UI Превью гема</h3>
-      <p class="text-xs text-slate-500">Компонент отрендерен с учетом финально отрезолвленных параметров</p>
+      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Recurrence UI Debug & Parity Dashboard</h1>
+      <p class="text-sm text-slate-500 mt-1">Development environment for testing multi-rule schedules, locale fallback, and JS/Ruby output parity.</p>
     </div>
 
-  </div>
-
-  <!-- app/views/recurrence_ui/dev/recurrence_previews/index.html.erb -->
-
-<!-- Таблица отладки находится выше -->
-
-<div class="mt-8 p-6 bg-white rounded-xl border border-slate-200 shadow-sm font-sans space-y-6">
-  <div class="border-b border-slate-100 pb-4">
-    <h3 class="text-lg font-bold text-slate-800">Автоматический рендер UI гема</h3>
-    <p class="text-xs text-slate-500">Компонент вызывается в чистом виде: <code>RecurrenceUi::PickerComponent.new(record: @event)</code></p>
-  </div>
-
-  <% component = RecurrenceUi::PickerComponent.new(record: @event) %>
-
-  <!-- 1. Отображение Recurrence Summary -->
-  <div class="p-4 bg-indigo-50/60 rounded-lg border border-indigo-100">
-    <strong class="block text-xs font-semibold text-indigo-900 uppercase tracking-wider mb-1">
-      Recurrence Summary (Язык: <%= component.locale %>):
-    </strong>
-    <span class="text-sm font-medium text-indigo-950">
-      <%= component.recurrence_summary.presence || "Правило не задано" %>
-    </span>
-  </div>
-
-  <!-- 2. Отображение карточки события и самого поля UI -->
-  <div id="<%= dom_id(@event) %>" class="w-full my-5 space-y-5 p-4 border border-slate-200 rounded-lg bg-slate-50/50">
-    <div>
-      <strong class="block text-xs text-slate-500 mb-1">Title:</strong>
-      <div class="text-sm font-semibold text-slate-800"><%= @event.title %></div>
-    </div>
-    
-    <div>
-      <strong class="block text-xs text-slate-500 mb-1">Description:</strong>
-      <div class="text-sm text-slate-700"><%= @event.description %></div>
-    </div>
-
-    <div>
-      <strong class="block text-xs text-slate-500 mb-1">Recurring rules (Raw Data):</strong>
-      <code class="block p-2 bg-slate-100 text-slate-700 rounded text-xs font-mono">
-        <%= @event.recurring_rules.to_json %>
-      </code>
-    </div>
-
-    <div>
-      <strong class="block text-xs text-slate-500 mb-2">Picker Component Rendering:</strong>
-      <!-- Вызов рендера вашего ViewComponent -->
-      <div class="bg-white p-4 border rounded-md shadow-sm">
-        <%= render component %>
+    <!-- Locale Switcher for Supported Locales -->
+    <div class="flex items-center space-x-2 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
+      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-2">Locale:</span>
+      <div class="flex space-x-1">
+        <% @locales.each do |loc| %>
+          <% is_active = (params[:locale].presence || @context_sources[:resolved][:locale]).to_s == loc.to_s %>
+          <%= link_to loc.to_s.upcase, 
+                      url_for(locale: loc, time_zone: params[:time_zone], week_start: params[:week_start]), 
+                      class: "px-3 py-1.5 text-xs font-bold rounded-md transition-colors #{is_active ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
+        <% end %>
       </div>
     </div>
-  </div>
-</div>
+  </header>
 
-
-<div class="mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200 font-sans">
-  <div class="flex items-center justify-between mb-4">
-    <div>
-      <h2 class="text-xl font-bold text-slate-800">Иерархия конфигурации гема</h2>
-      <p class="text-xs text-slate-500">Приоритет возрастает сверху вниз (URL и Session перекрывают настройки гема и приложения)</p>
+  <!-- SECTION 1: GEM DESCRIPTION -->
+  <section class="p-6 bg-white rounded-xl border border-slate-200 shadow-sm font-sans space-y-3">
+    <div class="flex items-center space-x-2">
+      <div class="p-2 bg-indigo-100 text-indigo-700 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      </div>
+      <h2 class="text-xl font-bold text-slate-800">1. Gem Overview</h2>
     </div>
-    <div class="text-xs bg-white px-3 py-1.5 rounded border border-slate-300 shadow-sm">
-      Время приложения: <strong class="text-indigo-600"><%= @current_time.strftime("%Y-%m-%d %H:%M:%S (%Z)") %></strong>
+    <p class="text-sm text-slate-600 leading-relaxed">
+      <strong>Recurrence UI</strong> provides a clean, responsive ViewComponent and Stimulus controller for managing complex recurring schedules backed by <code>IceCube</code>. It supports multiple rules (<code>rrules</code>), exception dates (<code>exdates</code>), and additional dates (<code>rdates</code>) with seamless i18n translation parity between server-rendered Ruby summaries and client-side JavaScript UI.
+    </p>
+  </section>
+
+  <!-- SECTION 2: FORM TESTING -->
+  <section class="p-6 bg-white rounded-xl border border-slate-200 shadow-sm font-sans space-y-6">
+    <div class="border-b border-slate-100 pb-4 flex justify-between items-center">
+      <div>
+        <h2 class="text-xl font-bold text-slate-800">2. Interactive Form & Picker Component Testing</h2>
+        <p class="text-xs text-slate-500">Component rendered directly via <code>RecurrenceUi::PickerComponent.new(record: @event)</code></p>
+      </div>
+      <span class="px-2.5 py-1 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full">Active Record Form Integration</span>
     </div>
-  </div>
 
-  <div class="overflow-x-auto">
-    <table class="w-full text-left text-xs border-collapse bg-white rounded-lg shadow-sm">
-      <thead>
-        <tr class="bg-slate-100 text-slate-600 border-b border-slate-200 uppercase font-semibold">
-          <th class="p-3">Уровень / Название</th>
-          <th class="p-3">Файл / Источник</th>
-          <th class="p-3">Locale</th>
-          <th class="p-3">Time Zone</th>
-          <th class="p-3">First Day</th>
-          <th class="p-3">Примечание</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-100">
-        <% @context_sources.each do |key, source| %>
-          <% is_resolved = key == :resolved %>
-          <tr class="<%= is_resolved ? 'bg-indigo-50/90 font-bold text-indigo-950 border-t-2 border-indigo-200' : 'text-slate-700 hover:bg-slate-50/50' %>">
-            <td class="p-3 font-semibold">
-              <%= source[:title] %>
-            </td>
-            <td class="p-3 font-mono text-[11px] text-slate-500">
-              <%= source[:file] %>
-            </td>
-            <td class="p-3">
-              <%= source[:locale].present? ? content_tag(:span, source[:locale], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
-            </td>
-            <td class="p-3">
-              <%= source[:time_zone].present? ? content_tag(:span, source[:time_zone], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
-            </td>
-            <td class="p-3">
-              <%= source[:week_start].present? ? content_tag(:span, source[:week_start], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
-            </td>
-            <td class="p-3 text-slate-500 italic text-[11px]">
-              <%= source[:note] %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-    <!-- Быстрые ссылки для тестирования переключения через URL -->
-  <div class="mt-4 flex flex-wrap gap-2 text-xs">
-    <span class="text-slate-500 self-center">Быстрые тесты URL:</span>
-    <%= link_to "Токио / Японский (Mon)", url_for(time_zone: "Asia/Tokyo", locale: "ja", week_start: 1), class: "px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-50 text-indigo-600" %>
-    <%= link_to "Нью-Йорк / Английский (Sun)", url_for(time_zone: "America/New_York", locale: "en", week_start: 0), class: "px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-50 text-indigo-600" %>
-    <%= link_to "Москва / Русский (Mon)", url_for(time_zone: "Europe/Moscow", locale: "ru", week_start: 1), class: "px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-50 text-indigo-600" %>
-    <%= link_to "Сбросить URL параметры", url_for(locale: nil, time_zone: nil, week_start: nil), class: "px-2 py-1 bg-red-50 border border-red-200 rounded text-red-600 hover:bg-red-100" %>
-  </div>
-</div>
+    <% component = RecurrenceUi::PickerComponent.new(record: @event) %>
 
-  <h1 class="text-3xl font-bold">Recurrence Summary: Ruby vs JS Parity Matrix</h1>
+    <!-- Recurrence Summary Banner -->
+    <div class="p-4 bg-indigo-50/60 rounded-lg border border-indigo-100">
+      <strong class="block text-xs font-semibold text-indigo-900 uppercase tracking-wider mb-1">
+        Current Recurrence Summary (Resolved Locale: <%= component.locale %>):
+      </strong>
+      <span class="text-sm font-medium text-indigo-950">
+        <%= component.recurrence_summary.presence || "No rules configured" %>
+      </span>
+    </div>
 
-  <% @locales.each do |locale| %>
-    <section class="border border-gray-300 rounded-lg p-6 bg-white shadow-sm space-y-4">
-      <h2 class="text-2xl font-bold text-indigo-600 border-b pb-2">
-        Locale: <%= locale.to_s.upcase %>
-      </h2>
+    <!-- Event Card & UI Picker Component -->
+    <div id="<%= dom_id(@event) %>" class="w-full space-y-5 p-5 border border-slate-200 rounded-lg bg-slate-50/50">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <strong class="block text-xs text-slate-500 mb-1">Title:</strong>
+          <div class="text-sm font-semibold text-slate-800"><%= @event.title %></div>
+        </div>
+        
+        <div>
+          <strong class="block text-xs text-slate-500 mb-1">Description:</strong>
+          <div class="text-sm text-slate-700"><%= @event.description %></div>
+        </div>
+      </div>
 
-      <table class="w-full text-left border-collapse">
+      <div>
+        <strong class="block text-xs text-slate-500 mb-1">Recurring Rules Payload (Raw JSON Hash):</strong>
+        <code class="block p-3 bg-slate-900 text-emerald-400 rounded-lg text-xs font-mono overflow-x-auto">
+          <%= @event.recurring_rules.to_json %>
+        </code>
+      </div>
+
+      <div>
+        <strong class="block text-xs text-slate-500 mb-2">Rendered Picker Component:</strong>
+        <div class="bg-white p-5 border border-slate-200 rounded-lg shadow-sm">
+          <%= render component %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: CONFIGURATION PRECEDENCE -->
+  <section class="p-6 bg-slate-50 rounded-xl border border-slate-200 font-sans space-y-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+      <div>
+        <h2 class="text-xl font-bold text-slate-800">3. Configuration Precedence & Resolution</h2>
+        <p class="text-xs text-slate-500">Priority increases downwards (URL and Session override Gem and Rails application defaults)</p>
+      </div>
+      <div class="text-xs bg-white px-3 py-1.5 rounded border border-slate-300 shadow-sm self-start md:self-auto">
+        App Time: <strong class="text-indigo-600"><%= @current_time.strftime("%Y-%m-%d %H:%M:%S (%Z)") %></strong>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs border-collapse bg-white rounded-lg shadow-sm">
         <thead>
-          <tr class="bg-gray-100 text-xs font-semibold text-gray-600 uppercase">
-            <th class="p-3">Rule Case</th>
-            <th class="p-3">Ruby (Server) Output</th>
-            <th class="p-3">JS (Client) Output</th>
-            <th class="p-3 text-center">Parity</th>
+          <tr class="bg-slate-100 text-slate-600 border-b border-slate-200 uppercase font-semibold">
+            <th class="p-3">Level / Layer Name</th>
+            <th class="p-3">File / Source Location</th>
+            <th class="p-3">Locale</th>
+            <th class="p-3">Time Zone</th>
+            <th class="p-3">First Day of Week</th>
+            <th class="p-3">Note</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 text-sm">
-          <% @rule_cases.each do |test_case| %>
-            <% 
-              json_payload = test_case[:hash].to_json 
-              options = {}
-              options[:locale] = locale
-              # Вызываем именно ваш сервис:
-              ruby_summary = RecurrenceUi::RecurrenceSummaryService.new(test_case[:hash], options).to_s
-            %>
-            <tr class="hover:bg-gray-50" data-parity-row>
-              <!-- 1. Название и JSON -->
-              <td class="p-3 align-top font-medium">
-                <div><%= test_case[:name] %></div>
-                <code class="text-xs text-gray-400 block mt-1"><%= json_payload %></code>
+        <tbody class="divide-y divide-slate-100">
+          <% @context_sources.each do |key, source| %>
+            <% is_resolved = key == :resolved %>
+            <tr class="<%= is_resolved ? 'bg-indigo-50/90 font-bold text-indigo-950 border-t-2 border-indigo-200' : 'text-slate-700 hover:bg-slate-50/50' %>">
+              <td class="p-3 font-semibold">
+                <%= source[:title] %>
               </td>
-
-              <!-- 2. Результат Ruby -->
-              <td class="p-3 align-top bg-blue-50/30" data-ruby-output>
-                <%= ruby_summary %>
+              <td class="p-3 font-mono text-[11px] text-slate-500">
+                <%= source[:file] %>
               </td>
-
-              <!-- 3. Результат JS (Stimulus рендерит прямо при загрузке) -->
-              <td class="p-3 align-top bg-green-50/30">
-                <div data-controller="recurrence-ui"
-                     data-recurrence-ui-translations-value="<%= I18n.t('recurrence_ui', locale: locale).to_json %>"
-                     data-recurrence-ui-locale-value="<%= locale %>">
-                  
-                  <input type="hidden" 
-                         data-recurrence-ui-target="hiddenField" 
-                         value="<%= json_payload %>">
-                  <input type="hidden" 
-                         data-recurrence-ui-target="ruleType" 
-                         value="<%= test_case[:hash][:rule_type].demodulize.underscore.gsub('_rule', '') %>">
-
-                  <div data-recurrence-ui-target="summaryText" data-js-output>
-                    <!-- Сюда Stimulus вставит свой текст -->
-                  </div>
-                </div>
+              <td class="p-3">
+                <%= source[:locale].present? ? content_tag(:span, source[:locale], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
               </td>
-
-              <!-- 4. Статус совпадения (автоматически проверяется скриптом) -->
-              <td class="p-3 align-top text-center" data-status-cell>
-                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-gray-100 text-gray-500">
-                  Checking...
-                </span>
+              <td class="p-3">
+                <%= source[:time_zone].present? ? content_tag(:span, source[:time_zone], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
+              </td>
+              <td class="p-3">
+                <%= source[:week_start].present? ? content_tag(:span, source[:week_start], class: "px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono") : content_tag(:span, "— (nil)", class: "text-slate-300 italic") %>
+              </td>
+              <td class="p-3 text-slate-500 italic text-[11px]">
+                <%= source[:note] %>
               </td>
             </tr>
           <% end %>
         </tbody>
       </table>
-    </section>
-  <% end %>
+    </div>
+
+    <!-- Quick URL Parameter Testing Links -->
+    <div class="pt-2 flex flex-wrap items-center gap-2 text-xs">
+      <span class="text-slate-500 font-medium">Quick URL Test Presets:</span>
+      <%= link_to "Tokyo / Japanese (Mon)", url_for(time_zone: "Asia/Tokyo", locale: "ja", week_start: 1), class: "px-2.5 py-1 bg-white border border-slate-300 rounded hover:bg-slate-50 text-indigo-600 font-medium shadow-sm" %>
+      <%= link_to "New York / English (Sun)", url_for(time_zone: "America/New_York", locale: "en", week_start: 0), class: "px-2.5 py-1 bg-white border border-slate-300 rounded hover:bg-slate-50 text-indigo-600 font-medium shadow-sm" %>
+      <%= link_to "Moscow / Russian (Mon)", url_for(time_zone: "Europe/Moscow", locale: "ru", week_start: 1), class: "px-2.5 py-1 bg-white border border-slate-300 rounded hover:bg-slate-50 text-indigo-600 font-medium shadow-sm" %>
+      <%= link_to "Reset URL Parameters", url_for(locale: nil, time_zone: nil, week_start: nil), class: "px-2.5 py-1 bg-red-50 border border-red-200 rounded text-red-600 hover:bg-red-100 font-medium" %>
+    </div>
+  </section>
+
+  <!-- SECTION 4: PARITY TESTING -->
+  <section class="space-y-6">
+    <div class="border-b border-slate-200 pb-4">
+      <h2 class="text-2xl font-bold text-slate-900">4. Ruby vs JS Parity Matrix</h2>
+      <p class="text-sm text-slate-500">Verification that <code>RecurrenceSummaryService</code> (Ruby) and Stimulus Controller (JS) produce identical text representations across all rule structures.</p>
+    </div>
+
+    <% @locales.each do |locale| %>
+      <div class="border border-slate-300 rounded-xl p-6 bg-white shadow-sm space-y-4">
+        <h3 class="text-xl font-bold text-indigo-600 border-b border-slate-100 pb-2 flex items-center justify-between">
+          <span>Locale: <%= locale.to_s.upcase %></span>
+          <span class="text-xs font-normal text-slate-400">Comparing <%= @rule_cases.size %> rule test cases</span>
+        </h3>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                <th class="p-3">Rule Test Case</th>
+                <th class="p-3">Ruby (Server) Output</th>
+                <th class="p-3">JS (Client) Output</th>
+                <th class="p-3 text-center">Parity Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-sm">
+              <% @rule_cases.each do |test_case| %>
+                <% 
+                  json_payload = test_case[:hash].to_json 
+                  options = { locale: locale }
+                  ruby_summary = RecurrenceUi::RecurrenceSummaryService.new(test_case[:hash], options).to_s
+                  first_rule = test_case[:hash][:rrules]&.first || test_case[:hash]
+                  rule_type_name = first_rule[:rule_type].to_s.demodulize.underscore.gsub('_rule', '')
+                %>
+                <tr class="hover:bg-slate-50 transition-colors" data-parity-row>
+                  <!-- 1. Case Name & JSON Payload -->
+                  <td class="p-3 align-top font-medium max-w-xs">
+                    <div class="text-slate-800 font-semibold"><%= test_case[:name] %></div>
+                    <code class="text-[11px] text-slate-500 block mt-1 font-mono break-all bg-slate-100 p-1.5 rounded"><%= json_payload %></code>
+                  </td>
+
+                  <!-- 2. Ruby Output -->
+                  <td class="p-3 align-top bg-blue-50/30 text-slate-800 font-medium" data-ruby-output>
+                    <%= ruby_summary %>
+                  </td>
+
+                  <!-- 3. JS Output (Rendered via Stimulus) -->
+                  <td class="p-3 align-top bg-emerald-50/30 text-slate-800 font-medium">
+                    <div data-controller="recurrence-ui"
+                         data-recurrence-ui-translations-value="<%= I18n.t('recurrence_ui', locale: locale).to_json %>"
+                         data-recurrence-ui-locale-value="<%= locale %>">
+                      
+                      <input type="hidden" 
+                             data-recurrence-ui-target="hiddenField" 
+                             value="<%= json_payload %>">
+                      <input type="hidden" 
+                             data-recurrence-ui-target="ruleType" 
+                             value="<%= rule_type_name %>">
+
+                      <div data-recurrence-ui-target="summaryText" data-js-output>
+                        <!-- Stimulus inserts summary text dynamically -->
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- 4. Parity Verification Badge -->
+                  <td class="p-3 align-top text-center" data-status-cell>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-500 animate-pulse">
+                      Checking...
+                    </span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
 </div>
 
-<!-- Маленький скрипт для сравнения текстов и подсветки расхождений -->
+<!-- JavaScript for comparing output strings and highlighting mismatches -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => { // Небольшой таймаут, чтобы Stimulus успел отрендерить summaryText
+    setTimeout(() => { // Small delay to allow Stimulus controllers to finish initial state evaluation
       document.querySelectorAll('[data-parity-row]').forEach(row => {
-        const rubyText = row.querySelector('[data-ruby-output]').innerText.replace(/\s+/g, ' ').trim();
-        const jsText = row.querySelector('[data-js-output]').innerText.replace(/\s+/g, ' ').trim();
+        const rubyCell = row.querySelector('[data-ruby-output]');
+        const jsCell = row.querySelector('[data-js-output]');
         const statusCell = row.querySelector('[data-status-cell]');
 
+        if (!rubyCell || !jsCell || !statusCell) return;
+
+        const rubyText = rubyCell.innerText.replace(/\s+/g, ' ').trim();
+        const jsText = jsCell.innerText.replace(/\s+/g, ' ').trim();
+
         if (rubyText === jsText) {
-          statusCell.innerHTML = `<span class="px-2 py-1 rounded text-xs font-bold bg-green-100 text-green-800">MATCH ✓</span>`;
+          statusCell.innerHTML = `<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">MATCH ✓</span>`;
         } else {
-          statusCell.innerHTML = `<span class="px-2 py-1 rounded text-xs font-bold bg-red-100 text-red-800">MISMATCH ✗</span>`;
-          row.classList.add('bg-red-50');
+          statusCell.innerHTML = `<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">MISMATCH ✗</span>`;
+          row.classList.add('bg-rose-50/60');
         }
       });
     }, 300);

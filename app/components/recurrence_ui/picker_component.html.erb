@@ -2,18 +2,18 @@
 <% I18n.with_locale(locale) do %>
   <div class="hidden bg-blue-600 text-white border-blue-600"></div>
   <div data-controller="<%= identifier %>" 
-      data-<%= identifier %>-time-zone-value="<%= time_zone %>"
-      data-<%= identifier %>-translations-value="<%= t('recurrence_ui', locale: locale).to_json %>"
-      data-<%= identifier %>-locale-value="<%= locale %>"
-      data-<%= identifier %>-selected-class="bg-blue-600 text-white border-blue-600"
-      class="space-y-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">  
+       data-<%= identifier %>-time-zone-value="<%= time_zone %>"
+       data-<%= identifier %>-translations-value="<%= t('recurrence_ui', locale: locale).to_json %>"
+       data-<%= identifier %>-locale-value="<%= locale %>"
+       data-<%= identifier %>-selected-class="bg-blue-600 text-white border-blue-600"
+       class="space-y-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">  
 
     <%# 1. Summary Link %>
     <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
 
     <div data-<%= identifier %>-target="editMode" class="hidden space-y-6">  
-    
-    <%# 2. All recurrence rules with Add button %>
+      
+      <%# 2. All recurrence rules container with Add Rule button %>
       <div class="space-y-3">
         <label class="block text-sm font-medium text-gray-700">
           <%= t('recurrence_ui.labels.rules', default: 'Recurrence Rules') %>
@@ -22,7 +22,7 @@
         <%# Rules container %>
         <div data-<%= identifier %>-target="rulesContainer" class="space-y-3"></div>
 
-        <%# Button Add rule %>
+        <%# Button to Add a new rule %>
         <button type="button" 
                 data-action="click-><%= identifier %>#addRule" 
                 class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800">
@@ -34,15 +34,27 @@
       <div data-<%= identifier %>-target="exceptionsBlock" class="pt-4 border-t border-gray-100 hidden">
         <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
       </div>
+
       <%# 4. Additional Dates Section %>
       <div data-<%= identifier %>-target="rdatesBlock" class="pt-4 border-t border-gray-100 hidden">
         <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
       </div>
+
       <%# 5. Footer Actions Section %>
       <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
     </div>
 
-      <%# 6. Hidden Field: The actual model field where the final JSON is saved %>
+    <%# 6. Rule Card Template for JS dynamic spawning %>
+    <template data-<%= identifier %>-target="ruleCardTemplate">
+      <%= render "recurrence_ui/rule_card", 
+                 form: form, 
+                 identifier: identifier, 
+                 days_for_ui: days_for_ui, 
+                 rec_ui: self, 
+                 rule_options: rule_options %>
+    </template>
+
+    <%# 7. Hidden Field: The actual model field where the final Schedule JSON is saved %>
     <%= form.hidden_field field_name, value: rules_json, data: { "#{identifier}_target": "hiddenField" } %>
   </div>
 <% end %>

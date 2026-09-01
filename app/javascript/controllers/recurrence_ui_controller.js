@@ -11,27 +11,9 @@ export default class extends Controller {
   }
 
   static targets = [
-    "ruleType", "specificFields", "hiddenField", "displayMode", "editMode", 
-    "summaryText", "iceCubeField", "dayButton",
-    
-    // Интервалы
-    "interval",
-    
-    // Monthly
-    "monthlyDays",
-    "nthDayBtn",
-
-    // Yearly
-    "monthSelector",
-    "monthInput",
-
-    // Окончание повторения
-    "terminationBlock", "endType", "endDate", "endCount", "endCountInput",
-    
-    // Исключения
+    "hiddenField", "displayMode", "editMode", "summaryText",
+    "rulesContainer", "ruleCardTemplate", "ruleCard",
     "exceptionsBlock", "exdatesContainer", "exdateInput", "exdateTemplate",
-
-    // Дополнения (даты, в которые событие также должно срабатывать, даже если они не попадают под правило)
     "rdatesBlock", "rdatesContainer", "rdateInput", "rdateTemplate"
   ]
 
@@ -40,85 +22,132 @@ export default class extends Controller {
   connect() {
     this.isInitializing = true
     this.initializeState()
-    this.syncButtonsUI()
-    this.toggleExceptionsBlock() 
-    this.toggleRdatesBlock()
-    this.toggleTerminationBlock() 
-    this.updateSummary()
     this.isInitializing = false
-    // В JS сразу доступны готовые значения:
-    console.log(this.localeValue)    // например: "ru"
-    console.log(this.timeZoneValue)  // например: "Europe/Moscow"
-    console.log(this.weekStartValue) // например: 1
   }
 
-  // ИНИЦИАЛИЗАЦИЯ
+  // ==========================================
+  // INITIALIZATION & STATE MANAGEMENT
+  // ==========================================
+
   initializeState() {
-    const ruleHashString = this.hiddenFieldTarget.value
-    
-    if (ruleHashString && ruleHashString.length > 2) { 
+    const jsonString = this.hiddenFieldTarget.value
+    this.rulesContainerTarget.innerHTML = ""
+
+    if (jsonString && jsonString.length > 2) {
       try {
-        const ruleHash = JSON.parse(ruleHashString)
-        const ruleType = this._determineRuleType(ruleHash)
-        
-        if (this.hasRuleTypeTarget) {
-          this.ruleTypeTarget.value = ruleType
-        }
-        
-        // Переключаем видимость вкладок
-        this.toggleFields() 
+        const schedule = JSON.parse(jsonString)
+        const rules = schedule.rrules || (schedule.rule_type ? [schedule] : [])
 
-        // Ищем контейнер активной вкладки
-        const container = this.specificFieldsTargets.find(el => el.dataset.rule === ruleType)
-        
-        if (container) {
-          // Заполняем интервал
-          const intervalInput = container.querySelector('[data-item="interval"]')
-          if (intervalInput && ruleHash.interval) {
-            intervalInput.value = ruleHash.interval
-          }
-          
-          // Заполняем месяц для годовых правил
-          if (ruleType.startsWith('yearly')) {
-            const monthInput = container.querySelector('[data-item="month"]')
-            if (monthInput && ruleHash.validations?.month_of_year) {
-              monthInput.value = ruleHash.validations.month_of_year[0]
-            }
-          }
-
-          // Синхронизируем кнопки
-          this._syncButtonsFromHash(container, ruleHash)
+        if (rules.length > 0) {
+          rules.forEach(ruleHash => this._createRuleCardFromHash(ruleHash))
+        } else {
+          this.addRule()
         }
 
-        this._fillTerminationFields(ruleHash)
-        this.showDisplayMode()
+        this._fillDatesSection(this.exdatesContainerTarget, this.exdateTemplateTarget, schedule.exdates)
+        this._fillDatesSection(this.rdatesContainerTarget, this.rdateTemplateTarget, schedule.rdates)
       } catch (e) {
-        console.error("Parsing error:", e)
+        console.error("[RecurrenceUi] JSON Parsing error:", e)
+        this.addRule()
       }
     } else {
-      if (this.hasRuleTypeTarget) this.ruleTypeTarget.value = 'never'
-      this.toggleFields()
-      this.showEditMode()
+      this.addRule()
     }
-    this.updateDebugField()
+
+    this.toggleExceptionsBlock()
+    this.toggleRdatesBlock()
+    this.syncButtonsUI()
+    this.updateSummary()
   }
 
-  saveRule(event) {
+  // ==========================================
+  // CARD ACTIONS (ADD / REMOVE / TOGGLE)
+  // ==========================================
+
+  addRule(e) {
+    if (e) e.preventDefault()
+    
+    if (!this.hasRuleCardTemplateTarget) return
+    const content = this.ruleCardTemplateTarget.innerHTML
+    this.rulesContainerTarget.insertAdjacentHTML('beforeend', content)
+
+    const newCard = this.rulesContainerTarget.lastElementChild
+    this.toggleCardFields({ currentTarget: newCard.querySelector('[data-item="ruleType"]') })
+    
+    this.toggleExceptionsBlock()
+    this.toggleRdatesBlock()
+    this.updateHiddenHash()
+  }
+
+  removeRule(e) {
+    e.preventDefault()
+    const card = e.target.closest('[data-recurrence-ui-target="ruleCard"]')
+    if (card) {
+      card.remove()
+      this.toggleExceptionsBlock()
+      this.toggleRdatesBlock()
+      this.updateHiddenHash()
+    }
+  }
+
+  toggleCardFields(e) {
+    const select = e.currentTarget
+    const card = select.closest('[data-recurrence-ui-target="ruleCard"]')
+    if (!card) return
+
+    const selectedValue = select.value
+    const specificFields = card.querySelectorAll('[data-item="specificFields"]')
+    
+    specificFields.forEach(el => {
+      el.classList.toggle('hidden', el.dataset.rule !== selectedValue)
+    })
+
+    this.updateHiddenHash()
+  }
+
+  toggleDay(event) {
     event.preventDefault()
+    const btn = event.currentTarget
+    btn.dataset.selected = (btn.dataset.selected !== 'true').toString()
+    this.syncButtonsUI()
+    this.updateHiddenHash()
+  }
+
+  toggleEndFields(event) {
+    const select = event.currentTarget
+    const card = select.closest('[data-recurrence-ui-target="ruleCard"]')
+    if (!card) return
+
+    const mode = select.value
+    const endDate = card.querySelector('[data-item="endDate"]')
+    const endCount = card.querySelector('[data-item="endCount"]')
+
+    if (endDate) endDate.classList.toggle('hidden', mode !== 'until')
+    if (endCount) endCount.classList.toggle('hidden', mode !== 'count')
+
+    this.updateHiddenHash()
+  }
+
+  // ==========================================
+  // MODE SWITCHING & ACTIONS
+  // ==========================================
+
+  saveRule(event) {
+    if (event) event.preventDefault()
     this.updateHiddenHash()
     this.showDisplayMode()
   }
 
   editRule(event) {
-    event.preventDefault()
+    if (event) event.preventDefault()
     this.ruleSnapshot = this.hiddenFieldTarget.value
     this.showEditMode()
   }
 
   cancelEdit(event) {
-    event.preventDefault()
+    if (event) event.preventDefault()
     this.hiddenFieldTarget.value = this.ruleSnapshot || ""
-    this.initializeState() 
+    this.initializeState()
     this.showDisplayMode()
   }
 
@@ -133,131 +162,138 @@ export default class extends Controller {
     if (this.hasEditModeTarget) this.editModeTarget.classList.remove('hidden')
   }
 
-  toggleFields() {
-    if (!this.hasRuleTypeTarget) return
-    const selectedValue = this.ruleTypeTarget.value
-    this.specificFieldsTargets.forEach(el => el.classList.toggle('hidden', el.dataset.rule !== selectedValue))
-    this.toggleExceptionsBlock()
-    this.toggleRdatesBlock()
-    this.toggleTerminationBlock() 
-    this.updateHiddenHash()
-  }
+  // ==========================================
+  // EXCEPTIONS (EXDATES) & ADDITIONS (RDATES)
+  // ==========================================
 
-  toggleDay(event) {
-    event.preventDefault()
-    const btn = event.currentTarget
-    btn.dataset.selected = (btn.dataset.selected !== 'true').toString()
-    this.updateHiddenHash()
-  }
-
-  // Исключения (exdates)
   addExdate(e) {
-    e.preventDefault();
-    const input = this.exdateInputTarget;
-    const dateValue = input.value;
-    if (!dateValue || this._getExdatesArray().includes(dateValue)) return;
-
-    const content = this.exdateTemplateTarget.innerHTML
-      .replace(/VALUE/g, dateValue)
-      .replace(/LABEL/g, this._formatDate(dateValue));
-
-    this.exdatesContainerTarget.insertAdjacentHTML('beforeend', content);
-    input.value = "";
-    this.updateHiddenHash();
+    e.preventDefault()
+    this._addDateToList(this.exdateInputTarget, this.exdatesContainerTarget, this.exdateTemplateTarget)
   }
 
   removeExdate(e) {
-    e.preventDefault();
-    e.target.closest('[data-exdate-value]').remove();
-    this.updateHiddenHash();
-  }
-
-  _getExdatesArray() {
-    if (!this.hasExdatesContainerTarget) return []
-    return Array.from(this.exdatesContainerTarget.querySelectorAll('[data-exdate-value]'))
-                .map(el => el.dataset.exdateValue);
-  }
- // Дополнения (rdates)
-  addRdate(e) {
-    e.preventDefault();
-    const input = this.rdateInputTarget;
-    const dateValue = input.value;
-    if (!dateValue || this._getRdatesArray().includes(dateValue)) return;
-
-    const content = this.rdateTemplateTarget.innerHTML
-      .replace(/VALUE/g, dateValue)
-      .replace(/LABEL/g, this._formatDate(dateValue));
-
-    this.rdatesContainerTarget.insertAdjacentHTML('beforeend', content);
-    input.value = "";
-    this.updateHiddenHash();
-  }
-
-  removeRdate(e) {
-    e.preventDefault();
-    e.target.closest('[data-rdate-value]').remove();
-    this.updateHiddenHash();
-  }
-
-  _getRdatesArray() {
-    if (!this.hasRdatesContainerTarget) return []
-    return Array.from(this.rdatesContainerTarget.querySelectorAll('[data-rdate-value]'))
-                .map(el => el.dataset.rdateValue);
-  }
-
-
-
-  // Окончание повторения (termination)
-  toggleTerminationBlock() {
-    if (!this.hasTerminationBlockTarget || !this.hasRuleTypeTarget) return
-    const ruleType = this.ruleTypeTarget.value
-    const isHidden = (ruleType === 'never' || ruleType === '')
-    this.terminationBlockTarget.classList.toggle('hidden', isHidden)
-  }
-  
-  toggleEndFields() {
-    if (!this.hasEndTypeTarget) return
-    const mode = this.endTypeTarget.value
-    if (this.hasEndDateTarget) this.endDateTarget.classList.toggle('hidden', mode !== 'until')
-    if (this.hasEndCountTarget) this.endCountTarget.classList.toggle('hidden', mode !== 'count')
+    e.preventDefault()
+    e.target.closest('[data-exdate-value]').remove()
     this.updateHiddenHash()
   }
 
-  updateHiddenHash() {
-    if (this.isInitializing || !this.hasRuleTypeTarget) return
+  addRdate(e) {
+    e.preventDefault()
+    this._addDateToList(this.rdateInputTarget, this.rdatesContainerTarget, this.rdateTemplateTarget)
+  }
 
-    const ruleType = this.ruleTypeTarget.value
-    if (ruleType === 'never') {
-      this.hiddenFieldTarget.value = ""
-      this.updateSummary()
+  removeRdate(e) {
+    e.preventDefault()
+    e.target.closest('[data-rdate-value]').remove()
+    this.updateHiddenHash()
+  }
+
+  toggleExceptionsBlock() {
+    if (!this.hasExceptionsBlockTarget) return
+    const hasRules = this.ruleCardTargets.length > 0
+    this.exceptionsBlockTarget.classList.toggle('hidden', !hasRules)
+  }
+
+  toggleRdatesBlock() {
+    if (!this.hasRdatesBlockTarget) return
+    const hasRules = this.ruleCardTargets.length > 0
+    this.rdatesBlockTarget.classList.toggle('hidden', !hasRules)
+  }
+
+  // ==========================================
+  // HASH BUILDER & SUMMARY GENERATION
+  // ==========================================
+
+  updateHiddenHash() {
+    if (this.isInitializing) return
+
+    const rrules = this.ruleCardTargets.map(card => this._buildSingleRuleHash(card)).filter(Boolean)
+    const exdates = this._getDatesArray(this.exdatesContainerTarget, 'exdateValue')
+    const rdates = this._getDatesArray(this.rdatesContainerTarget, 'rdateValue')
+
+    const schedule = { rrules, exdates, rdates }
+    
+    // Cleanup empty arrays
+    if (schedule.exdates.length === 0) delete schedule.exdates
+    if (schedule.rdates.length === 0) delete schedule.rdates
+
+    this.hiddenFieldTarget.value = JSON.stringify(schedule)
+    this.updateSummary()
+  }
+
+  updateSummary() {
+    if (!this.hasSummaryTextTarget || !this.hasHiddenFieldTarget) return
+
+    let schedule = {}
+    try {
+      schedule = JSON.parse(this.hiddenFieldTarget.value || "{}")
+    } catch (e) {
+      schedule = {}
+    }
+
+    const rrules = schedule.rrules || []
+    if (rrules.length === 0) {
+      this.summaryTextTarget.innerHTML = this.t('one_time')
       return
     }
 
-    const container = this.specificFieldsTargets.find(el => el.dataset.rule === ruleType)
-    if (!container) return
+    // Build human-readable summary for each rule
+    const ruleTexts = rrules.map(ruleHash => this._buildRuleSummaryText(ruleHash))
+    let mainText = ruleTexts.join('; ')
+
+    let exceptionsHtml = ""
+    if (schedule.exdates && schedule.exdates.length > 0) {
+      const exceptLabel = this.t('labels.exceptions')
+      const formattedExdates = schedule.exdates
+        .sort((a, b) => new Date(a) - new Date(b))
+        .map(d => this._formatDate(d))
+        .join(', ')
+
+      exceptionsHtml = `<br><span class="text-muted text-sm italic">${exceptLabel}: ${formattedExdates}</span>`
+    }
+
+    let rdatesHtml = ""
+    if (schedule.rdates && schedule.rdates.length > 0) {
+      const rdateLabel = this.t('labels.rdates')
+      const formattedRdates = schedule.rdates
+        .sort((a, b) => new Date(a) - new Date(b))
+        .map(d => this._formatDate(d))
+        .join(', ')
+
+      rdatesHtml = `<br><span class="text-muted text-sm italic">${rdateLabel}: ${formattedRdates}</span>`
+    }
+
+    this.summaryTextTarget.innerHTML = mainText + exceptionsHtml + rdatesHtml
+  }
+
+  // ==========================================
+  // HELPERS & PRIVATE METHODS
+  // ==========================================
+
+  _buildSingleRuleHash(card) {
+    const typeSelect = card.querySelector('[data-item="ruleType"]')
+    if (!typeSelect) return null
+
+    const ruleType = typeSelect.value
+    const container = card.querySelector(`[data-item="specificFields"][data-rule="${ruleType}"]`)
+    if (!container) return null
 
     const baseType = ruleType.split('_')[0]
     const iceCubeType = `IceCube::${baseType.charAt(0).toUpperCase()}${baseType.slice(1)}Rule`
 
-    let ruleHash = { 
-      rule_type: iceCubeType, 
-      interval: parseInt(container.querySelector('[data-item="interval"]')?.value) || 1, 
-      validations: {},
-      exdates: this._getExdatesArray(),
-      rdates: this._getRdatesArray()
+    let ruleHash = {
+      rule_type: iceCubeType,
+      interval: parseInt(container.querySelector('[data-item="interval"]')?.value) || 1,
+      validations: {}
     }
 
     if (ruleType === 'weekly') {
-      const days = Array.from(container.querySelectorAll('[data-selected="true"]'))
-                        .map(b => parseInt(b.dataset.value))
+      const days = Array.from(container.querySelectorAll('[data-selected="true"]')).map(b => parseInt(b.dataset.value))
       if (days.length > 0) ruleHash.validations.day = days
-    } 
-    else if (ruleType.endsWith('_day_of_month')) {
-      const days = Array.from(container.querySelectorAll('[data-selected="true"]'))
-                        .map(b => parseInt(b.dataset.day))
+    } else if (ruleType.endsWith('_day_of_month')) {
+      const days = Array.from(container.querySelectorAll('[data-selected="true"]')).map(b => parseInt(b.dataset.day))
       if (days.length > 0) ruleHash.validations.day_of_month = days
-    }
-    else if (ruleType.endsWith('_by_weekday')) {
+    } else if (ruleType.endsWith('_by_weekday')) {
       const nthDays = {}
       container.querySelectorAll('[data-selected="true"]').forEach(btn => {
         const day = btn.dataset.day
@@ -273,250 +309,129 @@ export default class extends Controller {
       if (month) ruleHash.validations.month_of_year = [month]
     }
 
-    delete ruleHash.until
-    delete ruleHash.count
-
-    if (this.hasEndTypeTarget) {
-      const endType = this.endTypeTarget.value
-      
+    // Termination for THIS card
+    const endTypeSelect = card.querySelector('[data-item="endType"]')
+    if (endTypeSelect) {
+      const endType = endTypeSelect.value
       if (endType === 'until') {
-        if (this.hasEndDateTarget && this.endDateTarget.value) {
-          ruleHash.until = this.endDateTarget.value + "T23:59:59Z"
-        }
-      } 
-      else if (endType === 'count') {
-        if (this.hasEndCountInputTarget && this.endCountInputTarget.value) {
-          ruleHash.count = parseInt(this.endCountInputTarget.value)
-        }
+        const endDateInput = card.querySelector('[data-item="endDateInput"]')
+        if (endDateInput && endDateInput.value) ruleHash.until = endDateInput.value + "T23:59:59Z"
+      } else if (endType === 'count') {
+        const endCountInput = card.querySelector('[data-item="endCountInput"]')
+        if (endCountInput && endCountInput.value) ruleHash.count = parseInt(endCountInput.value)
       }
     }
 
     if (Object.keys(ruleHash.validations).length === 0) delete ruleHash.validations
-    if (ruleHash.exdates.length === 0) delete ruleHash.exdates
-    if (ruleHash.rdates.length === 0) delete ruleHash.rdates
-    const json = JSON.stringify(ruleHash, null, 2)
-    this.hiddenFieldTarget.value = json
-    
-    this.updateDebugField()
-    this.updateSummary()
+    return ruleHash
   }
 
-  // Генерация текста Саммари
- updateSummary() {
-    if (!this.hasSummaryTextTarget || !this.hasHiddenFieldTarget) return;
+  _createRuleCardFromHash(ruleHash) {
+    if (!this.hasRuleCardTemplateTarget) return
+    const content = this.ruleCardTemplateTarget.innerHTML
+    this.rulesContainerTarget.insertAdjacentHTML('beforeend', content)
 
-    let hash = {};
-    try {
-      hash = JSON.parse(this.hiddenFieldTarget.value || "{}");
-    } catch (e) {
-      hash = {};
+    const card = this.rulesContainerTarget.lastElementChild
+    const ruleType = this._determineRuleType(ruleHash)
+    
+    const typeSelect = card.querySelector('[data-item="ruleType"]')
+    if (typeSelect) typeSelect.value = ruleType
+
+    this.toggleCardFields({ currentTarget: typeSelect })
+
+    const container = card.querySelector(`[data-item="specificFields"][data-rule="${ruleType}"]`)
+    if (container) {
+      const intervalInput = container.querySelector('[data-item="interval"]')
+      if (intervalInput && ruleHash.interval) intervalInput.value = ruleHash.interval
+
+      if (ruleType.startsWith('yearly')) {
+        const monthInput = container.querySelector('[data-item="month"]')
+        if (monthInput && ruleHash.validations?.month_of_year) {
+          monthInput.value = ruleHash.validations.month_of_year[0]
+        }
+      }
+
+      this._syncButtonsFromHash(container, ruleHash)
     }
 
-    const type = this._determineRuleType(hash);
-    if (type === 'never') {
-      this.summaryTextTarget.innerHTML = this.t('one_time');
-      return;
-    }
+    this._fillTerminationFieldsForCard(card, ruleHash)
+  }
 
-    const interval = hash.interval || 1;
-    const vals = hash.validations || {};
+  _buildRuleSummaryText(hash) {
+    const type = this._determineRuleType(hash)
+    const interval = hash.interval || 1
+    const vals = hash.validations || {}
 
-    // 1. Порядковое числительное для русского (3-й, 3-я)
-    const intervalGender = (type === 'weekly') ? 'weekly_interval' : 'male';
-    const count_f = this.formatOrdinal(interval, intervalGender);
+    const intervalGender = (type === 'weekly') ? 'weekly_interval' : 'male'
+    const count_f = this.formatOrdinal(interval, intervalGender)
 
-    let termination = "";
+    let termination = ""
     if (hash.until) {
-      termination = this.t('until_label', { date: this._formatDate(hash.until.split('T')[0]) });
+      termination = this.t('until_label', { date: this._formatDate(hash.until.split('T')[0]) })
     } else if (hash.count) {
-      termination = this.t('count_label', { count: hash.count });
+      termination = this.t('count_label', { count: hash.count })
     }
 
-    let weekdays = "";
+    let weekdays = ""
     if (vals.day || vals.day_of_week) {
-      const listFormatter = new Intl.ListFormat(this.localeValue, { style: 'long', type: 'conjunction' });
+      const listFormatter = new Intl.ListFormat(this.localeValue, { style: 'long', type: 'conjunction' })
       
       if (type === 'weekly' && vals.day) {
-        const names = vals.day.map(i => this.translationsValue.weekdays?.day_names_plural?.[i]);
-        weekdays = listFormatter.format(names.filter(Boolean));
+        const names = vals.day.map(i => this.translationsValue.weekdays?.day_names_plural?.[i])
+        weekdays = listFormatter.format(names.filter(Boolean))
       } else if (vals.day_of_week) {
-          const parts = Object.keys(vals.day_of_week).map(dayKey => {
-            const dayIdx = parseInt(dayKey);
-            const gender = this.translationsValue.weekdays?.weekday_genders?.[dayIdx] || 'male';
-            
-            const nths = vals.day_of_week[dayKey].map(n => {
-              const nStr = n.toString();
-              
-              // 1. Сначала ищем точное совпадение с учетом ПОЛА (например: nth_names.female['2'] -> "2-я", nth_names.neuter['5'] -> "5-е")
-              const genderSpecific = this.translationsValue.nth_names?.[gender]?.[nStr];
-              if (genderSpecific) return genderSpecific;
+        const parts = Object.keys(vals.day_of_week).map(dayKey => {
+          const dayIdx = parseInt(dayKey)
+          const gender = this.translationsValue.weekdays?.weekday_genders?.[dayIdx] || 'male'
+          
+          const nths = vals.day_of_week[dayKey].map(n => {
+            const nStr = n.toString()
+            const genderSpecific = this.translationsValue.nth_names?.[gender]?.[nStr]
+            if (genderSpecific) return genderSpecific
 
-              // 2. Ищем в общем словаре nth_names (для EN / JA)
-              const generalSpecific = this.translationsValue.nth_names?.[nStr];
-              if (generalSpecific) return generalSpecific;
+            const generalSpecific = this.translationsValue.nth_names?.[nStr]
+            if (generalSpecific) return generalSpecific
 
-              // 3. Используем formatOrdinal с учетом конкретного рода (male, female, neuter)
-              return this.formatOrdinal(n, gender);
-            });
-            
-            return `${listFormatter.format(nths)} ${this.translationsValue.weekdays?.day_names?.[dayIdx]}`;
-          });
-          weekdays = parts.join('; ');
-        }
+            return this.formatOrdinal(n, gender)
+          })
+          
+          return `${listFormatter.format(nths)} ${this.translationsValue.weekdays?.day_names?.[dayIdx]}`
+        })
+        weekdays = parts.join('; ')
+      }
     }
 
     const month = (vals.month_of_year) ? 
-      this.translationsValue.in_month_names_yearly?.[vals.month_of_year[0]] : "";
+      this.translationsValue.in_month_names_yearly?.[vals.month_of_year[0]] : ""
 
-    let days_of_month = "";
+    let days_of_month = ""
     if (vals.day_of_month) {
-      const formattedDates = vals.day_of_month.map(d => this.formatOrdinal(d, 'day_of_month'));
-      const listFormatter = new Intl.ListFormat(this.localeValue, { style: 'long', type: 'conjunction' });
-      const listStr = listFormatter.format(formattedDates);
-
-      days_of_month = this.t('days_of_month_fmt', { list: listStr });
+      const formattedDates = vals.day_of_month.map(d => this.formatOrdinal(d, 'day_of_month'))
+      const listFormatter = new Intl.ListFormat(this.localeValue, { style: 'long', type: 'conjunction' })
+      days_of_month = this.t('days_of_month_fmt', { list: listFormatter.format(formattedDates) })
     }
 
-    // Передаем И count (число), И count_f (порядковое)
-    const mainText = this.t(`summary.${type}`, {
+    return this.t(`summary.${type}`, {
       count: interval,
       count_f: count_f,
       until: termination,
       weekdays: weekdays,
       month: month,
       days_of_month: days_of_month
-    }).replace(/\s+/g, ' ').trim();
-
-    let exceptionsHtml = "";
-    if (hash.exdates && hash.exdates.length > 0) {
-      const exceptLabel = this.t('labels.exceptions');
-      const formattedExdates = hash.exdates
-        .sort((a, b) => new Date(a) - new Date(b))
-        .map(d => this._formatDate(d))
-        .join(', ');
-
-      exceptionsHtml = `<br><span class="text-muted text-sm italic">${exceptLabel}: ${formattedExdates}</span>`;
-    }
-    let rdatesHtml = "";
-    if (hash.rdates && hash.rdates.length > 0) {
-      const rdateLabel = this.t('labels.rdates');
-      const formattedRdates = hash.rdates
-        .sort((a, b) => new Date(a) - new Date(b))
-        .map(d => this._formatDate(d))
-        .join(', ');
-
-      rdatesHtml = `<br><span class="text-muted text-sm italic">${rdateLabel}: ${formattedRdates}</span>`;
-    }
-    this.summaryTextTarget.innerHTML = mainText + exceptionsHtml + rdatesHtml;
-
-  }
-
-  t(path, params = {}) {
-    let result = path.split('.').reduce((o, i) => o ? o[i] : null, this.translationsValue);
-    if (!result) return path;
-
-    const count = params.count ?? params.interval;
-
-    if (typeof count === 'number' && typeof result === 'object') {
-      if (count === 1 && result['one']) {
-        result = result['one'];
-      } else {
-        const locale = this.localeValue || 'en';
-        const pr = new Intl.PluralRules(locale, { type: 'cardinal' });
-        const rule = pr.select(count);
-        
-        result = result[rule] || result['other'] || result['one'] || path;
-      }
-    }
-
-    if (typeof result !== 'string') return path;
-
-    Object.keys(params).forEach(key => {
-      result = result.replace(`%{${key}}`, params[key]);
-    });
-
-    return result;
-  }
-
-  formatOrdinal(number, gender = 'male') {
-    const locale = this.localeValue || 'en';
-    const ruleType = locale.startsWith('en') ? 'ordinal' : 'cardinal';
-    const pr = new Intl.PluralRules(locale, { type: ruleType });
-    const rule = pr.select(number);
-
-    const ordinals = this.translationsValue.ordinals || {};
-    
-    // Вытягиваем группу по полу из YAML (ordinals.female, ordinals.neuter, ordinals.male)
-    let template = null;
-    if (ordinals[gender] && typeof ordinals[gender] === 'object') {
-      template = ordinals[gender][rule] || ordinals[gender]['other'];
-    }
-
-    // Если не нашли специфичную по полу группу, берем из корня ordinals
-    if (!template) {
-      template = ordinals[rule] || ordinals['other'];
-    }
-
-    if (typeof template !== 'string') {
-      return number.toString();
-    }
-
-    return template.replace('%{count}', number);
-  }
-  
-  syncButtonsUI() {
-    if (!this.hasSelectedClasses) return
-    this.element.querySelectorAll('[data-selected]').forEach(btn => {
-      btn.classList.remove(...this.selectedClasses)
-    })
-
-    this.element.querySelectorAll('[data-selected="true"]').forEach(btn => {
-      btn.classList.add(...this.selectedClasses)
-    })
-  }
-
-  updateDebugField() {
-    if (this.hasIceCubeFieldTarget) this.iceCubeFieldTarget.value = this.hiddenFieldTarget.value
-  }
-
-  toggleExceptionsBlock() {
-    if (!this.hasExceptionsBlockTarget || !this.hasRuleTypeTarget) return
-    const ruleType = this.ruleTypeTarget.value
-    const isHidden = (ruleType === 'never' || ruleType === '')
-    this.exceptionsBlockTarget.classList.toggle('hidden', isHidden)
-  }
-  toggleRdatesBlock() {
-    if (!this.hasRdatesBlockTarget || !this.hasRuleTypeTarget) return
-    const ruleType = this.ruleTypeTarget.value
-    const isHidden = (ruleType === 'never' || ruleType === '')
-    this.rdatesBlockTarget.classList.toggle('hidden', isHidden)
-  }
-
-  updateHiddenFromDebug() {
-    try {
-      JSON.parse(this.iceCubeFieldTarget.value)
-      this.hiddenFieldTarget.value = this.iceCubeFieldTarget.value
-      this.initializeState()
-    } catch (e) {}
+    }).replace(/\s+/g, ' ').trim()
   }
 
   _determineRuleType(hash) {
     if (!hash || !hash.rule_type) return 'never'
-    
     const base = hash.rule_type.replace('IceCube::', '').replace('Rule', '').toLowerCase()
     
-    if (base === 'monthly') {
-      return hash.validations?.day_of_week ? 'monthly_by_weekday' : 'monthly_by_day_of_month'
-    }
-    if (base === 'yearly') {
-      return hash.validations?.day_of_week ? 'yearly_by_weekday' : 'yearly_by_day_of_month'
-    }
+    if (base === 'monthly') return hash.validations?.day_of_week ? 'monthly_by_weekday' : 'monthly_by_day_of_month'
+    if (base === 'yearly') return hash.validations?.day_of_week ? 'yearly_by_weekday' : 'yearly_by_day_of_month'
     return base
   }
 
   _syncButtonsFromHash(container, hash) {
     container.querySelectorAll('[data-selected]').forEach(btn => btn.dataset.selected = "false")
-
     const vals = hash.validations || {}
 
     if (vals.day) {
@@ -525,14 +440,12 @@ export default class extends Controller {
         if (btn) btn.dataset.selected = "true"
       })
     }
-
     if (vals.day_of_month) {
       vals.day_of_month.forEach(d => {
         const btn = container.querySelector(`[data-day="${d}"]`)
         if (btn) btn.dataset.selected = "true"
       })
     }
-
     if (vals.day_of_week) {
       Object.keys(vals.day_of_week).forEach(dayNum => {
         vals.day_of_week[dayNum].forEach(nth => {
@@ -541,54 +454,137 @@ export default class extends Controller {
         })
       })
     }
-    
     this.syncButtonsUI()
   }
 
-  _fillTerminationFields(hash) {
-    if (!this.hasEndTypeTarget) return
+  _fillTerminationFieldsForCard(card, hash) {
+    const endTypeSelect = card.querySelector('[data-item="endType"]')
+    if (!endTypeSelect) return
 
     if (hash.until) {
-      this.endTypeTarget.value = 'until'
-      if (this.hasEndDateTarget) this.endDateTarget.value = hash.until.split('T')[0]
+      endTypeSelect.value = 'until'
+      const input = card.querySelector('[data-item="endDateInput"]')
+      if (input) input.value = hash.until.split('T')[0]
     } else if (hash.count) {
-      this.endTypeTarget.value = 'count'
-      if (this.hasEndCountInputTarget) this.endCountInputTarget.value = hash.count
+      endTypeSelect.value = 'count'
+      const input = card.querySelector('[data-item="endCountInput"]')
+      if (input) input.value = hash.count
     } else {
-      this.endTypeTarget.value = 'never'
+      endTypeSelect.value = 'never'
     }
-    this.toggleEndFields()
+
+    this.toggleEndFields({ currentTarget: endTypeSelect })
   }
-  _getFirstDayOfWeek() {
-    return this.weekStartValue; // 0 или 1
+
+  _addDateToList(inputTarget, containerTarget, templateTarget) {
+    const dateValue = inputTarget.value
+    if (!dateValue) return
+
+    const existingDates = Array.from(containerTarget.querySelectorAll('[data-date-value]')).map(el => el.dataset.dateValue)
+    if (existingDates.includes(dateValue)) return
+
+    const content = templateTarget.innerHTML
+      .replace(/VALUE/g, dateValue)
+      .replace(/LABEL/g, this._formatDate(dateValue))
+
+    containerTarget.insertAdjacentHTML('beforeend', content)
+    inputTarget.value = ""
+    this.updateHiddenHash()
+  }
+
+  _fillDatesSection(container, template, datesArray) {
+    if (!container || !template || !datesArray) return
+    container.innerHTML = ""
+    datesArray.forEach(dateValue => {
+      const content = template.innerHTML
+        .replace(/VALUE/g, dateValue)
+        .replace(/LABEL/g, this._formatDate(dateValue))
+      container.insertAdjacentHTML('beforeend', content)
+    })
+  }
+
+  _getDatesArray(container, dataKey) {
+    if (!container) return []
+    return Array.from(container.children)
+                .map(el => el.dataset[dataKey] || el.getAttribute(`data-${dataKey.replace(/([A-Z])/g, '-$1').toLowerCase()}`))
+                .filter(Boolean)
+  }
+
+  syncButtonsUI() {
+    if (!this.hasSelectedClasses) return
+    this.element.querySelectorAll('[data-selected]').forEach(btn => btn.classList.remove(...this.selectedClasses))
+    this.element.querySelectorAll('[data-selected="true"]').forEach(btn => btn.classList.add(...this.selectedClasses))
+  }
+
+  t(path, params = {}) {
+    let result = path.split('.').reduce((o, i) => o ? o[i] : null, this.translationsValue)
+    if (!result) return path
+
+    const count = params.count ?? params.interval
+
+    if (typeof count === 'number' && typeof result === 'object') {
+      if (count === 1 && result['one']) {
+        result = result['one']
+      } else {
+        const locale = this.localeValue || 'en'
+        const pr = new Intl.PluralRules(locale, { type: 'cardinal' })
+        const rule = pr.select(count)
+        result = result[rule] || result['other'] || result['one'] || path
+      }
+    }
+
+    if (typeof result !== 'string') return path
+
+    Object.keys(params).forEach(key => {
+      result = result.replace(`%{${key}}`, params[key])
+    })
+
+    return result
+  }
+
+  formatOrdinal(number, gender = 'male') {
+    const locale = this.localeValue || 'en'
+    const ruleType = locale.startsWith('en') ? 'ordinal' : 'cardinal'
+    const pr = new Intl.PluralRules(locale, { type: ruleType })
+    const rule = pr.select(number)
+
+    const ordinals = this.translationsValue.ordinals || {}
+    let template = null
+
+    if (ordinals[gender] && typeof ordinals[gender] === 'object') {
+      template = ordinals[gender][rule] || ordinals[gender]['other']
+    }
+
+    if (!template) {
+      template = ordinals[rule] || ordinals['other']
+    }
+
+    if (typeof template !== 'string') return number.toString()
+
+    return template.replace('%{count}', number)
   }
 
   _formatDate(dateString) {
-    if (!dateString) return '';
+    if (!dateString) return ''
 
-    // Парсим дату в UTC, чтобы избежать сдвигов часовых поясов
-    const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
-    const date = new Date(Date.UTC(year, month - 1, day));
+    const [year, month, day] = dateString.split('T')[0].split('-').map(Number)
+    const date = new Date(Date.UTC(year, month - 1, day))
 
-    const y = date.getUTCFullYear();
-    const m = date.getUTCMonth() + 1; // 1..12
-    const d = date.getUTCDate();
+    const y = date.getUTCFullYear()
+    const m = date.getUTCMonth() + 1
+    const d = date.getUTCDate()
 
-    // Берем формат и массив месяцев прямо из переданного YAML
-    const dateConfig = this.translationsValue.date || {};
-    const formatPattern = dateConfig.formats?.recurrence_date || "%Y-%m-%d";
-    const monthNames = dateConfig.month_names || [];
+    const dateConfig = this.translationsValue.date || {}
+    const formatPattern = dateConfig.formats?.recurrence_date || "%Y-%m-%d"
+    const monthNames = dateConfig.month_names || []
+    const monthName = monthNames[m] || ""
 
-    // Вытягиваем название месяца (учитывая, что 0-й элемент в массиве nil/null)
-    const monthName = monthNames[m] || "";
-
-    // Форматируем строго по шаблону из YAML
     return formatPattern
       .replace(/%Y/g, y)
       .replace(/%-m/g, m)
       .replace(/%m/g, String(m).padStart(2, '0'))
       .replace(/%-d/g, d)
       .replace(/%d/g, String(d).padStart(2, '0'))
-      .replace(/%B/g, monthName);
+      .replace(/%B/g, monthName)
   }
 }

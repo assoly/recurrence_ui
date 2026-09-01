@@ -1,4 +1,3 @@
-// app/javascript/controllers/recurrence_ui_controller.js
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
@@ -26,43 +25,19 @@ export default class extends Controller {
     this.isInitializing = false
   }
 
-  // ==========================================
+// ==========================================
   // INITIALIZATION & STATE MANAGEMENT
   // ==========================================
 
   initializeState() {
-    const jsonString = this.hiddenFieldTarget.value
+    const jsonString = this.hasHiddenFieldTarget ? this.hiddenFieldTarget.value : null
 
-    // Check if the rules container exists before trying to update it
+    // Clear rules container if target exists
     if (this.hasRulesContainerTarget) {
-      this.rulesContainerTarget.innerHTML = "...";
-    }
-  
-    // Update the summary text if the target exists
-    if (this.hasSummaryTextTarget) {
-      this.updateSummary();
+      this.rulesContainerTarget.innerHTML = ""
     }
 
-    // Update the rules list only if the corresponding container exists
-  if (this.hasRulesContainerTarget) {
-    this.renderRules();
-  }
-
-  // Update exception dates (exdates) only if their container exists
-  if (this.hasExdatesContainerTarget) {
-    this.renderExdates();
-  }
-
-  // Update additional dates (rdates) only if their container exists
-  if (this.hasRdatesContainerTarget) {
-    this.renderRdates();
-  }
-
-  // Update the summary text only if there is a target to display it in
-  if (this.hasSummaryTextTarget) {
-    this.renderSummary();
-  }
-
+    // Process rules, exdates, and rdates if JSON string is present
     if (jsonString && jsonString.length > 2) {
       try {
         const schedule = JSON.parse(jsonString)
@@ -70,24 +45,33 @@ export default class extends Controller {
 
         if (rules.length > 0) {
           rules.forEach(ruleHash => this._createRuleCardFromHash(ruleHash))
-        } else {
+        } else if (this.hasRuleCardTemplateTarget) {
           this.addRule()
         }
 
-        this._fillDatesSection(this.exdatesContainerTarget, this.exdateTemplateTarget, schedule.exdates)
-        this._fillDatesSection(this.rdatesContainerTarget, this.rdateTemplateTarget, schedule.rdates)
+        if (this.hasExdatesContainerTarget && this.hasExdateTemplateTarget) {
+          this._fillDatesSection(this.exdatesContainerTarget, this.exdateTemplateTarget, schedule.exdates)
+        }
+
+        if (this.hasRdatesContainerTarget && this.hasRdateTemplateTarget) {
+          this._fillDatesSection(this.rdatesContainerTarget, this.rdateTemplateTarget, schedule.rdates)
+        }
       } catch (e) {
         console.error("[RecurrenceUi] JSON Parsing error:", e)
-        this.addRule()
+        if (this.hasRuleCardTemplateTarget) this.addRule()
       }
-    } else {
+    } else if (this.hasRuleCardTemplateTarget) {
       this.addRule()
     }
 
     this.toggleExceptionsBlock()
     this.toggleRdatesBlock()
     this.syncButtonsUI()
-    this.updateSummary()
+
+    // Update the summary text only if there is a target to display it in
+    if (this.hasSummaryTextTarget) {
+      this.updateSummary()
+    }
   }
 
   // ==========================================

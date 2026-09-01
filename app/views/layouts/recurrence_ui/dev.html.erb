@@ -6,15 +6,14 @@
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
-  <!-- Подключение Tailwind (для красивых таблиц в превью) -->
+  <!-- Подключение Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Включаем поддержку Importmap или ES-модулей -->
-  <% if defined?(Importmap) %>
+  <!-- Подключение JS-модулей -->
+  <% if respond_to?(:javascript_importmap_tags) && Rails.application.config.respond_to?(:importmap) %>
     <%= javascript_importmap_tags %>
   <% else %>
-    <!-- Если JS подключается прямым тегом, ОБЯЗАТЕЛЬНО нужен type: "module" -->
-    <%= javascript_include_tag "recurrence_ui/application", "data-turbo-track": "reload", type: "module", defer: true %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module", defer: true %>
   <% end %>
 </head>
 <body class="bg-gray-100 p-8">

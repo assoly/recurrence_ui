@@ -1,58 +1,48 @@
 <%# app/components/recurrence_ui/picker_component.html.erb %>
 <% I18n.with_locale(locale) do %>
-<div class="hidden bg-blue-600 text-white border-blue-600"></div>
-<div data-controller="<%= identifier %>" 
-     data-<%= identifier %>-time-zone-value="<%= time_zone %>"
-     data-<%= identifier %>-translations-value="<%= t('recurrence_ui', locale: locale).to_json %>"
-     data-<%= identifier %>-locale-value="<%= locale %>"
-     data-<%= identifier %>-selected-class="bg-blue-600 text-white border-blue-600"
-     class="space-y-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">  
+  <div class="hidden bg-blue-600 text-white border-blue-600"></div>
+  <div data-controller="<%= identifier %>" 
+      data-<%= identifier %>-time-zone-value="<%= time_zone %>"
+      data-<%= identifier %>-translations-value="<%= t('recurrence_ui', locale: locale).to_json %>"
+      data-<%= identifier %>-locale-value="<%= locale %>"
+      data-<%= identifier %>-selected-class="bg-blue-600 text-white border-blue-600"
+      class="space-y-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">  
 
-  <%# 1. Ссылка-саммари с прерывистой линией %>
-  <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
+    <%# 1. Summary Link %>
+    <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
 
-  <div data-<%= identifier %>-target="editMode" class="hidden space-y-6">    
-    <%# 2. Селект типа повторения (Виртуальный select без обращения к модели) %>
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">
-        <%= t('recurrence_ui.labels.frequency') %>
-      </label>
+    <div data-<%= identifier %>-target="editMode" class="hidden space-y-6">  
+    
+    <%# 2. All recurrence rules with Add button %>
+      <div class="space-y-3">
+        <label class="block text-sm font-medium text-gray-700">
+          <%= t('recurrence_ui.labels.rules', default: 'Recurrence Rules') %>
+        </label>
 
-      <%= select_tag nil, 
-          options_for_select(rule_options, current_rule_type),
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
-          data: { 
-            action: "change->#{identifier}#toggleFields", 
-            "#{identifier}-target": "ruleType" 
-          } 
-      %>
-    </div>
+        <%# Rules container %>
+        <div data-<%= identifier %>-target="rulesContainer" class="space-y-3"></div>
 
-    <%# 3. Плоские блоки полей (Specific Fields) %>
-    <% %w[daily weekly monthly_by_day_of_month monthly_by_weekday yearly_by_day_of_month yearly_by_weekday].each do |rule| %>
-      <div data-<%= identifier %>-target="specificFields" data-rule="<%= rule %>" class="hidden">
-        <%= render "recurrence_ui/#{rule}", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: self %>
+        <%# Button Add rule %>
+        <button type="button" 
+                data-action="click-><%= identifier %>#addRule" 
+                class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800">
+          + <%= t('recurrence_ui.actions.add_rule', default: 'Add Rule') %>
+        </button>
       </div>
-    <% end %>
 
-    <%# 4. Секция "Окончание" %>
-    <div data-<%= identifier %>-target="terminationBlock" class="pt-4 border-t border-gray-100 hidden">
-      <%= render "recurrence_ui/termination", form: form, identifier: identifier, rec_ui: self %>
+      <%# 3. Exceptions Section %>
+      <div data-<%= identifier %>-target="exceptionsBlock" class="pt-4 border-t border-gray-100 hidden">
+        <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
+      </div>
+      <%# 4. Additional Dates Section %>
+      <div data-<%= identifier %>-target="rdatesBlock" class="pt-4 border-t border-gray-100 hidden">
+        <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+      </div>
+      <%# 5. Footer Actions Section %>
+      <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
     </div>
 
-    <%# 5. Секция "Исключения" %>
-    <div data-<%= identifier %>-target="exceptionsBlock" class="pt-4 border-t border-gray-100 hidden">
-      <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
-    </div>
-    <%# 6. Секция "Дополнительные даты" %>
-    <div data-<%= identifier %>-target="rdatesBlock" class="pt-4 border-t border-gray-100 hidden">
-      <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
-    </div>
-    <%# 7. Секция "Окончание формы" %>
-    <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
+      <%# 6. Hidden Field: The actual model field where the final JSON is saved %>
+    <%= form.hidden_field field_name, value: rules_json, data: { "#{identifier}_target": "hiddenField" } %>
   </div>
-
-    <%# 8. СКРЫТОЕ ПОЛЕ: Настоящее поле модели, куда сохраняется итоговый JSON %>
-  <%= form.hidden_field field_name, value: rules_json, data: { "#{identifier}_target": "hiddenField" } %>
-</div>
 <% end %>

@@ -13,7 +13,11 @@ export default class extends Controller {
     "hiddenField", "displayMode", "editMode", "summaryText",
     "rulesContainer", "ruleCardTemplate", "ruleCard",
     "exceptionsBlock", "exdatesContainer", "exdateInput", "exdateTemplate",
-    "rdatesBlock", "rdatesContainer", "rdateInput", "rdateTemplate", "iceCubeField"
+    "rdatesBlock", "rdatesContainer", "rdateInput", "rdateTemplate", "iceCubeField",
+    "visualEditor", // Блок с карточками и кнопками (Level 2)
+    "codeEditor",   // Блок с textarea для JSON (Level 2 alt)
+    "cardHeader",   // Текстовая заголовок-шапка карточки (для аккордеона Level 3)
+    "cardBody"      // Раскрывающийся блок с полями карточки (Level 3)
   ]
 
   ruleSnapshot = null
@@ -73,6 +77,88 @@ export default class extends Controller {
       this.updateSummary()
     }
   }
+  // Переключение U1 -> U2 (Раскрытие общего модуля)
+  toggleMainAccordion() {
+    if (!this.hasEditModeTarget) return
+    const isHidden = this.editModeTarget.classList.contains('hidden')
+    
+    if (isHidden) {
+      this.editModeTarget.classList.remove('hidden')
+    } else {
+      this.editModeTarget.classList.add('hidden')
+      this.updateSummary() // Пересчитываем итоговый текст при закрытии
+    }
+  }
+  toggleCardAccordion(event) {
+    event.preventDefault()
+    // Находим карточку, по которой кликнули
+    const card = event.currentTarget.closest('[data-recurrence-ui-target="ruleCard"]')
+    if (!card) return
+
+    const body = card.querySelector('[data-recurrence-ui-target="cardBody"]')
+    if (body) {
+      body.classList.toggle('hidden')
+    }
+  }
+
+    // 1. Открытие/закрытие панели кода
+  toggleCodeEditor(event) {
+    if (event) event.preventDefault()
+
+    const isCodeHidden = this.codeEditorTarget.classList.contains('hidden')
+
+    if (isCodeHidden) {
+      // Считываем текущий JSON из скрытого поля формы
+      const currentJson = this.hiddenFieldTarget.value || "{}"
+      
+      try {
+        // Форматируем JSON с отступами в 2 пробела для красивого отображения в textarea
+        const parsed = JSON.parse(currentJson)
+        this.iceCubeFieldTarget.value = JSON.stringify(parsed, null, 2)
+      } catch (e) {
+        // Если там был невалидный JSON, выводим как есть
+        this.iceCubeFieldTarget.value = currentJson
+      }
+
+      // Переключаем видимость блоков
+      this.visualEditorTarget.classList.add('hidden')
+      this.codeEditorTarget.classList.remove('hidden')
+    } else {
+      // Возврат назад без сохранения
+      this.codeEditorTarget.classList.add('hidden')
+      this.visualEditorTarget.classList.remove('hidden')
+    }
+  }
+
+  // 2. Применение кода по кнопке "ОК"
+  applyCodeChanges(event) {
+    if (event) event.preventDefault()
+
+    const rawJson = this.iceCubeFieldTarget.value.trim()
+
+    try {
+      // Валидируем JSON перед сохранением
+      if (rawJson.length > 0) {
+        JSON.parse(rawJson)
+      }
+
+      // Сохраняем в основное скрытое поле
+      this.hiddenFieldTarget.value = rawJson.length > 0 ? rawJson : "{}"
+
+      // Переинициализируем visual UI (карточки правил, теги дат) под новый JSON
+      this.initializeState()
+
+      // Переключаем обратно в визуальный режим
+      this.codeEditorTarget.classList.add('hidden')
+      this.visualEditorTarget.classList.remove('hidden')
+
+    } catch (e) {
+      alert(this.t('errors.invalid_json', { default: 'Ошибка в синтаксисе JSON' }))
+    }
+  }
+
+
+
 
   // ==========================================
   // CARD ACTIONS (ADD / REMOVE / TOGGLE)

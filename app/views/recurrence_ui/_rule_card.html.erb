@@ -1,39 +1,66 @@
 <%# app/views/recurrence_ui/_rule_card.html.erb %>
-<div data-<%= identifier %>-target="ruleCard" class="group relative border border-gray-200 p-4 rounded-lg bg-gray-50 hover:border-gray-300 space-y-4">
+<div data-<%= identifier %>-target="ruleCard" 
+     class="group relative border border-gray-200 rounded-lg bg-gray-50 hover:border-gray-300 transition-all overflow-hidden">
   
-  <%# 1. Button to remove individual rule (cross) %>
-  <button type="button" 
-          data-action="click-><%= identifier %>#removeRule" 
-          class="absolute top-3 right-3 text-gray-400 hover:text-red-500 font-bold p-1 transition-colors">
-    ✕
-  </button>
+  <%# 1. Шапка карточки (Заголовок-клик для раскрытия аккордеона) %>
+  <div class="flex items-center justify-between p-3 bg-white hover:bg-gray-50 cursor-pointer select-none border-b border-gray-100"
+       data-action="click-><%= identifier %>#toggleCardAccordion">
+    
+    <%# Текстовое резюме текущего правила (заполняется динамически JS) %>
+    <div class="flex items-center space-x-2 pr-8">
+      <span class="text-xs text-gray-400">▶</span>
+      <span data-item="cardSummary" class="text-sm font-medium text-gray-800">
+        <%= t('recurrence_ui.labels.new_rule', default: 'Новое правило') %>
+      </span>
+    </div>
 
-  <%# 2. Select for choosing the rule type for THIS specific card %>
-  <div>
-    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">
-      <%= t('recurrence_ui.labels.frequency', default: 'Frequency') %>
-    </label>
-
-    <select data-item="ruleType" 
-            data-action="change-><%= identifier %>#toggleCardFields" 
-            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-      <%# Render options based on resolved enabled rule types %>
-      <% rule_options.each do |label, value| %>
-        <option value="<%= value %>"><%= label %></option>
-      <% end %>
-    </select>
+    <%# Кнопка удаления конкретного правила (крестик) %>
+    <button type="button" 
+            data-action="click-><%= identifier %>#removeRule" 
+            title="<%= t('recurrence_ui.actions.remove', default: 'Удалить') %>"
+            class="text-gray-400 hover:text-red-500 font-bold px-2 py-1 transition-colors rounded">
+      ✕
+    </button>
   </div>
 
-  <%# 3. Flat field blocks inside the card (Specific Fields) %>
-    <%# Iterate through the resolved rule options %>
-    <% rule_options.map(&:last).each do |rule| %>
-    <div data-item="specificFields" data-rule="<%= rule %>" class="hidden">
-        <%= render "recurrence_ui/#{rule}", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: rec_ui %>
+  <%# 2. Раскрывающийся блок с полями карточки (Level 3 - по умолчанию hidden или открыт для нового) %>
+  <div data-<%= identifier %>-target="cardBody" class="p-4 space-y-4 bg-gray-50">
+    
+    <%# Выбор типа/частоты правила %>
+    <div>
+      <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">
+        <%= t('recurrence_ui.labels.frequency', default: 'Частота') %>
+      </label>
+
+      <select data-item="ruleType" 
+              data-action="change-><%= identifier %>#toggleCardFields" 
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        <% rule_options.each do |label, value| %>
+          <option value="<%= value %>"><%= label %></option>
+        <% end %>
+      </select>
     </div>
+
+    <%# Специфичные поля выбранного типа (Daily, Weekly и т.д.) %>
+    <% rule_options.map(&:last).each do |rule| %>
+      <div data-item="specificFields" data-rule="<%= rule %>" class="hidden">
+        <%= render "recurrence_ui/#{rule}", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: rec_ui %>
+      </div>
     <% end %>
 
-  <%# 4. Individual Termination Section for THIS specific rule card %>
-  <div data-item="terminationBlock" class="pt-4 border-t border-gray-100">
-    <%= render "recurrence_ui/termination", form: form, identifier: identifier, rec_ui: rec_ui %>
+    <%# Блок окончания конкретно для этого правила %>
+    <div data-item="terminationBlock" class="pt-4 border-t border-gray-200">
+      <%= render "recurrence_ui/termination", form: form, identifier: identifier, rec_ui: rec_ui %>
+    </div>
+
+    <%# Кнопка "Готово" для сворачивания карточки обратно %>
+    <div class="pt-2 text-right">
+      <button type="button" 
+              data-action="click-><%= identifier %>#toggleCardAccordion" 
+              class="px-3 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-md shadow-sm">
+        <%= t('recurrence_ui.actions.done', default: 'Готово') %>
+      </button>
+    </div>
+
   </div>
 </div>

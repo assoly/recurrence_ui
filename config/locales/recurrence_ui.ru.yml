@@ -2,7 +2,12 @@
 ru:
   recurrence_ui:
     actions:
+      add_rule: Добавить правило
+      apply_code: Применить код
       cancel: Отмена
+      code_mode: Редактировать код
+      done: Готово
+      remove: Удалить
       save: OK
     add_exception: Добавить исключение
     count_label:
@@ -25,15 +30,15 @@ ru:
         long: "%-d %B %Y"
         month_year: "%B %Y г."
         month_year_header: "%B %Y"
+        recurrence_date: "%-d %B %Y г."
         short: "%d %b"
         year_month_day_weekday: "%-d %B %Y года, %A"
-        recurrence_date: "%-d %B %Y г." # -> 31 декабря 2026 г.
-      month_names: # Родительный падеж для дат!
+      month_names:
       -
       - января
       - февраля
       - марта
-      - апреля    
+      - апреля
       - мая
       - июня
       - июля
@@ -85,12 +90,15 @@ ru:
       add_rdate: Добавить дополнительную дату
       choose_month: Выберите месяц
       day: день
+      editor_title: Настройка повторения
       except: Исключая
       exceptions: Исключения
-      rdates: Дополнительные даты
       frequency: Частота
       month: месяц
+      new_rule: Новое правило
       one_time: Без повторения
+      raw_json: Raw JSON
+      rdates: Дополнительные даты
       select_dates: Выбрать даты
       select_nth_day: Выбрать N-й день
       termination: Завершение задачи
@@ -137,6 +145,7 @@ ru:
       '3': 3-я
       '4': 4-я
       '5': 5-я
+    once: Once
     one_time: Без повторения
     ordinals:
       day_of_month:

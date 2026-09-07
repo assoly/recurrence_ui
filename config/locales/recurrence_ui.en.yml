@@ -1,7 +1,13 @@
+---
 en:
   recurrence_ui:
     actions:
+      add_rule: Add rule
+      apply_code: Apply Code
       cancel: Cancel
+      code_mode: Edit Code
+      done: Done
+      remove: Remove
       save: OK
     add_exception: Add exception
     count_label:
@@ -22,10 +28,10 @@ en:
         long: "%-d %B %Y"
         month_year: "%B %Y"
         month_year_header: "%B %Y"
+        recurrence_date: "%-d %B %Y"
         short: "%b %-d"
         year_month_day_weekday: "%A, %-d %B %Y"
-        recurrence_date: "%-d %B %Y" # -> 31 December 2026
-      month_names: 
+      month_names:
       -
       - January
       - February
@@ -53,7 +59,7 @@ en:
       - October
       - November
       - December
-    days_of_month_fmt: "the %{list}"
+    days_of_month_fmt: the %{list}
     debug_hint: Hidden field contents. You can edit this directly for testing!
     enter_exception_dates: Enter exception dates
     every: Every
@@ -82,12 +88,15 @@ en:
       add_rdate: Add additional date
       choose_month: Choose month
       day: Day
+      editor_title: Recurrence Settings
       except: Exceptions
-      rdates: Additional Dates
       exceptions: Exceptions
       frequency: Frequency
       month: Month
+      new_rule: New rule
       one_time: Does not repeat
+      raw_json: Raw JSON
+      rdates: Additional Dates
       select_dates: Select dates
       select_nth_day: Select N-th day
       termination: Ends
@@ -113,17 +122,18 @@ en:
       '3': 3rd
       '4': 4th
       '5': 5th
+    once: Once
     one_time: Does not repeat
     ordinals:
-      one: "%{count}st"   # 1, 21, 31
-      two: "%{count}nd"   # 2, 22
-      few: "%{count}rd"   # 3, 23
-      other: "%{count}th" # 4..20, 24..30
       day_of_month:
-        one: "%{count}st"
-        two: "%{count}nd"
         few: "%{count}rd"
+        one: "%{count}st"
         other: "%{count}th"
+        two: "%{count}nd"
+      few: "%{count}rd"
+      one: "%{count}st"
+      other: "%{count}th"
+      two: "%{count}nd"
       weekly_interval:
         one: "%{count}"
         other: "%{count}"
@@ -132,20 +142,20 @@ en:
         one: Every day %{until}
         other: Every %{count} days %{until}
       monthly_by_day_of_month:
-        one: "Every month on: %{days_of_month} %{until}"
-        other: "Every %{count} months on: %{days_of_month} %{until}"
+        one: 'Every month on: %{days_of_month} %{until}'
+        other: 'Every %{count} months on: %{days_of_month} %{until}'
       monthly_by_weekday:
-        one: "Every month on: %{weekdays} %{until}"
-        other: "Every %{count} months on: %{weekdays} %{until}"
+        one: 'Every month on: %{weekdays} %{until}'
+        other: 'Every %{count} months on: %{weekdays} %{until}'
       weekly:
         one: Every week on %{weekdays} %{until}
         other: Every %{count} weeks on %{weekdays} %{until}
       yearly_by_day_of_month:
-        one: "Every year in %{month}: %{days_of_month} %{until}"
-        other: "Every %{count} years in %{month}: %{days_of_month} %{until}"
+        one: 'Every year in %{month}: %{days_of_month} %{until}'
+        other: 'Every %{count} years in %{month}: %{days_of_month} %{until}'
       yearly_by_weekday:
-        one: "Every year in %{month}: %{weekdays} %{until}"
-        other: "Every %{count} years in %{month}: %{weekdays} %{until}"
+        one: 'Every year in %{month}: %{weekdays} %{until}'
+        other: 'Every %{count} years in %{month}: %{weekdays} %{until}'
     termination_types:
       count: After number of times
       never: Never
@@ -181,3 +191,11 @@ en:
       - Thursdays
       - Fridays
       - Saturdays
+      weekday_genders:
+      - male
+      - male
+      - male
+      - male
+      - male
+      - male
+      - male

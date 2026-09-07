@@ -2,7 +2,12 @@
 ja:
   recurrence_ui:
     actions:
+      add_rule: ルールを追加
+      apply_code: コードを適用
       cancel: キャンセル
+      code_mode: コードを編集
+      done: 完了
+      remove: 削除
       save: OK
     add_exception: 例外を追加
     count_label:
@@ -22,9 +27,23 @@ ja:
         long: "%Y年%m月%d日"
         month_year: "%Y年%m月"
         month_year_header: "%Y年%-m月"
+        recurrence_date: "%Y年%-m月%-d日"
         short: "%m/%d"
         year_month_day_weekday: "%Y年%m月%d日, %A"
-        recurrence_date: "%Y年%-m月%-d日" # -> 2026年8月22日
+      month_names:
+      -
+      - 1月
+      - 2月
+      - 3月
+      - 4月
+      - 5月
+      - 6月
+      - 7月
+      - 8月
+      - 9月
+      - 10月
+      - 11月
+      - 12月
       standalone_month_names:
       -
       - 1月
@@ -68,12 +87,15 @@ ja:
       add_rdate: 追加日を追加
       choose_month: 月を選択
       day: 日
+      editor_title: 繰り返しの設定
       except: 例外
       exceptions: 例外
-      rdates: 追加日
       frequency: 頻度
       month: 月
+      new_rule: 新しいルール
       one_time: 繰り返しなし
+      raw_json: Raw JSON
+      rdates: 追加日
       select_dates: 日付を選択
       select_nth_day: 曜日を指定
       termination: 終了
@@ -93,12 +115,13 @@ ja:
       '4': 第4
       '5': 第5
     nth_weeks:
+      "-1": 最終
       '1': 第1
       '2': 第2
       '3': 第3
       '4': 第4
       '5': 第5
-
+    once: Once
     one_time: 繰り返しなし
     ordinals:
       day_of_month:

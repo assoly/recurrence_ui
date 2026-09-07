@@ -12,12 +12,14 @@ export default class extends Controller {
   static targets = [
     "hiddenField", "displayMode", "editMode", "summaryText",
     "rulesContainer", "ruleCardTemplate", "ruleCard",
-    "exceptionsBlock", "exdatesContainer", "exdateInput", "exdateTemplate",
-    "rdatesBlock", "rdatesContainer", "rdateInput", "rdateTemplate", "iceCubeField",
+    "exceptionsBlock", "exdatesContainer", "exdateInput", "addExdateBtn", "exdateTemplate",
+    "rdatesBlock", "rdatesContainer", "rdateInput", "addRdateBtn", "rdateTemplate", 
+    
+    "iceCubeField",
     "visualEditor", // Блок с карточками и кнопками (Level 2)
     "codeEditor",   // Блок с textarea для JSON (Level 2 alt)
     "cardHeader",   // Текстовая заголовок-шапка карточки (для аккордеона Level 3)
-    "cardBody"      // Раскрывающийся блок с полями карточки (Level 3)
+    "cardBody"     // Раскрывающийся блок с полями карточки (Level 3)
   ]
 
   ruleSnapshot = null
@@ -293,20 +295,84 @@ export default class extends Controller {
   // EXCEPTIONS (EXDATES) & ADDITIONS (RDATES)
   // ==========================================
 
-  addExdate(e) {
-    e.preventDefault()
-    this._addDateToList(this.exdateInputTarget, this.exdatesContainerTarget, this.exdateTemplateTarget)
+
+  // 1. Активация/деактивация кнопки "+" при вводе даты
+  onDateInputChange(event) {
+    const input = event.target
+    const value = input.value.trim()
+    
+    if (input === this.exdateInputTarget && this.hasAddExdateBtnTarget) {
+      this.addExdateBtnTarget.disabled = !value
+    } else if (input === this.rdateInputTarget && this.hasAddRdateBtnTarget) {
+      this.addRdateBtnTarget.disabled = !value
+    }
+  }
+
+  // 2. Вспомогательный метод создания чипсов (Крестик ПЕРЕД датой, обычный шрифт)
+  _createDateChip(dateString, type) {
+    const isException = type === 'exception'
+    
+    // Цветовые гаммы:
+    // Исключения: Красный фон (bg-red-50 text-red-700 border-red-200)
+    // Дополнения: Зелёный фон (bg-emerald-50 text-emerald-700 border-emerald-200)
+    const bgClass = isException 
+      ? 'bg-red-50 text-red-700 border-red-200' 
+      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+
+    const actionMethod = isException ? 'removeExdate' : 'removeRdate'
+
+    const chip = document.createElement('span')
+    chip.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border ${bgClass}`
+    chip.dataset.date = dateString
+
+    // HTML: Сначала крестик (✕), затем сама дата
+    chip.innerHTML = `
+      <button type="button" 
+              data-action="click->${this.identifier}#${actionMethod}" 
+              class="hover:opacity-75 transition-opacity pr-0.5" 
+              title="Delete">✕</button>
+      <span>${this._formatDate(dateString)}</span>
+    `
+
+    return chip
+  }
+
+  // 3. Обработчик добавления Исключения
+  addExdate(event) {
+    if (event) event.preventDefault()
+    const dateValue = this.exdateInputTarget.value
+    if (!dateValue) return
+
+    const chip = this._createDateChip(dateValue, 'exception')
+    this.exdatesContainerTarget.appendChild(chip)
+
+    // Очищаем инпут и блокируем "+"
+    this.exdateInputTarget.value = ''
+    if (this.hasAddExdateBtnTarget) this.addExdateBtnTarget.disabled = true
+
+    this.updateHiddenHash()
+  }
+
+  // 4. Обработчик добавления Дополнительной даты
+  addRdate(event) {
+    if (event) event.preventDefault()
+    const dateValue = this.rdateInputTarget.value
+    if (!dateValue) return
+
+    const chip = this._createDateChip(dateValue, 'rdate')
+    this.rdatesContainerTarget.appendChild(chip)
+
+    // Очищаем инпут и блокируем "+"
+    this.rdateInputTarget.value = ''
+    if (this.hasAddRdateBtnTarget) this.addRdateBtnTarget.disabled = true
+
+    this.updateHiddenHash()
   }
 
   removeExdate(e) {
     e.preventDefault()
     e.target.closest('[data-exdate-value]').remove()
     this.updateHiddenHash()
-  }
-
-  addRdate(e) {
-    e.preventDefault()
-    this._addDateToList(this.rdateInputTarget, this.rdatesContainerTarget, this.rdateTemplateTarget)
   }
 
   removeRdate(e) {
@@ -432,8 +498,6 @@ export default class extends Controller {
   // ==========================================
   // HELPERS & PRIVATE METHODS
   // ==========================================
-
-
   
   _buildSingleRuleHash(card) {
     const typeSelect = card.querySelector('[data-item="ruleType"]')

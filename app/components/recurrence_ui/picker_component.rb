@@ -83,7 +83,7 @@ module RecurrenceUi
 
     def months_for_ui
       I18n.with_locale(locale) do
-        (1..12).map { |m| [I18n.t("#{i18n_prefix}.date.month_names", default: I18n.t('date.month_names'))[m], m] }
+        (1..12).map { |m| [I18n.t("#{i18n_prefix}.date.month_names", default:  I18n.t("recurrence_ui.date.month_names"))[m], m] }
       end
     end
 

@@ -90,18 +90,26 @@ export default class extends Controller {
     }
   }
   toggleCardAccordion(event) {
-    event.preventDefault()
-    // Ищем карточку с использованием динамического identifier этого контроллера!
-    const card = event.currentTarget.closest(`[data-${this.identifier}-target="ruleCard"]`)
-    if (!card) return
+  if (event) event.preventDefault()
 
-    const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
-    if (body) {
-      const isWillHide = !body.classList.contains('hidden')
-      body.classList.toggle('hidden')
-      if (isWillHide) this.updateCardSummary(card)
+  // Ищем карточку относительно нажатого элемента
+  const card = event.currentTarget.closest(`[data-${this.identifier}-target="ruleCard"]`) || 
+               event.currentTarget.closest('.group')
+  if (!card) return
+
+  const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
+  if (body) {
+    const isHidden = body.classList.contains('hidden')
+    
+    if (isHidden) {
+      body.classList.remove('hidden')
+    } else {
+      body.classList.add('hidden')
+      // Пересчитываем итоговую подпись при сворачивании[cite: 1, 2]
+      this.updateCardSummary(card)
     }
   }
+}
     // 1. Открытие/закрытие панели кода
   toggleCodeEditor(event) {
     if (event) event.preventDefault()
@@ -165,20 +173,24 @@ export default class extends Controller {
   // CARD ACTIONS (ADD / REMOVE / TOGGLE)
   // ==========================================
 
-  addRule(e) {
-    if (e) e.preventDefault()
-    
-    if (!this.hasRuleCardTemplateTarget) return
+  addRule(event) {
+    if (event) event.preventDefault()
+
     const content = this.ruleCardTemplateTarget.innerHTML
     this.rulesContainerTarget.insertAdjacentHTML('beforeend', content)
 
     const newCard = this.rulesContainerTarget.lastElementChild
-    this.toggleCardFields({ currentTarget: newCard.querySelector('[data-item="ruleType"]') })
+    const body = newCard.querySelector(`[data-${this.identifier}-target="cardBody"]`)
     
-    this.toggleExceptionsBlock()
-    this.toggleRdatesBlock()
+    // Открываем только вновь созданное правило для ввода данных
+    if (body) body.classList.remove('hidden')
+
+    this.updateCardSummary(newCard)
     this.updateHiddenHash()
   }
+
+
+
 
   removeRule(e) {
     e.preventDefault()
@@ -480,6 +492,7 @@ export default class extends Controller {
   }
 
   _createRuleCardFromHash(ruleHash) {
+
     if (!this.hasRuleCardTemplateTarget) return
     const content = this.ruleCardTemplateTarget.innerHTML
     this.rulesContainerTarget.insertAdjacentHTML('beforeend', content)
@@ -508,9 +521,17 @@ export default class extends Controller {
     }
 
     this._fillTerminationFieldsForCard(card, ruleHash)
+
+    // 1. Убеждаемся, что карточка свёрнута по умолчанию
+    const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
+    if (body) {
+      body.classList.add('hidden')
+    }
+
     // Обновляем текст в шапке аккордеона карточки при её загрузке из JSON
     this.updateCardSummary(card)
   }
+    
 
   _buildRuleSummaryText(hash) {
     const type = this._determineRuleType(hash)

@@ -91,16 +91,17 @@ export default class extends Controller {
   }
   toggleCardAccordion(event) {
     event.preventDefault()
-    // Находим карточку, по которой кликнули
-    const card = event.currentTarget.closest('[data-recurrence-ui-target="ruleCard"]')
+    // Ищем карточку с использованием динамического identifier этого контроллера!
+    const card = event.currentTarget.closest(`[data-${this.identifier}-target="ruleCard"]`)
     if (!card) return
 
-    const body = card.querySelector('[data-recurrence-ui-target="cardBody"]')
+    const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
     if (body) {
+      const isWillHide = !body.classList.contains('hidden')
       body.classList.toggle('hidden')
+      if (isWillHide) this.updateCardSummary(card)
     }
   }
-
     // 1. Открытие/закрытие панели кода
   toggleCodeEditor(event) {
     if (event) event.preventDefault()
@@ -181,7 +182,7 @@ export default class extends Controller {
 
   removeRule(e) {
     e.preventDefault()
-    const card = e.target.closest('[data-recurrence-ui-target="ruleCard"]')
+    const card = e.target.closest(`[data-${this.identifier}-target="ruleCard"]`)
     if (card) {
       card.remove()
       this.toggleExceptionsBlock()
@@ -192,10 +193,11 @@ export default class extends Controller {
 
   toggleCardFields(e) {
     const select = e.currentTarget
-    const card = select.closest('[data-recurrence-ui-target="ruleCard"]')
+    const card = select.closest(`[data-${this.identifier}-target="ruleCard"]`) || select.closest('[data-item="ruleCard"]')
     if (!card) return
 
     const selectedValue = select.value
+    // Ищем блоки по data-item="specificFields" без динамических таргетов
     const specificFields = card.querySelectorAll('[data-item="specificFields"]')
     
     specificFields.forEach(el => {
@@ -203,6 +205,7 @@ export default class extends Controller {
     })
 
     this.updateHiddenHash()
+    this.updateCardSummary(card)
   }
 
   toggleDay(event) {
@@ -211,23 +214,35 @@ export default class extends Controller {
     btn.dataset.selected = (btn.dataset.selected !== 'true').toString()
     this.syncButtonsUI()
     this.updateHiddenHash()
+
+    const card = btn.closest(`[data-${this.identifier}-target="ruleCard"]`)
+    if (card) this.updateCardSummary(card)
+
   }
 
   toggleEndFields(event) {
     const select = event.currentTarget
-    const card = select.closest('[data-recurrence-ui-target="ruleCard"]')
+    const card = select.closest(`[data-${this.identifier}-target="ruleCard"]`)
     if (!card) return
 
     const mode = select.value
-    const endDate = card.querySelector('[data-item="endDate"]')
+    const endDate = card.querySelector('[data-item="endDateInput"]')
     const endCount = card.querySelector('[data-item="endCount"]')
 
     if (endDate) endDate.classList.toggle('hidden', mode !== 'until')
-    if (endCount) endCount.classList.toggle('hidden', mode !== 'count')
+    if (endCount) {
+      endCount.classList.toggle('hidden', mode !== 'count')
+      if (mode === 'count') endCount.classList.add('flex')
+    }
 
     this.updateHiddenHash()
+    this.updateCardSummary(card)
   }
-
+  onCardInputChanged(event) {
+    const card = event.currentTarget.closest(`[data-${this.identifier}-target="ruleCard"]`)
+    this.updateHiddenHash()
+    if (card) this.updateCardSummary(card)
+  }
   // ==========================================
   // MODE SWITCHING & ACTIONS
   // ==========================================
@@ -321,7 +336,23 @@ export default class extends Controller {
     this.updateSummary()
     this.updateDebugField()
   }
+  updateCardSummary(card) {
+    if (!card) return
+    const summaryEl = card.querySelector('[data-item="cardSummary"]')
+    if (!summaryEl) return
 
+    // Собираем хэш текущей карточки, используя ваш готовый метод
+    const ruleHash = this._buildSingleRuleHash(card)
+    
+    if (!ruleHash) {
+      summaryEl.textContent = this.t('labels.new_rule', { default: 'Новое правило' })
+      return
+    }
+
+    // Генерируем текст с помощью вашего готового метода _buildRuleSummaryText
+    const text = this._buildRuleSummaryText(ruleHash)
+    summaryEl.textContent = text || this.t('labels.new_rule', { default: 'Новое правило' })
+  }
   updateSummary() {
     if (!this.hasSummaryTextTarget || !this.hasHiddenFieldTarget) return
 
@@ -477,6 +508,8 @@ export default class extends Controller {
     }
 
     this._fillTerminationFieldsForCard(card, ruleHash)
+    // Обновляем текст в шапке аккордеона карточки при её загрузке из JSON
+    this.updateCardSummary(card)
   }
 
   _buildRuleSummaryText(hash) {

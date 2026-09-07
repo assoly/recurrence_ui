@@ -1,5 +1,5 @@
   
-<%# app/views/recurrence_ui/_yearly_by_day_of_month.html.erb %>
+<%# app/views/recurrence_ui/_yearly_by_weekday.html.erb %>
 <%# 
   Tailwind JIT Safelist (чтобы Tailwind не вырезал стили при сборке):
   bg-blue-600 text-white border-blue-600
@@ -14,7 +14,7 @@
         <%= number_field_tag nil, rec_ui.initial_interval, 
             min: 1, 
             class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
-            data: { item: 'interval', action: "input->#{identifier}#updateHiddenHash" } %>
+            data: { item: 'interval', action: "input->#{identifier}#onCardInputChanged" } %>
 
         <span class="text-gray-700">
           <%= t("recurrence_ui.labels.year", count: rec_ui.initial_interval) %>

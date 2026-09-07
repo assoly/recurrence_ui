@@ -48,15 +48,21 @@
           </button>
         </div>
 
-        <%# Секция Исключений (Теги/Badge) %>
-        <div data-<%= identifier %>-target="exceptionsBlock" class="pt-4 border-t border-gray-100 hidden">
-          <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                <%# Секция Исключений (Теги/Badge) %>
+                <div data-<%= identifier %>-target="exceptionsBlock" class="pt-4 border-t border-gray-100 hidden">
+                  <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
+                </div>  
+              <%# Секция Дополнительных дат (Теги/Badge) %>
+                <div data-<%= identifier %>-target="rdatesBlock" class="pt-4 border-t border-gray-100 hidden">
+                  <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+                </div>
         </div>
 
-        <%# Секция Дополнительных дат (Теги/Badge) %>
-        <div data-<%= identifier %>-target="rdatesBlock" class="pt-4 border-t border-gray-100 hidden">
-          <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
-        </div>
+
+        
+
+        
 
         <%# Нижняя панель действий (Сохранить/ОК) %>
         <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>

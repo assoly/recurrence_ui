@@ -185,8 +185,16 @@ module RecurrenceUi
         end
 
         # 3. Format via ordinals (for days of month and regular intervals)
-        ordinal = I18n.t("recurrence_ui.ordinals.#{gender}", count: number, locale: @locale, default: nil) ||
-                  I18n.t("recurrence_ui.ordinals", count: number, locale: @locale, default: nil)
+        # Получаем правило плюрализации для числа (для английского 2 -> :two, 3 -> :few, 21 -> :one и т.д.)
+        rule = ordinal_rule_for(number)
+
+        ordinal = if gender.present?
+                    I18n.t("recurrence_ui.ordinals.#{gender}.#{rule}", locale: @locale, default: nil) ||
+                    I18n.t("recurrence_ui.ordinals.#{gender}.other", locale: @locale, default: nil)
+                  end
+
+        ordinal ||= I18n.t("recurrence_ui.ordinals.#{rule}", locale: @locale, default: nil) ||
+                    I18n.t("recurrence_ui.ordinals.other", locale: @locale, default: nil)
 
         if ordinal.is_a?(String) && ordinal.include?("%{count}")
           return ordinal.gsub("%{count}", number.to_s)
@@ -208,7 +216,21 @@ module RecurrenceUi
       def interval_gender
         @type == :weekly ? :weekly_interval : :male
       end
+      
+      # Вспомогательный метод определения категории числительного (без привязки к языку)
+      def ordinal_rule_for(number)
+        n = number.abs
+        
+        # Обработка исключений 11, 12, 13 (для EN и других языков)
+        return :other if (11..13).cover?(n % 100)
 
+        case n % 10
+        when 1 then :one
+        when 2 then :two
+        when 3 then :few
+        else :other
+        end
+      end
       def format_weekdays
         if @type == :weekly && @validations[:day]
           day_names = I18n.t("recurrence_ui.weekdays.day_names_plural", locale: @locale)

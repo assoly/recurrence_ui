@@ -155,6 +155,20 @@ module RecurrenceUi
               rdates: ["2026-08-26", "2026-08-28"]
             } 
           },
+
+          {
+            name: "Multiple Rules (Weekly Mon + Monthly 1st & 15th)",
+            hash: {
+
+
+              rrules: [
+                {rule_type: "IceCube::MonthlyRule", interval: 2, validations: {day_of_month: [1, 2, 3, 5, 10, 11, 13, 15, 20, 21, 23, 25, 30]}}, 
+                {rule_type: "IceCube::MonthlyRule", interval: 1, validations: {day_of_month: [1, 11, 21, 31]}},
+              ],
+              exdates: ["2026-09-01"],
+              rdates: ["2026-09-10"]
+            }
+          },
           {
             name: "Multiple Rules (Weekly Mon + Monthly 1st & 15th)",
             hash: {

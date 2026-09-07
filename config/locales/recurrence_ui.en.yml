@@ -53,7 +53,7 @@ en:
       - October
       - November
       - December
-    days_of_month_fmt: "on the %{list}"
+    days_of_month_fmt: "the %{list}"
     debug_hint: Hidden field contents. You can edit this directly for testing!
     enter_exception_dates: Enter exception dates
     every: Every
@@ -115,15 +115,15 @@ en:
       '5': 5th
     one_time: Does not repeat
     ordinals:
+      one: "%{count}st"   # 1, 21, 31
+      two: "%{count}nd"   # 2, 22
+      few: "%{count}rd"   # 3, 23
+      other: "%{count}th" # 4..20, 24..30
       day_of_month:
         one: "%{count}st"
         two: "%{count}nd"
         few: "%{count}rd"
         other: "%{count}th"
-      one: "%{count}st"
-      two: "%{count}nd"
-      few: "%{count}rd"
-      other: "%{count}th"
       weekly_interval:
         one: "%{count}"
         other: "%{count}"

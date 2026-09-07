@@ -13,19 +13,22 @@
           [t("recurrence_ui.termination_types.count", default: "After number of times"), 'count']
         ]), 
         class: "text-sm rounded-md border-gray-300", 
-        data: { "#{identifier}_target": "endType", action: "change->#{identifier}#toggleEndFields" } 
+        data: { 
+          item: "endType", 
+          action: "change->#{identifier}#toggleEndFields" 
+        } 
     %>
     
     <input type="date" 
            class="hidden text-sm rounded-md border-gray-300" 
-           data-<%= identifier %>-target="endDate" 
-           data-action="change-><%= identifier %>#updateHiddenHash">
+           data-item="endDateInput" 
+           data-action="change-><%= identifier %>#onCardInputChanged">
     
-    <div data-<%= identifier %>-target="endCount" class="hidden items-center gap-2">
+    <div data-item="endCount" class="hidden flex items-center gap-2">
       <input type="number" min="1" placeholder="10" 
              class="w-20 text-sm rounded-md border-gray-300" 
-             data-<%= identifier %>-target="endCountInput" 
-             data-action="input-><%= identifier %>#updateHiddenHash">
+             data-item="endCountInput" 
+             data-action="input-><%= identifier %>#onCardInputChanged">
       <span class="text-xs text-gray-500 uppercase font-bold">
         <%= t("recurrence_ui.labels.times", default: "times") %>
       </span>

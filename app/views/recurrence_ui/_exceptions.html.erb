@@ -34,13 +34,13 @@
   </div>
 </div>
 
-<%# Шаблон, который будет кастомизировать разработчик %>
+<%# Template for exdate items, which will be used to customize the developer %>
 <template data-<%= identifier %>-target="exdateTemplate">
   <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border bg-red-50 text-red-700 border-red-200" data-exdate-value="VALUE">
     <button type="button" 
             data-action="click-><%= identifier %>#removeExdate" 
             class="hover:opacity-75 transition-opacity pr-0.5" 
-            title="<%= t('recurrence_ui.actions.remove', default: 'Удалить') %>">✕</button>
+            title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>">✕</button>
     <span>LABEL</span>
   </span>
 </template>

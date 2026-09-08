@@ -1,4 +1,5 @@
 <%# app/views/recurrence_ui/_monthly_by_weekday.html.erb %>
+<%# Block of options for monthly recurrence by day of week %>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
 
 <div class="space-y-4">
@@ -14,11 +15,11 @@
   </div>
 
   <div class="space-y-1">
-    <%# Итерируемся по цифрам, которые являются ключами в YAML %>
+    <%# Iterating through the numbers that are keys in the YAML %>
     <% %w[1 2 3 4 5 -1].each do |val| %>
       <div class="grid grid-cols-8 gap-1 items-center">
         <div class="col-span-1 text-[10px] text-gray-500 uppercase font-bold text-right pr-1">
-          <%# Прямое обращение к ключу "1", "2" и т.д. %>
+          <%# Direct access to the key "1", "2" and so on %>
           <%= t("recurrence_ui.nth_names.#{val}") %>
         </div>
         
@@ -34,7 +35,7 @@
                     data-<%= identifier %>-target="nthDayBtn"
                     data-selected="<%= !!is_selected %>" 
                     data-action="click-><%= identifier %>#toggleDay">
-              <%# Важно: всегда указываем scope для дней недели, чтобы не зависеть от локали по умолчанию %>
+              <%# Important: always specify the scope for days of the week to avoid dependency on the default locale %>
               <%= t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
             </button>
           <% end %>

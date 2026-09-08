@@ -1,11 +1,11 @@
 <%# app/views/recurrence_ui/_rdates.html.erb %>
 <div class="space-y-1.5">
-  <%# 1. Компактный заголовок %>
+  <%# 1. Container label %>
   <label class="text-xs font-medium text-slate-700 flex items-center gap-1">
-    <span>✅</span> <%= t("recurrence_ui.labels.rdates", locale: locale, default: "Дополнительные даты") %>
+    <span>✅</span> <%= t("recurrence_ui.labels.rdates", locale: locale, default: "Additional Dates") %>
   </label>
 
-  <%# 2. Контейнер для зеленых чипсов (rdatesContainer) %>
+  <%# 2. Container for green chips (rdatesContainer) %>
   <div data-<%= identifier %>-target="rdatesContainer" class="flex flex-wrap gap-1">
     <% rdates.each do |rdate| %>
       <% date_str = rdate.is_a?(Date) || rdate.is_a?(Time) ? rdate.strftime("%Y-%m-%d") : rdate.to_s %>
@@ -13,13 +13,13 @@
         <button type="button" 
                 data-action="click-><%= identifier %>#removeRdate" 
                 class="hover:opacity-75 transition-opacity pr-0.5" 
-                title="<%= t('recurrence_ui.actions.remove', default: 'Удалить') %>">✕</button>
+                title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>">✕</button>
         <span><%= rec_ui._formatDate(date_str) rescue date_str %></span>
       </span>
     <% end %>
   </div>
 
-  <%# 3. Инпут и кнопка с правильными таргетами (rdatesInput, addRdateBtn) %>
+  <%# 3. Input and button with correct targets (rdatesInput, addRdateBtn) %>
   <div class="flex items-center gap-1.5 pt-1">
     <input type="date" 
            data-<%= identifier %>-target="rdateInput" 
@@ -37,13 +37,13 @@
   </div>
 </div>
 
-<%# 4. Шаблон для динамического создания чипсов через JS %>
+<%# 4. Template for dynamically creating chips via JS %>
 <template data-<%= identifier %>-target="rdateTemplate">
   <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border bg-emerald-50 text-emerald-700 border-emerald-200" data-rdate-value="VALUE">
     <button type="button" 
             data-action="click-><%= identifier %>#removeRdate" 
             class="hover:opacity-75 transition-opacity pr-0.5" 
-            title="<%= t('recurrence_ui.actions.remove', default: 'Удалить') %>">✕</button>
+            title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>">✕</button>
     <span>LABEL</span>
   </span>
 </template>

@@ -1,10 +1,11 @@
 <%# app/views/recurrence_ui/_monthly_by_day_of_month.html.erb %>
+<%# Block of options for monthly recurrence by day of month %>
 <% selected_days_for_monthly = local_assigns.fetch(:selected_days_for_monthly, {}) %>
 <div class="space-y-4">
   <div class="flex items-center space-x-2 mb-3">
     <span class="text-gray-700"><%= t("recurrence_ui.every") %></span>
     
-    <%# 1. ИНПУТ ИНТЕРВАЛА: добавляем событие input->identifier#onCardInputChanged %>
+    <%# 1. Input Interval %>
     <%= number_field_tag nil, rec_ui.initial_interval, 
           min: 1, 
           class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
@@ -29,7 +30,7 @@
             <% (1..31).each do |day| %>
                 <% is_selected = selected_days_for_monthly.to_a.include?(day) %> 
                 
-                <%# 2. КНОПКИ ДНЕЙ: вызываем toggleDay (внутри которого теперь вызывается updateCardSummary) %>
+                <%# 2. Day Buttons %>
                 <button type="button" 
                         class="w-full py-2 rounded-md flex items-center justify-center text-xs font-medium border transition-all
                            bg-white text-gray-700 border-gray-300 hover:bg-blue-50

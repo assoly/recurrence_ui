@@ -1,0 +1,229 @@
+uk:
+  recurrence_ui:
+    actions:
+      add_rule: Додати правило
+      apply_code: Застосувати код
+      cancel: Скасувати
+      code_mode: Редагувати код
+      done: Готово
+      remove: Видалити
+      save: OK
+    add_exception: Додати виняток
+    count_label:
+      one: "%{count} раз"
+      few: "%{count} рази"
+      many: "%{count} разів"
+      other: "%{count} рази"
+    date:
+      abbr_day_names:
+      - нд
+      - пн
+      - вт
+      - ср
+      - чт
+      - пт
+      - сб
+      formats:
+        day_month_format: "%-d %B"
+        default: "%d.%m.%Y"
+        long: "%-d %B %Y"
+        month_year: "%B %Y р."
+        month_year_header: "%B %Y"
+        recurrence_date: "%-d %B %Y р."
+        short: "%d %b"
+        year_month_day_weekday: "%-d %B %Y року, %A"
+      month_names:
+      -
+      - січня
+      - лютого
+      - березня
+      - квітня
+      - травня
+      - червня
+      - липня
+      - серпня
+      - вересня
+      - жовтня
+      - листопада
+      - грудня
+      standalone_month_names:
+      -
+      - січень
+      - лютий
+      - березень
+      - квітень
+      - травень
+      - червень
+      - липень
+      - серпень
+      - вересень
+      - жовтень
+      - листопад
+      - грудень
+    days_of_month_fmt: "%{list} числа"
+    debug_hint: Підсумковий JSON для IceCube. Ви можете редагувати його безпосередньо для тестування!
+    enter_exception_dates: Введіть дати винятків
+    every: Кожен
+    every_week: Кожен
+    in_month_names_yearly:
+    -
+    - січні
+    - лютому
+    - березні
+    - квітні
+    - травні
+    - червні
+    - липні
+    - серпні
+    - вересні
+    - жовтні
+    - листопаді
+    - грудні
+    interval:
+      day: день
+      month: місяць
+      week: тиждень
+      year: рік
+    labels:
+      add_exception: Додати виняток
+      add_rdate: Додати додаткову дату
+      choose_month: Оберіть місяць
+      day: день
+      editor_title: Налаштування повторення
+      except: За винятком
+      exceptions: Винятки
+      frequency: Частота
+      month: місяць
+      new_rule: Нове правило
+      one_time: Без повторення
+      raw_json: Raw JSON
+      rdates: Додаткові дати
+      select_dates: Обрати дати
+      select_nth_day: Обрати N-й день
+      termination: Завершення завдання
+      times: разів
+      week: тиждень
+      year: рік
+    last: останній
+    list:
+      last_word_connector: " і "
+      two_words_connector: " і "
+      words_connector: ", "
+    nth_names:
+      "-1": ост.
+      '1': 1-й
+      '2': 2-й
+      '3': 3-й
+      '4': 4-й
+      '5': 5-й
+      female:
+        "-1": ост.
+        '1': 1-ша
+        '2': 2-га
+        '3': 3-тя
+        '4': 4-та
+        '5': 5-та
+      male:
+        "-1": ост.
+        '1': 1-й
+        '2': 2-й
+        '3': 3-й
+        '4': 4-й
+        '5': 5-й
+      neutral:
+        "-1": ост.
+        '1': 1-ше
+        '2': 2-ге
+        '3': 3-тє
+        '4': 4-те
+        '5': 5-те
+    nth_weeks:
+      "-1": ост.
+      '1': 1-й
+      '2': 2-й
+      '3': 3-й
+      '4': 4-й
+      '5': 5-й
+    once: Одного разу
+    one_time: Без повторення
+    ordinals:
+      day_of_month:
+        one: "%{count}-го"
+        other: "%{count}-го"
+      female:
+        one: "%{count}-ша"
+        other: "%{count}-ша"
+      male:
+        one: "%{count}-й"
+        other: "%{count}-й"
+      neutral:
+        one: "%{count}-ше"
+        other: "%{count}-ше"
+      one: "%{count}-й"
+      other: "%{count}-й"
+      two: "%{count}-й"
+      weekly_interval:
+        one: "%{count}-й"
+        other: "%{count}-й"
+    summary:
+      daily:
+        one: Кожен день %{until}
+        other: Кожен %{count_f} день %{until}
+      monthly_by_day_of_month:
+        one: 'Щомісяця: %{days_of_month} %{until}'
+        other: 'Кожен %{count_f} місяць: %{days_of_month} %{until}'
+      monthly_by_weekday:
+        one: 'Щомісяця: %{weekdays} %{until}'
+        other: 'Кожен %{count_f} місяць: %{weekdays} %{until}'
+      weekly:
+        one: Щотижня по %{weekdays} %{until}
+        other: Кожен %{count_f} тиждень по %{weekdays} %{until}
+      yearly_by_day_of_month:
+        one: 'Щороку в %{month}: %{days_of_month} %{until}'
+        other: 'Кожен %{count_f} рік у %{month}: %{days_of_month} %{until}'
+      yearly_by_weekday:
+        one: 'Щороку в %{month}: %{weekdays} %{until}'
+        other: 'Кожен %{count_f} рік у %{month}: %{weekdays} %{until}'
+    termination_types:
+      count: Кількість разів
+      never: Безкінечно
+      until: До дати
+    times_label: разів
+    types:
+      daily: Щодня
+      monthly_by_day_of_month: Щомісяця (за днем місяця)
+      monthly_by_weekday: Щомісяця (за днем тижня)
+      never: Без повторення
+      weekly: Щотижня
+      yearly_by_day_of_month: Щороку (за днем місяця)
+      yearly_by_weekday: Щороку (за днем тижня)
+    units:
+      month:
+        one: місяць
+        other: місяців
+    until_label: до %{date}
+    weekdays:
+      day_names:
+      - неділя
+      - понеділок
+      - вівторок
+      - середа
+      - четвер
+      - п'ятниця
+      - субота
+      day_names_plural:
+      - неділях
+      - понеділках
+      - вівторках
+      - середах
+      - четвергах
+      - п'ятницях
+      - суботах
+      weekday_genders:
+      - female
+      - male
+      - male
+      - female
+      - male
+      - female
+      - female

@@ -1,4 +1,4 @@
-<%# Локальные переменные для удобства %>
+<%# local variables for convenience %>
 <% selected_days = local_assigns[:selected_weekly_days] || rec_ui.selected_weekly_days %>
   <div class="flex items-center space-x-2 mb-3">
     <span class="text-gray-700"><%= t("recurrence_ui.every_week") %></span>
@@ -16,11 +16,11 @@
     </span>
   </div>
 
-  <%# Сетка дней недели %>
+  <%# Grid of days of the week %>
   <div>
     <div class="grid grid-cols-7 gap-1">
       <% days_for_ui.each do |day_idx| %>
-        <%# Сокращенное название дня (Пн, Вт...) берется с учетом локали компонента %>
+        <%# Abbreviated name of the day (Mon, Tue...) is taken into account with the component's locale %>
         <% day_name = t('recurrence_ui.date.abbr_day_names')[day_idx] %>
         
         <button type="button" 

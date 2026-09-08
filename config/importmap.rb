@@ -1,3 +1,3 @@
-# config/importmap.rb внутри гема
+# config/importmap.rb in the recurrence_ui gem
 pin "recurrence_ui", to: "recurrence_ui/index.js"
 pin "recurrence_ui/recurrence_ui_controller", to: "recurrence_ui/recurrence_ui_controller.js"

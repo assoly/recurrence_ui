@@ -13,20 +13,20 @@ module RecurrenceUi
       end
     end
 
-    # 2. Подключаем importmap гема
+    # 2. Add importmap support for the gem
     initializer "recurrence_ui.importmap", before: "importmap" do |app|
       if app.config.respond_to?(:importmap)
         app.config.importmap.paths << Engine.root.join("config/importmap.rb")
       end
     end
 
-    # 3. Ассеты и прекомпиляция ТОЛЬКО нужных файлов
+    # 3. Assets and precompilation of ONLY the necessary files
     initializer "recurrence_ui.assets" do |app|
       if app.config.respond_to?(:assets)
         app.config.assets.paths << Engine.root.join("app/javascript")
         app.config.assets.paths << Engine.root.join("app/assets/stylesheets")
 
-        # Явно указываем только целевые файлы гема для прекомпиляции
+        # Add files for precompilation
         app.config.assets.precompile += %w(
           recurrence_ui/index.js
           recurrence_ui/recurrence_ui_controller.js
@@ -35,18 +35,22 @@ module RecurrenceUi
       end
     end
 
-    # 4. Локали i18n
+    # 4. i18n locales
     initializer "recurrence_ui.locales" do |app|
       config.i18n.load_path += Dir[Engine.root.join("config", "locales", "*.{rb,yml}")]
     end
 
-    # 5. Роуты для отладки в development
+    # 5. Routes for debugging in development
     initializer "recurrence_ui.append_routes" do |app|
       app.routes.append do
         if Rails.env.development?
           get '/dev/recurrence_previews', to: 'recurrence_ui/dev/recurrence_previews#index'
         end
       end
+    end
+    # Add components to the global ViewComponent / ActionView search
+    config.to_prepare do
+      ApplicationController.helper(RecurrenceUi::Engine.helpers)
     end
   end
 end

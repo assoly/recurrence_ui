@@ -1,0 +1,229 @@
+be:
+  recurrence_ui:
+    actions:
+      add_rule: Дадаць правіла
+      apply_code: Ужыць код
+      cancel: Скасаваць
+      code_mode: Рэдагаваць код
+      done: Гатова
+      remove: Выдаліць
+      save: OK
+    add_exception: Дадаць выключэнне
+    count_label:
+      one: "%{count} раз"
+      few: "%{count} разы"
+      many: "%{count} разоў"
+      other: "%{count} разы"
+    date:
+      abbr_day_names:
+      - не
+      - пн
+      - аў
+      - ср
+      - чц
+      - пт
+      - сб
+      formats:
+        day_month_format: "%-d %B"
+        default: "%d.%m.%Y"
+        long: "%-d %B %Y"
+        month_year: "%B %Y г."
+        month_year_header: "%B %Y"
+        recurrence_date: "%-d %B %Y г."
+        short: "%d %b"
+        year_month_day_weekday: "%-d %B %Y года, %A"
+      month_names:
+      -
+      - студзеня
+      - лютага
+      - сакавіка
+      - красавіка
+      - мая
+      - чэрвеня
+      - ліпеня
+      - жніўня
+      - верасня
+      - кастрычніка
+      - лістапада
+      - снежня
+      standalone_month_names:
+      -
+      - студзень
+      - люты
+      - сакавік
+      - красавік
+      - май
+      - чэрвень
+      - ліпень
+      - жнівень
+      - верасень
+      - кастрычнік
+      - лістапад
+      - снежань
+    days_of_month_fmt: "%{list} ліку"
+    debug_hint: Выніковы JSON для IceCube. Вы можаце рэдагаваць яго напрамую для тэставання!
+    enter_exception_dates: Увядзіце даты выключэнняў
+    every: Кожны
+    every_week: Кожны
+    in_month_names_yearly:
+    -
+    - студзені
+    - лютым
+    - сакавіку
+    - красавіку
+    - маі
+    - чэрвені
+    - ліпені
+    - жніўні
+    - верасні
+    - кастрычніку
+    - лістападзе
+    - снежні
+    interval:
+      day: дзень
+      month: месяц
+      week: тыдзень
+      year: год
+    labels:
+      add_exception: Дадаць выключэнне
+      add_rdate: Дадаць дадатковую дату
+      choose_month: Выберыце месяц
+      day: дзень
+      editor_title: Налада паўтарэння
+      except: Акрамя
+      exceptions: Выключэнні
+      frequency: Чакласць
+      month: месяц
+      new_rule: Новае правіла
+      one_time: Без паўтарэння
+      raw_json: Raw JSON
+      rdates: Дадатковыя даты
+      select_dates: Выбраць даты
+      select_nth_day: Выбраць N-ы дзень
+      termination: Завяршэнне задачы
+      times: раз
+      week: тыдзень
+      year: год
+    last: апошні
+    list:
+      last_word_connector: " і "
+      two_words_connector: " і "
+      words_connector: ", "
+    nth_names:
+      "-1": апошн.
+      '1': 1-ы
+      '2': 2-і
+      '3': 3-і
+      '4': 4-ы
+      '5': 5-ы
+      female:
+        "-1": апошн.
+        '1': 1-я
+        '2': 2-я
+        '3': 3-я
+        '4': 4-я
+        '5': 5-я
+      male:
+        "-1": апошн.
+        '1': 1-ы
+        '2': 2-і
+        '3': 3-і
+        '4': 4-ы
+        '5': 5-ы
+      neutral:
+        "-1": апошн.
+        '1': 1-е
+        '2': 2-е
+        '3': 3-е
+        '4': 4-е
+        '5': 5-е
+    nth_weeks:
+      "-1": апошн.
+      '1': 1-я
+      '2': 2-я
+      '3': 3-я
+      '4': 4-я
+      '5': 5-я
+    once: Аднойчы
+    one_time: Без паўтарэння
+    ordinals:
+      day_of_month:
+        one: "%{count}-га"
+        other: "%{count}-га"
+      female:
+        one: "%{count}-я"
+        other: "%{count}-я"
+      male:
+        one: "%{count}-ы"
+        other: "%{count}-ы"
+      neutral:
+        one: "%{count}-е"
+        other: "%{count}-е"
+      one: "%{count}-ы"
+      other: "%{count}-ы"
+      two: "%{count}-і"
+      weekly_interval:
+        one: "%{count}-ы"
+        other: "%{count}-ы"
+    summary:
+      daily:
+        one: Кожны дзень %{until}
+        other: Кожны %{count_f} дзень %{until}
+      monthly_by_day_of_month:
+        one: 'Кожны месяц: %{days_of_month} %{until}'
+        other: 'Кожны %{count_f} месяц: %{days_of_month} %{until}'
+      monthly_by_weekday:
+        one: 'Кожны месяц: %{weekdays} %{until}'
+        other: 'Кожны %{count_f} месяц: %{weekdays} %{until}'
+      weekly:
+        one: Кожны тыдзень па %{weekdays} %{until}
+        other: Кожны %{count_f} тыдзень па %{weekdays} %{until}
+      yearly_by_day_of_month:
+        one: 'Кожны год у %{month}: %{days_of_month} %{until}'
+        other: 'Кожны %{count_f} год у %{month}: %{days_of_month} %{until}'
+      yearly_by_weekday:
+        one: 'Кожны год у %{month}: %{weekdays} %{until}'
+        other: 'Кожны %{count_f} год у %{month}: %{weekdays} %{until}'
+    termination_types:
+      count: Колькасць разоў
+      never: Бясконца
+      until: Да даты
+    times_label: раз
+    types:
+      daily: Штодня
+      monthly_by_day_of_month: Штомесяц (па днях месяца)
+      monthly_by_weekday: Штомесяц (па днях тыдня)
+      never: Без паўтарэння
+      weekly: Штотыдзень
+      yearly_by_day_of_month: Штогод (па днях месяца)
+      yearly_by_weekday: Штогод (па днях тыдня)
+    units:
+      month:
+        one: месяц
+        other: месяцаў
+    until_label: да %{date}
+    weekdays:
+      day_names:
+      - нядзеля
+      - панядзелак
+      - аўторак
+      - серада
+      - чацвер
+      - пятніца
+      - субота
+      day_names_plural:
+      - нядзелях
+      - панядзелках
+      - аўторках
+      - серадах
+      - чацвяргах
+      - пятніцах
+      - суботах
+      weekday_genders:
+      - female
+      - male
+      - male
+      - female
+      - male
+      - female
+      - female

@@ -44,6 +44,24 @@ module RecurrenceUi
       "#{main_text}#{exceptions_text}#{rdates_text}".strip.html_safe
     end
 
+    def self.format_date(date_or_string, locale)
+      return '' if date_or_string.blank?
+
+      date = date_or_string.is_a?(String) ? Date.parse(date_or_string) : date_or_string.to_date
+
+      format_pattern = I18n.t("recurrence_ui.date.formats.recurrence_date", locale: locale, default: "%-d %B %Y")
+      month_names = I18n.t("recurrence_ui.date.month_names", locale: locale)
+      month_name = month_names[date.month] || ""
+
+      format_pattern
+        .gsub("%Y", date.year.to_s)
+        .gsub("%-m", date.month.to_s)
+        .gsub("%m", date.month.to_s.rjust(2, '0'))
+        .gsub("%-d", date.day.to_s)
+        .gsub("%d", date.day.to_s.rjust(2, '0'))
+        .gsub("%B", month_name)
+    end
+
     private
 
     # Process configuration parameters: locale, time_zone, week_start
@@ -62,25 +80,13 @@ module RecurrenceUi
       RecurrenceUi.config.resolved_week_start
     end
 
-    # Unified date formatting method in Ruby
-    def format_date(date_or_string)
-      return '' if date_or_string.blank?
-
-      date = date_or_string.is_a?(String) ? Date.parse(date_or_string) : date_or_string.to_date
-
-      # 1. Read format pattern from gem locale
-      format_pattern = I18n.t("recurrence_ui.date.formats.recurrence_date", locale: @locale)
-
-      # 2. Pass obtained strftime string to I18n.l
-      I18n.l(date, format: format_pattern, locale: @locale)
-    end
-
+  
     # Exception formatting method
     def format_exceptions
       return "" if @schedule[:exdates].blank?
 
       except_label = I18n.t("recurrence_ui.labels.exceptions", locale: @locale)
-      formatted_dates = @schedule[:exdates].map { |d| format_date(d) }
+      formatted_dates = @schedule[:exdates].map { |d| self.class.format_date(d, @locale) }
       dates_str = formatted_dates.join(", ")
 
       "<br><span class='text-muted text-sm italic'>#{except_label}: #{dates_str}</span>"
@@ -91,7 +97,7 @@ module RecurrenceUi
       return "" if @schedule[:rdates].blank?
 
       rdate_label = I18n.t("recurrence_ui.labels.rdates", locale: @locale)
-      formatted_dates = @schedule[:rdates].map { |d| format_date(d) }
+      formatted_dates = @schedule[:rdates].map { |d| self.class.format_date(d, @locale) }
       dates_str = formatted_dates.join(", ")
 
       "<br><span class='text-muted text-sm italic'>#{rdate_label}: #{dates_str}</span>"
@@ -118,7 +124,7 @@ module RecurrenceUi
         # 2. Termination (until date or count)
         # Use format_date for :until
         termination = if @hash[:until]
-                        date_str = format_date(@hash[:until])
+                        date_str = RecurrenceSummaryService.format_date(@hash[:until], @locale)
                         I18n.t("recurrence_ui.until_label", date: date_str, locale: @locale)
                       elsif @hash[:count]
                         I18n.t("recurrence_ui.count_label", count: @hash[:count], locale: @locale)
@@ -185,7 +191,7 @@ module RecurrenceUi
         end
 
         # 3. Format via ordinals (for days of month and regular intervals)
-        # Получаем правило плюрализации для числа (для английского 2 -> :two, 3 -> :few, 21 -> :one и т.д.)
+        # Get the pluralization rule for the number (for English 2 -> :two, 3 -> :few, 21 -> :one etc.)
         rule = ordinal_rule_for(number)
 
         ordinal = if gender.present?
@@ -216,12 +222,12 @@ module RecurrenceUi
       def interval_gender
         @type == :weekly ? :weekly_interval : :male
       end
-      
-      # Вспомогательный метод определения категории числительного (без привязки к языку)
+
+      # Helper method for determining the ordinal category (language-independent)
       def ordinal_rule_for(number)
         n = number.abs
         
-        # Обработка исключений 11, 12, 13 (для EN и других языков)
+        #  Handling exceptions for 11, 12, 13 (for EN and other languages)
         return :other if (11..13).cover?(n % 100)
 
         case n % 10
@@ -268,14 +274,6 @@ module RecurrenceUi
 
         list_str = formatted_dates.to_sentence(sentence_options)
         I18n.t("recurrence_ui.days_of_month_fmt", list: list_str, locale: @locale)
-      end
-
-      def format_date(date_or_string)
-        return '' if date_or_string.blank?
-
-        date = date_or_string.is_a?(String) ? Date.parse(date_or_string) : date_or_string.to_date
-        format_pattern = I18n.t("recurrence_ui.date.formats.recurrence_date", locale: @locale)
-        I18n.l(date, format: format_pattern, locale: @locale)
       end
     end
   end

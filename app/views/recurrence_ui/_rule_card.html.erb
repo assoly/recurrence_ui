@@ -1,32 +1,32 @@
 <%# app/views/recurrence_ui/_rule_card.html.erb %>
 <div data-<%= identifier %>-target="ruleCard" class="group relative py-0.5">
   
-  <%# Шапка правила: Крестик СНАЧАЛА, затем текст-ссылка %>
+  <%# Header of the rule: Cross first, then text-link %>
   <div class="flex items-center gap-2 py-0.5 cursor-pointer select-none">
     
-    <%# 1. Крестик в начале строки %>
+    <%# 1. Cross at the beginning of the line %>
     <button type="button" 
             data-action="click-><%= identifier %>#removeRule" 
-            title="<%= t('recurrence_ui.actions.remove', default: 'Удалить') %>"
+            title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>"
             class="text-slate-400 hover:text-red-600 font-normal text-xs px-1 hover:bg-slate-100 rounded transition-colors">
       ✕
     </button>
 
-    <%# 2. Текст правила (ссылка) %>
+    <%# 2. Text of the rule (link) %>
     <div class="flex-1 min-w-0" data-action="click-><%= identifier %>#toggleCardAccordion">
       <span data-item="cardSummary" 
             class="text-sm font-medium text-blue-600 hover:text-blue-800 underline underline-offset-4 decoration-dashed decoration-blue-400 hover:decoration-blue-600 transition-colors">
-        <%= t('recurrence_ui.labels.new_rule', default: 'Новое правило') %>
+        <%= t('recurrence_ui.labels.new_rule', default: 'New rule') %>
       </span>
     </div>
 
   </div>
 
-  <%# Тело аккордеона правила %>
+  <%# Body of the rule accordion %>
   <div data-<%= identifier %>-target="cardBody" class="hidden mt-1 pt-2 pb-2 pl-3 space-y-2 border-l-2 border-blue-200 bg-slate-50/50 rounded-r-md">
     <div>
       <label class="block text-xs font-medium text-slate-600 mb-1">
-        <%= t('recurrence_ui.labels.frequency', default: 'Частота') %>
+        <%= t('recurrence_ui.labels.frequency', default: 'Frequency') %>
       </label>
 
       <select data-item="ruleType" 

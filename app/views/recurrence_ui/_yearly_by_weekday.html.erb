@@ -1,7 +1,8 @@
   
 <%# app/views/recurrence_ui/_yearly_by_weekday.html.erb %>
+<%# Block of options for yearly recurrence by weekday %>
 <%# 
-  Tailwind JIT Safelist (чтобы Tailwind не вырезал стили при сборке):
+  Tailwind JIT Safelist:
   bg-blue-600 text-white border-blue-600
   bg-red-600 border-red-600
   hidden block flex items-center justify-center text-xs font-medium border transition-all
@@ -33,11 +34,11 @@
         </select>
       </div>
     <div class="space-y-1">
-    <%# Итерируемся по цифрам, которые являются ключами в YAML %>
+    <%# Iterate over the numbers that are keys in the YAML %>
     <% %w[1 2 3 4 5 -1].each do |val| %>
       <div class="grid grid-cols-8 gap-1 items-center">
         <div class="col-span-1 text-[10px] text-gray-500 uppercase font-bold text-right pr-1">
-          <%# Прямое обращение к ключу "1", "2" и т.д. %>
+          <%# Direct access to the key "1", "2" and so on %>
           <%= t("recurrence_ui.nth_names.#{val}") %>
         </div>
         
@@ -53,7 +54,7 @@
                     data-<%= identifier %>-target="nthDayBtn"
                     data-selected="<%= !!is_selected %>" 
                     data-action="click-><%= identifier %>#toggleDay">
-              <%# Важно: всегда указываем scope для дней недели, чтобы не зависеть от локали по умолчанию %>
+              <%# Important: always specify the scope for weekdays to avoid dependency on the default locale %>
               <%= t('recurrence_ui.date.abbr_day_names')[day_idx] %> 
             </button>
           <% end %>

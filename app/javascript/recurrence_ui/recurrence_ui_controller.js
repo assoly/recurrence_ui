@@ -308,77 +308,75 @@ export default class extends Controller {
     }
   }
 
-  // 2. Вспомогательный метод создания чипсов (Крестик ПЕРЕД датой, обычный шрифт)
-  _createDateChip(dateString, type) {
-    const isException = type === 'exception'
-    
-    // Цветовые гаммы:
-    // Исключения: Красный фон (bg-red-50 text-red-700 border-red-200)
-    // Дополнения: Зелёный фон (bg-emerald-50 text-emerald-700 border-emerald-200)
-    const bgClass = isException 
-      ? 'bg-red-50 text-red-700 border-red-200' 
-      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  // 2. Универсальный метод вставки из <template>
+  _addDateFromTemplate(inputTarget, containerTarget, templateTarget) {
+    if (!inputTarget || !containerTarget || !templateTarget) return
 
-    const actionMethod = isException ? 'removeExdate' : 'removeRdate'
+    const dateValue = inputTarget.value.trim()
+    if (!dateValue) return
 
-    const chip = document.createElement('span')
-    chip.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border ${bgClass}`
-    chip.dataset.date = dateString
+    // Проверка на дубликаты
+    const existingDates = Array.from(containerTarget.children).map(
+      el => el.dataset.exdateValue || el.dataset.rdateValue || el.dataset.date
+    )
+    if (existingDates.includes(dateValue)) return
 
-    // HTML: Сначала крестик (✕), затем сама дата
-    chip.innerHTML = `
-      <button type="button" 
-              data-action="click->${this.identifier}#${actionMethod}" 
-              class="hover:opacity-75 transition-opacity pr-0.5" 
-              title="Delete">✕</button>
-      <span>${this._formatDate(dateString)}</span>
-    `
+    // Подставляем данные в template
+    const html = templateTarget.innerHTML
+      .replace(/VALUE/g, dateValue)
+      .replace(/LABEL/g, this._formatDate(dateValue))
 
-    return chip
+    containerTarget.insertAdjacentHTML('beforeend', html)
+    inputTarget.value = ''
+    this.updateHiddenHash()
   }
 
-  // 3. Обработчик добавления Исключения
+  // 3. Добавление исключения (Exdate)
   addExdate(event) {
     if (event) event.preventDefault()
-    const dateValue = this.exdateInputTarget.value
-    if (!dateValue) return
-
-    const chip = this._createDateChip(dateValue, 'exception')
-    this.exdatesContainerTarget.appendChild(chip)
-
-    // Очищаем инпут и блокируем "+"
-    this.exdateInputTarget.value = ''
+    this._addDateFromTemplate(this.exdateInputTarget, this.exdatesContainerTarget, this.exdateTemplateTarget)
     if (this.hasAddExdateBtnTarget) this.addExdateBtnTarget.disabled = true
-
-    this.updateHiddenHash()
   }
 
-  // 4. Обработчик добавления Дополнительной даты
+  // 4. Добавление дополнительной даты (Rdate)
   addRdate(event) {
     if (event) event.preventDefault()
-    const dateValue = this.rdateInputTarget.value
-    if (!dateValue) return
-
-    const chip = this._createDateChip(dateValue, 'rdate')
-    this.rdatesContainerTarget.appendChild(chip)
-
-    // Очищаем инпут и блокируем "+"
-    this.rdateInputTarget.value = ''
+    this._addDateFromTemplate(this.rdateInputTarget, this.rdatesContainerTarget, this.rdateTemplateTarget)
     if (this.hasAddRdateBtnTarget) this.addRdateBtnTarget.disabled = true
-
-    this.updateHiddenHash()
   }
+
+  // 5. Заполнение секции при первичной загрузке из JSON
+  _fillDatesSection(container, template, datesArray) {
+    if (!container || !template || !datesArray) return
+    container.innerHTML = ""
+    
+    datesArray.forEach(dateValue => {
+      const html = template.innerHTML
+        .replace(/VALUE/g, dateValue)
+        .replace(/LABEL/g, this._formatDate(dateValue))
+      container.insertAdjacentHTML('beforeend', html)
+    })
+  }
+
 
   removeExdate(e) {
     e.preventDefault()
-    e.target.closest('[data-exdate-value]').remove()
-    this.updateHiddenHash()
+    const badge = e.currentTarget.closest('[data-exdate-value]')
+    console.log("Removing exdate badge:", badge)
+    if (badge) {
+      badge.remove()
+      this.updateHiddenHash()
+    }
   }
 
   removeRdate(e) {
     e.preventDefault()
-    e.target.closest('[data-rdate-value]').remove()
-    this.updateHiddenHash()
+    const badge = e.currentTarget.closest('[data-rdate-value]')
+    console.log("Removing rdate badge:", badge)
+    if (badge) {
+      badge.remove()
+      this.updateHiddenHash()
+    }
   }
 
   toggleExceptionsBlock() {

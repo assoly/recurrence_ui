@@ -1,25 +1,49 @@
 <%# app/views/recurrence_ui/_rdates.html.erb %>
-  <h4 class="text-md font-medium text-gray-700 mb-2">✅ <%= t("recurrence_ui.labels.rdates", locale: locale) %></h4>
+<div class="space-y-1.5">
+  <%# 1. Компактный заголовок %>
+  <label class="text-xs font-medium text-slate-700 flex items-center gap-1">
+    <span>✅</span> <%= t("recurrence_ui.labels.rdates", locale: locale, default: "Дополнительные даты") %>
+  </label>
 
-  <div data-<%= identifier %>-target="rdatesContainer" class="flex flex-wrap gap-2 mb-4">
-    <% rdates.each do |date_str| %>
-      <%# Рендерим начальные данные через хелпер, чтобы не дублировать верстку плашки вручную %>
-      <%= render "recurrence_ui/rdate_badge", date: date_str.to_date, identifier: identifier, rec_ui: rec_ui %>
+  <%# 2. Контейнер для зеленых чипсов (rdatesContainer) %>
+  <div data-<%= identifier %>-target="rdatesContainer" class="flex flex-wrap gap-1">
+    <% rdates.each do |rdate| %>
+      <% date_str = rdate.is_a?(Date) || rdate.is_a?(Time) ? rdate.strftime("%Y-%m-%d") : rdate.to_s %>
+      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border bg-emerald-50 text-emerald-700 border-emerald-200" data-rdate-value="<%= date_str %>">
+        <button type="button" 
+                data-action="click-><%= identifier %>#removeRdate" 
+                class="hover:opacity-75 transition-opacity pr-0.5" 
+                title="<%= t('recurrence_ui.actions.remove', default: 'Удалить') %>">✕</button>
+        <span><%= rec_ui._formatDate(date_str) rescue date_str %></span>
+      </span>
     <% end %>
   </div>
 
-  <div class="flex items-center gap-2">
+  <%# 3. Инпут и кнопка с правильными таргетами (rdatesInput, addRdateBtn) %>
+  <div class="flex items-center gap-1.5 pt-1">
     <input type="date" 
            data-<%= identifier %>-target="rdateInput" 
-           class="block w-full max-w-[200px] border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+           data-action="input-><%= identifier %>#onDateInputChange"
+           class="w-full text-xs py-1 px-2 rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
     
     <button type="button" 
+            data-<%= identifier %>-target="addRdateBtn"
             data-action="click-><%= identifier %>#addRdate" 
-            class="inline-flex items-center px-4 py-2 border border-blue-600 text-sm font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50 transition-colors">
-      <%= t("recurrence_ui.labels.add_rdate") %>
+            disabled
+            title="<%= t('recurrence_ui.actions.add_rdate', default: 'Add date') %>"
+            class="px-2 py-1 text-xs font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+      +
     </button>
   </div>
-<%# шаблон для JS %>
+</div>
+
+<%# 4. Шаблон для динамического создания чипсов через JS %>
 <template data-<%= identifier %>-target="rdateTemplate">
-  <%= render "recurrence_ui/rdate_badge", date: nil, identifier: identifier, template: true %>
+  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border bg-emerald-50 text-emerald-700 border-emerald-200" data-rdate-value="VALUE">
+    <button type="button" 
+            data-action="click-><%= identifier %>#removeRdate" 
+            class="hover:opacity-75 transition-opacity pr-0.5" 
+            title="<%= t('recurrence_ui.actions.remove', default: 'Удалить') %>">✕</button>
+    <span>LABEL</span>
+  </span>
 </template>

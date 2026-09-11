@@ -3,7 +3,7 @@ require_relative "lib/recurrence_ui/version"
 Gem::Specification.new do |spec|
   spec.name        = "recurrence_ui"
   spec.version     = RecurrenceUi::VERSION
-  spec.authors     = ["Katya German"]
+  spec.authors     = ["Katerina German"]
   spec.email       = ["assoly@gmail.com"]
   spec.homepage    = "https://github.com/assoly/recurrence_ui" 
   spec.summary     = "UI component for IceCube schedule generation in Rails."

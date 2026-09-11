@@ -1,41 +1,36 @@
-<%# app/views/recurrence_ui/_monthly_by_weekday.html.erb %>
-<%# Block of options for monthly recurrence by day of week %>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
 
-<div class="space-y-4">
-  <div class="flex items-center space-x-2 mb-3">
-    <span class="text-gray-700"><%= t("recurrence_ui.every") %></span>
+<div class="space-y-3">
+  <%# Interval Input Header %>
+  <div class="flex items-center space-x-2">
+    <span class="rui-inline-label"><%= t("recurrence_ui.labels.every") %></span>
     <%= number_field_tag nil, rec_ui.initial_interval, 
-            min: 1,  
-          class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500",
+          min: 1,  
+          class: "rui-input w-16 text-center",
           data: { item: "interval", action: "input->#{identifier}#onCardInputChanged" } %> 
-        <span class="text-gray-700">
-      <%= t("recurrence_ui.labels.month") %>
-    </span>
+    <span class="rui-inline-label"><%= t("recurrence_ui.labels.month") %></span>
   </div>
 
+  <%# Grid of Nth Days %>
   <div class="space-y-1">
-    <%# Iterating through the numbers that are keys in the YAML %>
     <% %w[1 2 3 4 5 -1].each do |val| %>
       <div class="grid grid-cols-8 gap-1 items-center">
-        <div class="col-span-1 text-[10px] text-gray-500 uppercase font-bold text-right pr-1">
-          <%# Direct access to the key "1", "2" and so on %>
+        <%# Row Label %>
+        <div class="col-span-1 text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold text-right pr-1">
           <%= t("recurrence_ui.nth_names.#{val}") %>
         </div>
         
+        <%# Day Buttons Grid %>
         <div class="col-span-7 grid grid-cols-7 gap-1">
           <% days_for_ui.each do |day_idx| %>
             <% is_selected = selected_nth_days[val.to_s]&.include?(day_idx) %>
             <button type="button" 
-                    class="w-full py-2 rounded-md flex items-center justify-center text-xs font-medium border transition-all
-                           bg-white text-gray-700 border-gray-300 hover:bg-blue-50
-                           data-[selected='true']:bg-blue-600 data-[selected='true']:text-white data-[selected='true']:border-blue-600"
+                    class="rui-day-btn"
                     data-nth="<%= val %>"
                     data-day="<%= day_idx %>"
                     data-<%= identifier %>-target="nthDayBtn"
                     data-selected="<%= !!is_selected %>" 
                     data-action="click-><%= identifier %>#toggleDay">
-              <%# Important: always specify the scope for days of the week to avoid dependency on the default locale %>
               <%= t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
             </button>
           <% end %>

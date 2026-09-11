@@ -1,36 +1,37 @@
-<%# app/views/recurrence_ui/_termination.html.erb %>
-<%# Termination block for the recurrence rule %>
-<div class="border-t border-gray-100 pt-4">
-  <label class="block text-sm font-semibold text-gray-700 mb-3">
-    <%= t("recurrence_ui.labels.termination", default: "Ends") %>
+<div class="rui-divider pt-3">
+  <label class="rui-label mb-2">
+    <%= t("recurrence_ui.labels.termination") %>
   </label>
   
-  <div class="flex flex-wrap items-center gap-3">
+  <div class="flex flex-wrap items-center gap-2">
+    <%# Termination Type Selector %>
     <%= select_tag :end_type, 
         options_for_select([
-          [t("recurrence_ui.termination_types.never", default: "Never"), 'never'], 
-          [t("recurrence_ui.termination_types.until", default: "On date"), 'until'], 
-          [t("recurrence_ui.termination_types.count", default: "After number of times"), 'count']
+          [t("recurrence_ui.termination_types.never"), 'never'], 
+          [t("recurrence_ui.termination_types.until"), 'until'], 
+          [t("recurrence_ui.termination_types.count"), 'count']
         ]), 
-        class: "text-sm rounded-md border-gray-300", 
+        class: "rui-select", 
         data: { 
           item: "endType", 
           action: "change->#{identifier}#toggleEndFields" 
         } 
     %>
     
+    <%# Specific Date Input %>
     <input type="date" 
-           class="hidden text-sm rounded-md border-gray-300" 
+           class="rui-input hidden text-xs" 
            data-item="endDateInput" 
            data-action="change-><%= identifier %>#onCardInputChanged">
     
+    <%# Count Input Field %>
     <div data-item="endCount" class="hidden flex items-center gap-2">
       <input type="number" min="1" placeholder="10" 
-             class="w-20 text-sm rounded-md border-gray-300" 
+             class="rui-input w-20 text-xs" 
              data-item="endCountInput" 
              data-action="input-><%= identifier %>#onCardInputChanged">
-      <span class="text-xs text-gray-500 uppercase font-bold">
-        <%= t("recurrence_ui.labels.times", default: "times") %>
+      <span class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">
+        <%= t("recurrence_ui.labels.times") %>
       </span>
     </div>
   </div>

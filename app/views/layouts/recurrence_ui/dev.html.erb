@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full">
 <head>
   <meta charset="utf-8">
   <title>Recurrence UI Dev Previews</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
-  <!-- Подключение Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <%# 1. Подключаем скомпилированный файл стилей Tailwind v4 / гема %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
 
-  <!-- Подключение JS-модулей -->
+  <%# 2. Подключение JS-модулей %>
   <% if respond_to?(:javascript_importmap_tags) && Rails.application.config.respond_to?(:importmap) %>
     <%= javascript_importmap_tags %>
   <% else %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module", defer: true %>
   <% end %>
 </head>
-<body class="bg-gray-100 p-8">
+
+<body class="bg-gray-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 antialiased p-8 transition-colors min-h-screen">
   <div class="max-w-7xl mx-auto">
     <%= yield %>
   </div>

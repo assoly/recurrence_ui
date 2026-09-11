@@ -1,97 +1,93 @@
-<%# app/components/recurrence_ui/picker_component.html.erb %>
+<%# Main Component Container - Outer borders removed as requested %>
 <% I18n.with_locale(locale) do %>
   <div class="hidden bg-blue-600 text-white border-blue-600"></div>
+  
   <div data-controller="<%= identifier %>" 
        data-<%= identifier %>-time-zone-value="<%= time_zone %>"
        data-<%= identifier %>-translations-value="<%= t('recurrence_ui', locale: locale).to_json %>"
        data-<%= identifier %>-locale-value="<%= locale %>"
        data-<%= identifier %>-selected-class="bg-blue-600 text-white border-blue-600"
-       class="space-y-3 p-3 bg-white border border-gray-200 rounded-xl shadow-sm">  
+       class="rui-container">  
 
-    <%# 1. Summary Link (Level U1 ) %>
+    <%# 1. Summary Link Header %>
     <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
 
-    <%# 2. Edit Mode Container (Level U2 ) %>
+    <%# 2. Main Edit Mode Panel %>
     <div data-<%= identifier %>-target="editMode" class="hidden space-y-3">  
       
-      <%# Header for edit mode  %>
-      <div class="flex items-center justify-between pb-2 border-b border-gray-100">
-        <span class="text-xs font-semibold text-gray-700">
-          <%= t('recurrence_ui.labels.editor_title', default: 'Recurrence') %>
+      <%# Header bar with Code Editor toggle %>
+      <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-800">
+        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">
+          <%= t('recurrence_ui.labels.editor_title') %>
         </span>
-        <%# Edit mode toggle button %>
         <button type="button" 
                 data-action="click-><%= identifier %>#toggleCodeEditor" 
-                title="<%= t('recurrence_ui.actions.code_mode', default: 'Edit Code') %>"
-                class="px-1.5 py-0.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors font-mono text-[11px] font-bold border border-gray-200">
+                title="<%= t('recurrence_ui.actions.code_mode') %>"
+                class="rui-btn-secondary font-mono text-[11px] px-1.5 py-0.5">
           &lt;/&gt;
         </button>
       </div>
 
-      <%# A. Visual rule editor %>
+      <%# A. Visual Rule Editor Section %>
       <div data-<%= identifier %>-target="visualEditor" class="space-y-3">
-        
-        <%# Section for recurrence rules without unnecessary headers and with minimal spacing space-y-0.5 %>
         <div class="space-y-1">
-          <%# Container for dynamic rule cards %>
-          <div data-<%= identifier %>-target="rulesContainer" class="space-y-0.5"></div>
+          <%# Dynamic Rule Cards Container %>
+          <div data-<%= identifier %>-target="rulesContainer" class="space-y-2"></div>
 
-          <%# Button to add a new rule %>
+          <%# Add Rule Action Button %>
           <div class="pt-1">
             <button type="button" 
                     data-action="click-><%= identifier %>#addRule" 
-                    class="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-800 gap-1">
-              <span>+</span> <%= t('recurrence_ui.actions.add_rule', default: 'Add rule') %>
+                    class="inline-flex items-center text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline gap-1">
+              <span>+</span> <%= t('recurrence_ui.actions.add_rule') %>
             </button>
           </div>
         </div>
 
-        <%# Grid of 2 columns for Exceptions and Additional Dates %>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-gray-100 mt-2">
-          <%# Section for Exceptions (Red) %>
+        <%# Exceptions & Additional Dates Grid %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 rui-divider">
           <div data-<%= identifier %>-target="exceptionsBlock" class="hidden">
             <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
           </div>  
           
-          <%# Section for Additional Dates (Green) %>
           <div data-<%= identifier %>-target="rdatesBlock" class="hidden">
             <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
           </div>
         </div>
 
-        <%# Bottom action panel (Save/OK/Cancel) %>
-        <div class="pt-2 border-t border-gray-100">
+        <%# Bottom Action Bar %>
+        <div class="pt-2 rui-divider">
           <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
         </div>
       </div>
 
-      <%# B. Isolated code editing panel (Hidden by default) %>
+      <%# B. Raw JSON / Code Editor Panel %>
       <div data-<%= identifier %>-target="codeEditor" class="hidden space-y-3">
         <div>
-          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-            <%= t('recurrence_ui.labels.raw_json', default: 'Raw JSON') %>
+          <label class="rui-label">
+            <%= t('recurrence_ui.labels.raw_json') %>
           </label>
           <textarea data-<%= identifier %>-target="iceCubeField" 
                     rows="6" 
-                    class="block w-full font-mono text-xs p-2.5 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-900 text-green-400"></textarea>
+                    class="rui-textarea font-mono text-xs w-full bg-gray-900 text-green-400 dark:bg-black dark:text-green-300"></textarea>
         </div>
         <div class="flex items-center justify-end space-x-2">
           <button type="button" 
                   data-action="click-><%= identifier %>#toggleCodeEditor" 
-                  class="px-2.5 py-1 text-xs font-medium text-gray-600 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-md">
-            <%= t('recurrence_ui.actions.cancel', default: 'Cancel') %>
+                  class="rui-btn-secondary">
+            <%= t('recurrence_ui.actions.cancel') %>
           </button>
           <button type="button" 
                   data-action="click-><%= identifier %>#applyCodeChanges" 
-                  class="px-2.5 py-1 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm">
-            <%= t('recurrence_ui.actions.apply_code', default: 'Apply Code') %>
+                  class="rui-btn-primary">
+            <%= t('recurrence_ui.actions.apply_code') %>
           </button>
         </div>
       </div>
 
     </div>
 
-    <%# Template for rule card for dynamic spawn-generation via JS %>
+    <%# Rule Card Template for Dynamic JS Spawning %>
     <template data-<%= identifier %>-target="ruleCardTemplate">
       <%= render "recurrence_ui/rule_card", 
                  form: form, 
@@ -101,7 +97,7 @@
                  rule_options: rule_options %>
     </template>
 
-    <%# Actual hidden form field for Rails %>
+    <%# Hidden Form Field for Rails submission %>
     <%= form.hidden_field field_name, value: rules_json, data: { "#{identifier}_target": "hiddenField" } %>
   </div>
 <% end %>

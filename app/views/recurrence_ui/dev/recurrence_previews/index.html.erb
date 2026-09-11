@@ -10,10 +10,17 @@
   <%= csp_meta_tag %>
   
   <%# Include application styles and javascript %>
-  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+<%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+<%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
 </head>
-<body class="bg-gray-50 text-slate-800 antialiased p-8">
+<body class="bg-gray-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 antialiased p-8 transition-colors">
+<!-- Floating Theme Toggle Button for Testing -->
+<button type="button" 
+        onclick="document.documentElement.classList.toggle('dark')" 
+        class="fixed top-4 right-4 z-50 px-3 py-2 text-xs font-semibold rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700 shadow-md hover:opacity-80 transition-all cursor-pointer flex items-center gap-2">
+  <span>🌙 / ☀️</span>
+  <span>Toggle Theme</span>
+</button>
 <div class="max-w-7xl mx-auto space-y-12">
 
   <!-- TOP HEADER & LOCALE SWITCHER -->
@@ -22,7 +29,14 @@
       <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Recurrence UI Debug & Parity Dashboard</h1>
       <p class="text-sm text-slate-500 mt-1">Development environment for testing multi-rule schedules, locale fallback, and JS/Ruby output parity.</p>
     </div>
-
+        <div>
+        <!-- Переключатель темы -->
+      <button type="button" 
+              onclick="document.documentElement.classList.toggle('dark')" 
+              class="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700 transition-colors">
+        🌙 / ☀️ Switch Dark/Light Mode
+      </button>
+        </div>
     <!-- Locale Switcher for Supported Locales -->
     <div class="flex items-center space-x-2 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
       <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-2">Locale:</span>
@@ -50,52 +64,54 @@
     </p>
   </section>
 
-  <!-- SECTION 2: FORM TESTING -->
-  <section class="p-6 bg-white rounded-xl border border-slate-200 shadow-sm font-sans space-y-6">
-    <div class="border-b border-slate-100 pb-4 flex justify-between items-center">
+<!-- SECTION 2: FORM TESTING -->
+  <section class="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm font-sans space-y-6 transition-colors">
+    <div class="border-b border-slate-100 dark:border-slate-800 pb-4 flex justify-between items-center">
       <div>
-        <h2 class="text-xl font-bold text-slate-800">2. Interactive Form & Picker Component Testing</h2>
-        <p class="text-xs text-slate-500">Component rendered directly via <code>RecurrenceUi::PickerComponent.new(record: @event)</code></p>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">2. Interactive Form & Picker Component Testing</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Component rendered directly via <code>RecurrenceUi::PickerComponent.new(record: @event)</code></p>
       </div>
-      <span class="px-2.5 py-1 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full">Active Record Form Integration</span>
+      <span class="px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-300 text-emerald-800 rounded-full">Active Record Form Integration</span>
     </div>
 
     <% component = RecurrenceUi::PickerComponent.new(record: @event) %>
 
     <!-- Recurrence Summary Banner -->
-    <div class="p-4 bg-indigo-50/60 rounded-lg border border-indigo-100">
-      <strong class="block text-xs font-semibold text-indigo-900 uppercase tracking-wider mb-1">
+    <div class="p-4 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-lg border border-indigo-100 dark:border-indigo-900/50">
+      <strong class="block text-xs font-semibold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider mb-1">
         Current Recurrence Summary (Resolved Locale: <%= component.locale %>):
       </strong>
-      <span class="text-sm font-medium text-indigo-950">
+      <span class="text-sm font-medium text-indigo-950 dark:text-indigo-200">
         <%= component.recurrence_summary.presence || "No rules configured" %>
       </span>
     </div>
 
     <!-- Event Card & UI Picker Component -->
-    <div id="<%= dom_id(@event) %>" class="w-full space-y-5 p-5 border border-slate-200 rounded-lg bg-slate-50/50">
+    <div id="<%= dom_id(@event) %>" class="w-full space-y-5 p-5 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50/50 dark:bg-slate-950/50">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <strong class="block text-xs text-slate-500 mb-1">Title:</strong>
-          <div class="text-sm font-semibold text-slate-800"><%= @event.title %></div>
+          <strong class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Title:</strong>
+          <div class="text-sm font-semibold text-slate-800 dark:text-slate-200"><%= @event.title %></div>
         </div>
         
         <div>
-          <strong class="block text-xs text-slate-500 mb-1">Description:</strong>
-          <div class="text-sm text-slate-700"><%= @event.description %></div>
+          <strong class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Description:</strong>
+          <div class="text-sm text-slate-700 dark:text-slate-300"><%= @event.description %></div>
         </div>
       </div>
 
       <div>
-        <strong class="block text-xs text-slate-500 mb-1">Recurring Rules Payload (Raw JSON Hash):</strong>
+        <strong class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Recurring Rules Payload (Raw JSON Hash):</strong>
         <code class="block p-3 bg-slate-900 text-emerald-400 rounded-lg text-xs font-mono overflow-x-auto">
           <%= @event.recurring_rules.to_json %>
         </code>
       </div>
 
       <div>
-        <strong class="block text-xs text-slate-500 mb-2">Rendered Picker Component:</strong>
-        <div class="bg-white p-5 border border-slate-200 rounded-lg shadow-sm">
+        <strong class="block text-xs text-slate-500 dark:text-slate-400 mb-2">Rendered Picker Component:</strong>
+        
+        <!-- Обертка компонента с тёмным фоном -->
+        <div class="bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm">
           <%= render component %>
         </div>
       </div>

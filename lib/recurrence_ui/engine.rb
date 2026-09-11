@@ -25,6 +25,7 @@ module RecurrenceUi
       if app.config.respond_to?(:assets)
         app.config.assets.paths << Engine.root.join("app/javascript")
         app.config.assets.paths << Engine.root.join("app/assets/stylesheets")
+        app.config.assets.precompile += %w( recurrence_ui/application.css )
 
         # Add files for precompilation
         app.config.assets.precompile += %w(

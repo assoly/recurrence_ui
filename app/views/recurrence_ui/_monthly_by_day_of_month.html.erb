@@ -1,48 +1,46 @@
 <%# app/views/recurrence_ui/_monthly_by_day_of_month.html.erb %>
-<%# Block of options for monthly recurrence by day of month %>
+<%# Monthly Recurrence Rule Options (By Day of Month) %>
 <% selected_days_for_monthly = local_assigns.fetch(:selected_days_for_monthly, {}) %>
-<div class="space-y-4">
-  <div class="flex items-center space-x-2 mb-3">
-    <span class="text-gray-700"><%= t("recurrence_ui.every") %></span>
+
+<div class="space-y-3" data-item="specificFields" data-rule="monthly_by_day_of_month">
+  <%# Interval Input Header %>
+  <div class="flex items-center space-x-2">
+    <span class="rui-inline-label">
+      <%= t("recurrence_ui.labels.every", default: "Every") %>
+    </span>
     
-    <%# 1. Input Interval %>
     <%= number_field_tag nil, rec_ui.initial_interval, 
           min: 1, 
-          class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+          class: "rui-input w-16 text-center",
           data: { 
             item: "interval", 
             action: "input->#{identifier}#onCardInputChanged" 
           } %> 
     
-    <span class="text-gray-700">
-      <%= t("recurrence_ui.labels.month") %>
+    <span class="rui-inline-label">
+      <%= t("recurrence_ui.labels.month", count: rec_ui.initial_interval, default: "month(s)") %>
     </span>
   </div>
 
+  <%# Month Days Selection Section %>
   <div data-<%= identifier %>-target="monthlyDays">
-    <p class="text-sm font-medium text-gray-700 mb-2"><%= t("recurrence_ui.labels.select_dates") %>:</p>
+    <label class="rui-label mb-2">
+      <%= t("recurrence_ui.labels.select_dates", default: "Select dates") %>:
+    </label>
     
-      <div class="grid grid-cols-8 gap-1 items-center">
-        <div class="col-span-1 text-[10px] text-gray-500 uppercase font-bold text-right pr-1">
-          &nbsp;
-        </div>
-        <div class="col-span-7 grid grid-cols-7 gap-1">
-            <% (1..31).each do |day| %>
-                <% is_selected = selected_days_for_monthly.to_a.include?(day) %> 
-                
-                <%# 2. Day Buttons %>
-                <button type="button" 
-                        class="w-full py-2 rounded-md flex items-center justify-center text-xs font-medium border transition-all
-                           bg-white text-gray-700 border-gray-300 hover:bg-blue-50
-                           data-[selected='true']:bg-blue-600 data-[selected='true']:text-white data-[selected='true']:border-blue-600"
-                        data-day="<%= day %>"
-                        data-<%= identifier %>-target="dayButton"
-                        data-selected="<%= is_selected %>"
-                        data-action="click-><%= identifier %>#toggleDay">
-                <%= day %>
-                </button>
-            <% end %>
-        </div>
-      </div>
+    <div class="grid grid-cols-7 gap-1">
+      <% (1..31).each do |day| %>
+        <% is_selected = selected_days_for_monthly.to_a.include?(day) %> 
+        
+        <button type="button" 
+                class="rui-day-btn"
+                data-day="<%= day %>"
+                data-<%= identifier %>-target="dayButton"
+                data-selected="<%= is_selected %>"
+                data-action="click-><%= identifier %>#toggleDay">
+          <%= day %>
+        </button>
+      <% end %>
+    </div>
   </div>
 </div>

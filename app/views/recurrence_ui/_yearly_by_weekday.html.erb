@@ -1,61 +1,67 @@
-  
 <%# app/views/recurrence_ui/_yearly_by_weekday.html.erb %>
-<%# Block of options for yearly recurrence by weekday %>
-<%# 
-  Tailwind JIT Safelist:
-  bg-blue-600 text-white border-blue-600
-  bg-red-600 border-red-600
-  hidden block flex items-center justify-center text-xs font-medium border transition-all
-  bg-white text-gray-700 border-gray-300 hover:bg-blue-50
-%>
+<%# Yearly Recurrence Rule Options (By Weekday / Nth Day) %>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
-<div class="space-y-4">
-    <div class="flex items-center space-x-2 mb-3">
-        <span class="text-gray-700"><%= t("recurrence_ui.every") %></span>
-        <%= number_field_tag nil, rec_ui.initial_interval, 
-            min: 1, 
-            class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
-            data: { item: 'interval', action: "input->#{identifier}#onCardInputChanged" } %>
 
-        <span class="text-gray-700">
-          <%= t("recurrence_ui.labels.year", count: rec_ui.initial_interval) %>
-        </span>
+<div class="space-y-3" data-item="specificFields" data-rule="yearly_by_weekday">
+  <%# Interval Input Header %>
+  <div class="flex items-center space-x-2">
+    <span class="rui-inline-label">
+      <%= t("recurrence_ui.labels.every", default: "Every") %>
+    </span>
 
-    </div>
-      <div data-<%= identifier %>-target="monthSelector" class="flex items-center gap-3">
-        <label class="whitespace-nowrap text-sm font-medium text-gray-600">
-          <%= t("recurrence_ui.labels.choose_month") %>
-        </label>
-        <select data-<%= identifier %>-target="monthInput" data-item="month" data-action="change-><%= identifier %>#updateHiddenHash" class="w-full sm:w-auto rounded-md border-gray-300 py-1.5 text-sm">
-          <% (1..12).each do |m| %>
-            <% month_name = I18n.t("recurrence_ui.date.standalone_month_names", default: t("recurrence_ui.date.month_names"))[m] %>
-            <option value="<%= m %>"><%= month_name %></option>
-          <% end %>
-        </select>
-      </div>
-    <div class="space-y-1">
-    <%# Iterate over the numbers that are keys in the YAML %>
+    <%= number_field_tag nil, rec_ui.initial_interval, 
+          min: 1, 
+          class: "rui-input w-16 text-center",
+          data: { 
+            item: "interval", 
+            action: "input->#{identifier}#onCardInputChanged" 
+          } %>
+
+    <span class="rui-inline-label">
+      <%= t("recurrence_ui.labels.year", count: rec_ui.initial_interval, default: "year(s)") %>
+    </span>
+  </div>
+
+  <%# Month Selector %>
+  <div data-<%= identifier %>-target="monthSelector" class="flex items-center gap-3">
+    <label class="rui-inline-label whitespace-nowrap">
+      <%= t("recurrence_ui.labels.choose_month", default: "Choose month") %>:
+    </label>
+
+    <select data-<%= identifier %>-target="monthInput" 
+            data-item="month" 
+            data-action="change-><%= identifier %>#onCardInputChanged" 
+            class="rui-select w-full sm:w-auto">
+      <% (1..12).each do |m| %>
+        <% month_name = I18n.t("recurrence_ui.date.standalone_month_names", default: t("recurrence_ui.date.month_names"))[m] %>
+        <option value="<%= m %>"><%= month_name %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <%# Grid of Nth Days (1st, 2nd, 3rd, 4th, 5th, Last) %>
+  <div class="space-y-1">
     <% %w[1 2 3 4 5 -1].each do |val| %>
       <div class="grid grid-cols-8 gap-1 items-center">
-        <div class="col-span-1 text-[10px] text-gray-500 uppercase font-bold text-right pr-1">
-          <%# Direct access to the key "1", "2" and so on %>
-          <%= t("recurrence_ui.nth_names.#{val}") %>
+        <%# Row Label (Ordinal Name) %>
+        <div class="col-span-1 text-[10px] text-right pr-1">
+          <span class="rui-label mb-0 text-[10px] font-bold">
+            <%= t("recurrence_ui.nth_names.#{val}") %>
+          </span>
         </div>
         
+        <%# Day Buttons Grid %>
         <div class="col-span-7 grid grid-cols-7 gap-1">
           <% days_for_ui.each do |day_idx| %>
             <% is_selected = selected_nth_days[val.to_s]&.include?(day_idx) %>
             <button type="button" 
-                    class="w-full py-2 rounded-md flex items-center justify-center text-xs font-medium border transition-all
-                           bg-white text-gray-700 border-gray-300 hover:bg-blue-50
-                           data-[selected='true']:bg-blue-600 data-[selected='true']:text-white data-[selected='true']:border-blue-600"
+                    class="rui-day-btn"
                     data-nth="<%= val %>"
                     data-day="<%= day_idx %>"
                     data-<%= identifier %>-target="nthDayBtn"
                     data-selected="<%= !!is_selected %>" 
                     data-action="click-><%= identifier %>#toggleDay">
-              <%# Important: always specify the scope for weekdays to avoid dependency on the default locale %>
-              <%= t('recurrence_ui.date.abbr_day_names')[day_idx] %> 
+              <%= t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
             </button>
           <% end %>
         </div>

@@ -1,0 +1,88 @@
+/* Значения по умолчанию (Светлая тема) */
+:root {
+  --rui-bg-main: #ffffff;
+  --rui-text-main: #111827;       /* gray-900 */
+  --rui-text-muted: #6b7280;      /* gray-500 */
+  --rui-border-color: #d1d5db;    /* gray-300 */
+  
+  --rui-input-bg: #ffffff;
+  --rui-input-disabled-bg: #f3f4f6;
+
+  /* Primary (Акцентный цвет: кнопки, выбранные дни) */
+  --rui-primary-bg: #2563eb;      /* blue-600 */
+  --rui-primary-hover: #1d4ed8;   /* blue-700 */
+  --rui-primary-active: #1e40af;  /* blue-800 */
+  --rui-primary-text: #ffffff;
+
+  /* Secondary (Второстепенные кнопки) */
+  --rui-secondary-bg: #f3f4f6;    /* gray-100 */
+  --rui-secondary-hover: #e5e7eb; /* gray-200 */
+  --rui-secondary-text: #374151;  /* gray-700 */
+  --rui-secondary-border: #d1d5db;
+
+  /* Hover эффекты для интерактивных элементов */
+  --rui-hover-bg-soft: #eff6ff;   /* blue-50 */
+}
+
+/* Автоматический тёмный режим (системный или класс .dark) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-rui-theme="light"]) {
+    --rui-bg-main: #eff6ff;       /* gray-800 */
+    --rui-text-main: #f9fafb;      /* gray-100 */
+    --rui-text-muted: #9ca3af;     /* gray-400 */
+    --rui-border-color: #374151;   /* gray-700 */
+    
+    --rui-input-bg: #1f2937;
+    --rui-input-disabled-bg: #111827;
+
+    --rui-primary-bg: #3b82f6;     /* blue-500 */
+    --rui-primary-hover: #2563eb;
+    
+    --rui-secondary-bg: #1f2937;
+    --rui-secondary-hover: #374151;
+    --rui-secondary-text: #e5e7eb;
+    --rui-secondary-border: #4b5563;
+
+    --rui-hover-bg-soft: #374151;  /* gray-700 */
+  }
+}
+
+/* Если в приложении добавлен класс .dark на <html> или атрибут data-rui-theme="dark" */
+.dark, [data-rui-theme="dark"] {
+  --rui-bg-main: #1f2937;
+  --rui-text-main: #f9fafb;
+  --rui-text-muted: #9ca3af;
+  --rui-border-color: #374151;
+  
+  --rui-input-bg: #1f2937;
+  --rui-input-disabled-bg: #111827;
+
+  --rui-primary-bg: #3b82f6;
+  --rui-primary-hover: #2563eb;
+  
+  --rui-secondary-bg: #1f2937;
+  --rui-secondary-hover: #374151;
+  --rui-secondary-text: #e5e7eb;
+  --rui-secondary-border: #4b5563;
+
+  --rui-hover-bg-soft: #374151;
+}
+
+/* Принудительный режим "Только светлая тема" */
+[data-rui-theme="light"] {
+  --rui-bg-main: #ffffff;
+  --rui-text-main: #111827;
+  --rui-text-muted: #6b7280;
+  --rui-border-color: #d1d5db;
+  --rui-input-bg: #ffffff;
+  --rui-input-disabled-bg: #f3f4f6;
+  --rui-primary-bg: #2563eb;
+  --rui-primary-hover: #1d4ed8;
+  --rui-primary-active: #1e40af;
+  --rui-primary-text: #ffffff;
+  --rui-secondary-bg: #f3f4f6;
+  --rui-secondary-hover: #e5e7eb;
+  --rui-secondary-text: #374151;
+  --rui-secondary-border: #d1d5db;
+  --rui-hover-bg-soft: #eff6ff;
+}

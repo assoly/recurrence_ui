@@ -1,15 +1,17 @@
 <%# app/views/recurrence_ui/_footer_actions.html.erb %>
-
-<%# Edit Mode Actions %>
-<div class="flex justify-end space-x-3 mt-4 pt-3 border-t border-gray-200">
+<%# Footer Action Buttons (Cancel / Save) %>
+<div class="rui-divider flex justify-end gap-2 pt-3 mt-3">
+  <%# Cancel Editing Button %>
   <button type="button" 
           data-action="click-><%= identifier %>#cancelEdit" 
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+          class="rui-btn rui-btn--secondary">
     <%= t("recurrence_ui.actions.cancel", default: "Cancel") %>
   </button>
+
+  <%# Save/Apply Changes Button %>
   <button type="button" 
           data-action="click-><%= identifier %>#saveRule" 
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700">
+          class="rui-btn rui-btn--primary">
     <%= t("recurrence_ui.actions.save", default: "OK") %>
   </button>
 </div>

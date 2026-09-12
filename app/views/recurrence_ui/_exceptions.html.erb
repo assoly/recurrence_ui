@@ -1,46 +1,50 @@
 <%# app/views/recurrence_ui/_exceptions.html.erb %>
+<%# Excluded Dates (EXDATES) Section %>
 <div class="space-y-1.5">
-  <label class="text-xs font-medium text-slate-700 flex items-center gap-1">
-    <span>🚫</span> <%= t("recurrence_ui.labels.exceptions", locale: locale, default: "Исключения") %>
+  <%# 1. Section Label %>
+  <label class="rui-label flex items-center gap-1">
+    <span>🚫</span> <%= t("recurrence_ui.labels.exceptions", locale: locale, default: "Exceptions") %>
   </label>
 
+  <%# 2. Container for EXDATE Chips %>
   <div data-<%= identifier %>-target="exdatesContainer" class="flex flex-wrap gap-1">
     <% exdates.each do |exdate| %>
       <% date_str = exdate.is_a?(Date) || exdate.is_a?(Time) ? exdate.strftime("%Y-%m-%d") : exdate.to_s %>
-      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border bg-red-50 text-red-700 border-red-200" data-exdate-value="<%= date_str %>">
+      <span class="rui-chip rui-chip--exdate" data-exdate-value="<%= date_str %>">
         <button type="button" 
                 data-action="click-><%= identifier %>#removeExdate" 
-                class="hover:opacity-75 transition-opacity pr-0.5" 
-                title="<%= t('recurrence_ui.actions.remove', default: 'Удалить') %>">✕</button>
+                class="rui-chip__remove-btn" 
+                title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>">✕</button>
         <span><%= rec_ui._formatDate(date_str) rescue date_str %></span>
       </span>
     <% end %>
   </div>
 
+  <%# 3. Date Input and Add Button %>
   <div class="flex items-center gap-1.5 pt-1">
     <input type="date" 
            data-<%= identifier %>-target="exdateInput" 
            data-action="input-><%= identifier %>#onDateInputChange"
-           class="w-full text-xs py-1 px-2 rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+           class="rui-input w-full text-xs py-1 px-2">
     
     <button type="button" 
             data-<%= identifier %>-target="addExdateBtn"
             data-action="click-><%= identifier %>#addExdate" 
             disabled
-            title="<%= t('recurrence_ui.actions.add_exdate', default: 'Добавить исключение') %>"
-            class="px-2 py-1 text-xs font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+            title="<%= t('recurrence_ui.actions.add_exdate', default: 'Add exception') %>"
+            class="rui-btn rui-btn--primary px-2 py-1 text-xs font-bold">
       +
     </button>
   </div>
 </div>
 
-<%# Template for exdate items, which will be used to customize the developer %>
+<%# 4. Template for Dynamically Generated EXDATE Chips via JS %>
 <template data-<%= identifier %>-target="exdateTemplate">
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border bg-red-50 text-red-700 border-red-200" data-exdate-value="VALUE">
+  <span class="rui-chip rui-chip--exdate" data-exdate-value="VALUE">
     <button type="button" 
             data-action="click-><%= identifier %>#removeExdate" 
-            class="hover:opacity-75 transition-opacity pr-0.5" 
+            class="rui-chip__remove-btn" 
             title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>">✕</button>
     <span>LABEL</span>
   </span>
-</template>
+</template>s

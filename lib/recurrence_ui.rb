@@ -1,7 +1,7 @@
 require "rails"
 require "view_component" 
-require "ice_cube" # непосредственно с этим гемом мы работаем, чтобы строить расписания
-require "rails-i18n" # нужен для работы с правилами разных языков (например, для японского языка)
+require "ice_cube" # This gem is used to generate recurrence rules and calculate occurrences of events based on those rules.
+require "rails-i18n" # This gem is used for internationalization and localization of the application.
 
 require "recurrence_ui/version"
 require "recurrence_ui/configuration"

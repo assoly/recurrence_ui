@@ -1,37 +1,43 @@
-<div class="rui-divider pt-3">
+<%# app/views/recurrence_ui/_termination.html.erb %>
+<%# Termination / End Condition Section for Recurrence Rules %>
+<div class="rui-divider pt-3" data-item="termination">
   <label class="rui-label mb-2">
-    <%= t("recurrence_ui.labels.termination") %>
+    <%= t("recurrence_ui.labels.termination", default: "Ends") %>
   </label>
   
   <div class="flex flex-wrap items-center gap-2">
     <%# Termination Type Selector %>
     <%= select_tag :end_type, 
         options_for_select([
-          [t("recurrence_ui.termination_types.never"), 'never'], 
-          [t("recurrence_ui.termination_types.until"), 'until'], 
-          [t("recurrence_ui.termination_types.count"), 'count']
+          [t("recurrence_ui.termination_types.never", default: "Never"), 'never'], 
+          [t("recurrence_ui.termination_types.until", default: "On date"), 'until'], 
+          [t("recurrence_ui.termination_types.count", default: "After number of times"), 'count']
         ]), 
         class: "rui-select", 
         data: { 
           item: "endType", 
-          action: "change->#{identifier}#toggleEndFields" 
+          "#{identifier}_target": "endType",
+          action: "change->#{identifier}#toggleEndFields change->#{identifier}#onCardInputChanged" 
         } 
     %>
     
-    <%# Specific Date Input %>
+    <%# Specific End Date Input %>
     <input type="date" 
            class="rui-input hidden text-xs" 
            data-item="endDateInput" 
+           data-<%= identifier %>-target="endDate"
            data-action="change-><%= identifier %>#onCardInputChanged">
     
     <%# Count Input Field %>
-    <div data-item="endCount" class="hidden flex items-center gap-2">
+    <div data-item="endCount" data-<%= identifier %>-target="endCount" class="hidden flex items-center gap-2">
       <input type="number" min="1" placeholder="10" 
              class="rui-input w-20 text-xs" 
              data-item="endCountInput" 
+             data-<%= identifier %>-target="endCountInput"
              data-action="input-><%= identifier %>#onCardInputChanged">
-      <span class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">
-        <%= t("recurrence_ui.labels.times") %>
+      
+      <span class="rui-inline-label text-xs uppercase font-semibold">
+        <%= t("recurrence_ui.labels.times", default: "times") %>
       </span>
     </div>
   </div>

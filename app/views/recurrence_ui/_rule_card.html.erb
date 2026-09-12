@@ -1,58 +1,58 @@
 <%# app/views/recurrence_ui/_rule_card.html.erb %>
 <div data-<%= identifier %>-target="ruleCard" class="group relative py-0.5">
   
-  <%# Header of the rule: Cross first, then text-link %>
-  <div class="flex items-center gap-2 py-0.5 cursor-pointer select-none">
+  <%# 1. Rule Header: Delete action & Summary Accordion Link %>
+  <div class="flex items-center gap-2 py-0.5 select-none">
     
-    <%# 1. Cross at the beginning of the line %>
+    <%# Remove Rule Button %>
     <button type="button" 
             data-action="click-><%= identifier %>#removeRule" 
             title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>"
-            class="text-slate-400 hover:text-red-600 font-normal text-xs px-1 hover:bg-slate-100 rounded transition-colors">
+            class="rui-btn-remove">
       ✕
     </button>
 
-    <%# 2. Text of the rule (link) %>
+    <%# Rule Summary Link (Toggle Accordion) %>
     <div class="flex-1 min-w-0" data-action="click-><%= identifier %>#toggleCardAccordion">
-      <span data-item="cardSummary" 
-            class="text-sm font-medium text-blue-600 hover:text-blue-800 underline underline-offset-4 decoration-dashed decoration-blue-400 hover:decoration-blue-600 transition-colors">
+      <span data-item="cardSummary" class="rui-accordion-link">
         <%= t('recurrence_ui.labels.new_rule', default: 'New rule') %>
       </span>
     </div>
 
   </div>
 
-  <%# Body of the rule accordion %>
-  <div data-<%= identifier %>-target="cardBody" class="hidden mt-1 pt-2 pb-2 pl-3 space-y-2 border-l-2 border-blue-200 bg-slate-50/50 rounded-r-md">
+  <%# 2. Rule Accordion Body %>
+  <div data-<%= identifier %>-target="cardBody" class="hidden rui-card-body">
+    
+    <%# Frequency Selector Block %>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">
-        <%= t('recurrence_ui.labels.frequency', default: 'Frequency') %>
-      </label>
-
       <select data-item="ruleType" 
               data-action="change-><%= identifier %>#toggleCardFields" 
-              class="block w-full text-xs rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              class="rui-select w-full">
         <% rule_options.each do |label, value| %>
           <option value="<%= value %>"><%= label %></option>
         <% end %>
       </select>
     </div>
 
+    <%# Dynamic Specific Rule Fields (Weekly, Monthly, etc.) %>
     <% rule_options.map(&:last).each do |rule| %>
       <div data-item="specificFields" data-rule="<%= rule %>" class="hidden">
         <%= render "recurrence_ui/#{rule}", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: rec_ui %>
       </div>
     <% end %>
 
-    <div data-item="terminationBlock" class="pt-2 border-t border-slate-200">
+    <%# Termination Settings Section %>
+    <div data-item="terminationBlock" class="pt-2">
       <%= render "recurrence_ui/termination", form: form, identifier: identifier, rec_ui: rec_ui %>
     </div>
 
+    <%# Accordion Close Action %>
     <div class="pt-0.5 text-right">
       <button type="button" 
               data-action="click-><%= identifier %>#toggleCardAccordion" 
-              class="px-2 py-0.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 rounded shadow-sm">
-        <%= t('recurrence_ui.actions.done', default: 'Готово') %>
+              class="rui-btn-secondary">
+        <%= t('recurrence_ui.actions.done', default: 'Done') %>
       </button>
     </div>
 

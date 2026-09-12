@@ -1,32 +1,36 @@
-<%# local variables for convenience %>
+<%# app/views/recurrence_ui/_weekly.html.erb %>
+<%# Weekly Recurrence Rule Options %>
 <% selected_days = local_assigns[:selected_weekly_days] || rec_ui.selected_weekly_days %>
-  <div class="flex items-center space-x-2 mb-3">
-    <span class="text-gray-700"><%= t("recurrence_ui.every_week") %></span>
+
+<div class="space-y-3" data-item="specificFields" data-rule="weekly">
+  <%# Interval Input Header %>
+  <div class="flex items-center space-x-2">
+    <span class="rui-inline-label">
+      <%= t("recurrence_ui.every_week", default: "Every") %>
+    </span>
     
     <%= number_field_tag nil, rec_ui.initial_interval, 
           min: 1, 
-          class: "w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+          class: "rui-input w-16 text-center",
           data: { 
             item: "interval",
             action: "input->#{identifier}#onCardInputChanged"
           } %> 
           
-    <span class="text-gray-700">
-      <%= t("recurrence_ui.labels.week", count: rec_ui.initial_interval) %>
+    <span class="rui-inline-label">
+      <%= t("recurrence_ui.labels.week", count: rec_ui.initial_interval, default: "week(s)") %>
     </span>
   </div>
 
-  <%# Grid of days of the week %>
+  <%# Days of Week Selection Grid %>
   <div>
     <div class="grid grid-cols-7 gap-1">
       <% days_for_ui.each do |day_idx| %>
-        <%# Abbreviated name of the day (Mon, Tue...) is taken into account with the component's locale %>
-        <% day_name = t('recurrence_ui.date.abbr_day_names')[day_idx] %>
+        <%# Abbreviated day name based on current locale %>
+        <% day_name = t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %>
         
         <button type="button" 
-                class="w-full py-2 rounded-md flex items-center justify-center text-xs font-medium border transition-all
-                       bg-white text-gray-700 border-gray-300 hover:bg-blue-50 
-                       data-[selected='true']:bg-blue-600 data-[selected='true']:text-white data-[selected='true']:border-blue-600"
+                class="rui-day-btn"
                 data-value="<%= day_idx %>" 
                 data-selected="<%= selected_days.include?(day_idx) %>"
                 data-action="click-><%= identifier %>#toggleDay" 
@@ -36,3 +40,4 @@
       <% end %>
     </div>
   </div>
+</div>

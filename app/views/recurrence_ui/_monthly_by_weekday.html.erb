@@ -1,23 +1,36 @@
+<%# app/views/recurrence_ui/_monthly_by_weekday.html.erb %>
+<%# Monthly Recurrence Rule Options (By Weekday / Nth Day) %>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
 
-<div class="space-y-3">
+<div class="space-y-3" data-item="specificFields" data-rule="monthly_by_weekday">
   <%# Interval Input Header %>
   <div class="flex items-center space-x-2">
-    <span class="rui-inline-label"><%= t("recurrence_ui.labels.every") %></span>
+    <span class="rui-inline-label">
+      <%= t("recurrence_ui.labels.every", default: "Every") %>
+    </span>
+
     <%= number_field_tag nil, rec_ui.initial_interval, 
           min: 1,  
           class: "rui-input w-16 text-center",
-          data: { item: "interval", action: "input->#{identifier}#onCardInputChanged" } %> 
-    <span class="rui-inline-label"><%= t("recurrence_ui.labels.month") %></span>
+          data: { 
+            item: "interval", 
+            action: "input->#{identifier}#onCardInputChanged" 
+          } %> 
+
+    <span class="rui-inline-label">
+      <%= t("recurrence_ui.labels.month", count: rec_ui.initial_interval, default: "month(s)") %>
+    </span>
   </div>
 
-  <%# Grid of Nth Days %>
+  <%# Grid of Nth Days (1st, 2nd, 3rd, 4th, 5th, Last) %>
   <div class="space-y-1">
     <% %w[1 2 3 4 5 -1].each do |val| %>
       <div class="grid grid-cols-8 gap-1 items-center">
-        <%# Row Label %>
-        <div class="col-span-1 text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold text-right pr-1">
-          <%= t("recurrence_ui.nth_names.#{val}") %>
+        <%# Row Label (Ordinal Name) %>
+        <div class="col-span-1 text-[10px] text-right pr-1">
+          <span class="rui-label mb-0 text-[10px] font-bold">
+            <%= t("recurrence_ui.nth_names.#{val}") %>
+          </span>
         </div>
         
         <%# Day Buttons Grid %>

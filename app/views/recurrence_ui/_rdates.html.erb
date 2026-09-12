@@ -1,48 +1,49 @@
 <%# app/views/recurrence_ui/_rdates.html.erb %>
+<%# Additional Dates (RDATES) Section %>
 <div class="space-y-1.5">
-  <%# 1. Container label %>
-  <label class="text-xs font-medium text-slate-700 flex items-center gap-1">
+  <%# 1. Section Label %>
+  <label class="rui-label flex items-center gap-1">
     <span>✅</span> <%= t("recurrence_ui.labels.rdates", locale: locale, default: "Additional Dates") %>
   </label>
 
-  <%# 2. Container for green chips (rdatesContainer) %>
+  <%# 2. Container for RDATE Chips %>
   <div data-<%= identifier %>-target="rdatesContainer" class="flex flex-wrap gap-1">
     <% rdates.each do |rdate| %>
       <% date_str = rdate.is_a?(Date) || rdate.is_a?(Time) ? rdate.strftime("%Y-%m-%d") : rdate.to_s %>
-      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border bg-emerald-50 text-emerald-700 border-emerald-200" data-rdate-value="<%= date_str %>">
+      <span class="rui-chip rui-chip--rdate" data-rdate-value="<%= date_str %>">
         <button type="button" 
                 data-action="click-><%= identifier %>#removeRdate" 
-                class="hover:opacity-75 transition-opacity pr-0.5" 
+                class="rui-chip__remove-btn" 
                 title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>">✕</button>
         <span><%= rec_ui._formatDate(date_str) rescue date_str %></span>
       </span>
     <% end %>
   </div>
 
-  <%# 3. Input and button with correct targets (rdatesInput, addRdateBtn) %>
+  <%# 3. Date Input and Add Button %>
   <div class="flex items-center gap-1.5 pt-1">
     <input type="date" 
            data-<%= identifier %>-target="rdateInput" 
            data-action="input-><%= identifier %>#onDateInputChange"
-           class="w-full text-xs py-1 px-2 rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+           class="rui-input w-full text-xs py-1 px-2">
     
     <button type="button" 
             data-<%= identifier %>-target="addRdateBtn"
             data-action="click-><%= identifier %>#addRdate" 
             disabled
             title="<%= t('recurrence_ui.actions.add_rdate', default: 'Add date') %>"
-            class="px-2 py-1 text-xs font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+            class="rui-btn rui-btn--primary px-2 py-1 text-xs font-bold">
       +
     </button>
   </div>
 </div>
 
-<%# 4. Template for dynamically creating chips via JS %>
+<%# 4. Template for Dynamically Generated RDATE Chips via JS %>
 <template data-<%= identifier %>-target="rdateTemplate">
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-normal border bg-emerald-50 text-emerald-700 border-emerald-200" data-rdate-value="VALUE">
+  <span class="rui-chip rui-chip--rdate" data-rdate-value="VALUE">
     <button type="button" 
             data-action="click-><%= identifier %>#removeRdate" 
-            class="hover:opacity-75 transition-opacity pr-0.5" 
+            class="rui-chip__remove-btn" 
             title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>">✕</button>
     <span>LABEL</span>
   </span>

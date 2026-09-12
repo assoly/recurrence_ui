@@ -16,12 +16,12 @@ module RecurrenceUi
           yearly_by_weekday
         ].freeze
 
-    attr_accessor :enabled_rule_types, :locale, :time_zone, :week_start, :supported_locales
-
+    attr_accessor :enabled_rule_types, :locale, :time_zone, :week_start, :supported_locales, :theme_mode
     def initialize
       @locale = nil
       @time_zone = nil
       @week_start = nil
+      @theme_mode = :auto     # Example: :auto (default), :light (light only), :dark (dark only)
       @supported_locales = SUPPORTED_LOCALES
       @enabled_rule_types = ALL_RULE_TYPES.dup
     end

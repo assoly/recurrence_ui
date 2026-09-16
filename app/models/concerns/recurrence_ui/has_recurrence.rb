@@ -4,90 +4,94 @@ module RecurrenceUi
     extend ActiveSupport::Concern
 
     included do
-      serialize :recurring_rules, type: Hash, coder: YAML # или JSON / JSONB
+      # It's recommended to use JSON/JSONB for storing original data types
+      serialize :recurring_rules, type: Hash, coder: YAML
     end
-  def recurring_rules=(value)
-    # 1. Если пришла строка (например, JSON от Stimulus), парсим ее
-    if value.is_a?(String) && value.present?
-      begin
-        value = JSON.parse(value)
-      rescue JSON::ParserError
-        Rails.logger.warn "Failed to parse recurring_rules JSON string."
-        value = nil
+
+    def recurring_rules=(value)
+      if value.is_a?(String) && value.present?
+        begin
+          value = JSON.parse(value)
+        rescue JSON::ParserError => e
+          Rails.logger.warn "[RecurrenceUi] Failed to parse recurring_rules JSON: #{e.message}"
+          value = nil
+        end
+      end
+
+      if value.is_a?(Hash) && value.present?
+        super(value.deep_stringify_keys)
+      else
+        super(nil)
       end
     end
 
-    # 2. Если значение является непустым хэшем, сохраняем его.
-    if value.is_a?(Hash) && value.present?
-       # Опционально: можно добавить проверку, что это валидный IceCube хэш
-       super(value) 
-    else
-       super(nil)
-    end
-  end
-  
-  # Получение правила IceCube (для генерации событий)
-  def rule
-    return nil if recurring_rules.blank? || recurring_rules == {}
+    # Returns a full IceCube::Schedule object instead of a single IceCube::Rule
+    def schedule(start_time = nil)
+      base_time = start_time || self.try(:calendar_datetime)&.to_time || Time.current
+      s = IceCube::Schedule.new(base_time)
 
-    # 1. Глубокое клонирование хэша, чтобы не менять исходные данные
-    rule_hash = recurring_rules.deep_dup 
+      return s if recurring_rules.blank?
 
-    # 2. ✅ ИСПРАВЛЕНИЕ: Конвертируем 0 -> 7 ТОЛЬКО для Monthly day_of_week
-    # Используем ключи-строки, так как YAML/JSON парсит ключи в строки
-    if rule_hash['rule_type'] == 'IceCube::MonthlyRule' && 
-       rule_hash.dig('validations', 'day_of_week').present?
-       
-       # Проходим по всем N-ым неделям (ключи "1", "2", "-1" и т.д.)
-       rule_hash['validations']['day_of_week'].each do |nth, days|
-          # Заменяем 0 на 7 в массиве дней недели
-          rule_hash['validations']['day_of_week'][nth] = days.map do |day_index|
-             # day_index должен быть числом, так как IceCube сохраняет числа
-             day_index == 0 ? 7 : day_index 
+      data = recurring_rules.deep_dup
+
+      # Support for both a single rule (legacy/simple) and a structure with rrules
+      rules_array = data['rrules'] || [data]
+
+      rules_array.each do |rule_hash|
+        next if rule_hash.blank? || !rule_hash.is_a?(Hash)
+
+        # 1. Correction 0 -> 7 for IceCube::MonthlyRule (day_of_week)
+        if rule_hash['rule_type'] == 'IceCube::MonthlyRule' &&
+           rule_hash.dig('validations', 'day_of_week').is_a?(Hash)
+          
+          rule_hash['validations']['day_of_week'].transform_values! do |days|
+            Array(days).map { |day| day.to_i == 0 ? 7 : day.to_i }
           end
-       end
-    end
-    
-    # IceCube::Rule.from_hash теперь получает скорректированный хэш
-    r = IceCube::Rule.from_hash(rule_hash)
-    # 2. ДОБАВЛЯЕМ ОГРАНИЧЕНИЕ ПО ДАТЕ
-    # Если в модели есть поле repeat_until и оно заполнено
-    if respond_to?(:repeat_until) && repeat_until.present?
-      # .end_of_day гарантирует, что задача сработает и в последний день тоже
-      r = r.until(repeat_until.to_time.end_of_day)
-    end
-    
-    r
-    rescue
-      nil
-  end
+        end
 
-  # Генерация расписания IceCube
-  def schedule(start_time = nil)
-    # start_time должен быть объектом Time или DateTime
-    base_time = start_time || self.calendar_datetime&.to_time || Time.current
-    s = IceCube::Schedule.new(base_time)
-    
-    # Если правило существует, добавляем его
-    s.add_recurrence_rule(rule) if rule.present?
-    
-    s
-  end
+        # 2. Restoration of IceCube::Rule
+        begin
+          r = IceCube::Rule.from_hash(rule_hash)
 
-  # Хелпер для вьюхи: показывает текст правила вместе с датой окончания
-  def upcoming_occurrences(limit = 5)
-    # Метод next_occurrences — это стандартный метод IceCube::Schedule
-    # Он принимает количество и время, от которого считать
-    # Начинаем поиск с 00:00:00 сегодняшнего дня
-    schedule(calendar_datetime).next_occurrences(limit, Time.current.beginning_of_day)
+          # Apply the global repeat_until attribute of the model, if it exists and is not already specified in the rule_hash
+          if respond_to?(:repeat_until) && repeat_until.present? && !rule_hash['until']
+            r = r.until(repeat_until.to_time.end_of_day)
+          end
+
+          s.add_recurrence_rule(r)
+        rescue StandardError => e
+          Rails.logger.error "[RecurrenceUi] Error building IceCube::Rule from hash: #{e.message}"
+        end
+      end
+
+      # 3. Adding exceptions (exdates) and additional dates (rdates)
+      Array(data['exdates']).each do |exdate|
+        s.add_exception_time(Time.zone.parse(exdate.to_s)) if exdate.present?
+      end
+
+      Array(data['rdates']).each do |rdate|
+        s.add_recurrence_time(Time.zone.parse(rdate.to_s)) if rdate.present?
+      end
+
+      s
+    end
+
+    # Save the rule method for backward compatibility (returns the first rule from the schedule)
+    def rule
+      schedule.recurrence_rules.first
+    end
+
+    # Next upcoming occurrences
+    def upcoming_occurrences(limit = 5, from_time = Time.current.beginning_of_day)
+      schedule.next_occurrences(limit, from_time)
+    end
+
+    # Description of the rule / schedule
+    def recurring_text
+      return I18n.t("recurrence_ui.once", default: "Once") if recurring_rules.blank?
+      
+      # IceCube::Schedule#to_s collects the textual description of the schedule
+      schedule.to_s
+    end
   end
-# Проверить нужно ли это или рудимент
-  def recurring_text
-    return I18n.t("recurrence_ui.once") if recurring_rules.blank?
-    
-    text = rule.to_s
-    # IceCube автоматически добавит "until [Date]" в to_s, если мы вызвали .until(date)
-    text
-  end
-end
 end

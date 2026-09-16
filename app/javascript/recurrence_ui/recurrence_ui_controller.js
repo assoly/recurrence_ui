@@ -416,16 +416,14 @@ export default class extends Controller {
     if (!card) return
     const summaryEl = card.querySelector('[data-item="cardSummary"]')
     if (!summaryEl) return
-
-    // Собираем хэш текущей карточки, используя ваш готовый метод
+    // Create a summary text for the card based on its current state
     const ruleHash = this._buildSingleRuleHash(card)
     
     if (!ruleHash) {
       summaryEl.textContent = this.t('labels.new_rule', { default: 'Новое правило' })
       return
     }
-
-    // Генерируем текст с помощью вашего готового метода _buildRuleSummaryText
+    // Generate a human-readable summary for the rule with _buildRuleSummaryText
     const text = this._buildRuleSummaryText(ruleHash)
     summaryEl.textContent = text || this.t('labels.new_rule', { default: 'Новое правило' })
   }
@@ -583,14 +581,12 @@ export default class extends Controller {
     }
 
     this._fillTerminationFieldsForCard(card, ruleHash)
-
-    // 1. Убеждаемся, что карточка свёрнута по умолчанию
+    // Card should be collapsed by default, so we don't show the body unless the user expands it
     const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
     if (body) {
       body.classList.add('hidden')
     }
-
-    // Обновляем текст в шапке аккордеона карточки при её загрузке из JSON
+    // Update header summary text for the card based on JSON data
     this.updateCardSummary(card)
   }
     

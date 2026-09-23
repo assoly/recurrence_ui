@@ -3,7 +3,7 @@
 <div class="space-y-1.5">
   <%# 1. Section Label %>
   <label class="rui-label flex items-center gap-1">
-    <span>✅</span> <%= t("recurrence_ui.labels.rdates", locale: locale, default: "Additional Dates") %>
+   <%= t("recurrence_ui.labels.rdates", locale: locale, default: "Additional Dates") %>
   </label>
 
   <%# 2. Container for RDATE Chips %>
@@ -32,7 +32,7 @@
             data-action="click-><%= identifier %>#addRdate" 
             disabled
             title="<%= t('recurrence_ui.actions.add_rdate', default: 'Add date') %>"
-            class="rui-btn rui-btn--primary px-2 py-1 text-xs font-bold">
+            class="rui-btn rui-btn-primary px-2 py-1 text-xs font-bold">
       +
     </button>
   </div>

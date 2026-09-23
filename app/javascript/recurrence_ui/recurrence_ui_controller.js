@@ -92,26 +92,28 @@ export default class extends Controller {
     }
   }
   toggleCardAccordion(event) {
-  if (event) event.preventDefault()
+    if (event) event.preventDefault()
 
-  // Ищем карточку относительно нажатого элемента
-  const card = event.currentTarget.closest(`[data-${this.identifier}-target="ruleCard"]`) || 
-               event.currentTarget.closest('.group')
-  if (!card) return
+    // Если кликнули по самому крестику удаления — игнорируем раскрытие аккордеона
+    if (event.target.closest('.rui-btn-remove-card')) return
 
-  const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
-  if (body) {
-    const isHidden = body.classList.contains('hidden')
-    
-    if (isHidden) {
-      body.classList.remove('hidden')
-    } else {
-      body.classList.add('hidden')
-      // Пересчитываем итоговую подпись при сворачивании[cite: 1, 2]
-      this.updateCardSummary(card)
+    const card = event.currentTarget.closest(`[data-${this.identifier}-target="ruleCard"]`)
+    if (!card) return
+
+    const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
+    if (body) {
+      const isHidden = body.classList.contains('hidden')
+      
+      if (isHidden) {
+        body.classList.remove('hidden')
+        card.classList.add('is-open') // Заголовок снизу теряет скругления и сливается с формой
+      } else {
+        body.classList.add('hidden')
+        card.classList.remove('is-open') // Возвращаем аккуратные скругления со всех сторон
+        this.updateCardSummary(card) // Обновляем подпись при сворачивании
+      }
     }
   }
-}
     // 1. Открытие/закрытие панели кода
   toggleCodeEditor(event) {
     if (event) event.preventDefault()

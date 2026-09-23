@@ -8,7 +8,7 @@
   .rui-container {
     background-color: var(--rui-bg-main);
     color: var(--rui-text-main);
-    @apply space-y-3 w-full transition-colors;
+    @apply space-y-3 w-full rounded-lg p-4 transition-colors;
   }
 
   /* Universal Input & Select Field Styles */
@@ -36,7 +36,7 @@
   /* Labels and Captions */
   .rui-label {
     color: var(--rui-text-muted);
-    @apply block text-xs font-semibold uppercase tracking-wider mb-1;
+    @apply block font-semibold tracking-wider mb-1;
   }
 
   .rui-inline-label {
@@ -51,11 +51,21 @@
     @apply px-3 py-1.5 text-xs font-medium rounded-md shadow-sm transition-colors;
   }
 
-  .rui-btn-primary:hover {
-    background-color: var(--rui-primary-hover);
-  }
+.rui-btn-primary:hover:not(:disabled) {
+  background-color: var(--rui-primary-hover);
+}
 
-  .rui-btn-primary:active {
+/* Состояние, когда дата ещё не введена */
+.rui-btn-primary:disabled {
+  background-color: var(--rui-secondary-bg);
+  color: var(--rui-text-muted);
+  border: 1px solid var(--rui-border-color);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+  .rui-btn-primary:active:not(:disabled) {
     background-color: var(--rui-primary-active);
   }
 
@@ -64,7 +74,7 @@
     background-color: var(--rui-secondary-bg);
     color: var(--rui-secondary-text);
     border-color: var(--rui-secondary-border);
-    @apply px-3 py-1.5 text-xs font-medium border rounded-md transition-colors;
+    @apply px-3 py-1.5 text-xs font-medium border rounded-lg transition-colors;
   }
 
   .rui-btn-secondary:hover {
@@ -207,5 +217,6 @@
   .rui-summary-icon {
     @apply opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-400 dark:text-gray-500;
   }
+  
 
 }

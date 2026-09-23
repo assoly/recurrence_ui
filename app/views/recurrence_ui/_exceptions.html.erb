@@ -3,7 +3,7 @@
 <div class="space-y-1.5">
   <%# 1. Section Label %>
   <label class="rui-label flex items-center gap-1">
-    <span>🚫</span> <%= t("recurrence_ui.labels.exceptions", locale: locale, default: "Exceptions") %>
+   <%= t("recurrence_ui.labels.exceptions", locale: locale, default: "Exceptions") %>
   </label>
 
   <%# 2. Container for EXDATE Chips %>
@@ -32,7 +32,7 @@
             data-action="click-><%= identifier %>#addExdate" 
             disabled
             title="<%= t('recurrence_ui.actions.add_exdate', default: 'Add exception') %>"
-            class="rui-btn rui-btn--primary px-2 py-1 text-xs font-bold">
+            class="rui-btn rui-btn-primary px-2 py-1 text-xs font-bold">
       +
     </button>
   </div>
@@ -47,4 +47,4 @@
             title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>">✕</button>
     <span>LABEL</span>
   </span>
-</template>s
+</template>

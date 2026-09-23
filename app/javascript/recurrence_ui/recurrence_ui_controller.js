@@ -80,6 +80,7 @@ export default class extends Controller {
     }
   }
   // Переключение U1 -> U2 (Раскрытие общего модуля)
+  // Toggle Main Panel Accordion Mode
   toggleMainAccordion() {
     if (!this.hasEditModeTarget) return
     const isHidden = this.editModeTarget.classList.contains('hidden')
@@ -88,13 +89,15 @@ export default class extends Controller {
       this.editModeTarget.classList.remove('hidden')
     } else {
       this.editModeTarget.classList.add('hidden')
-      this.updateSummary() // Пересчитываем итоговый текст при закрытии
+      this.updateSummary() // Recalculate summary text on close
     }
   }
+
+  // Toggle Rule Item Accordion Mode
   toggleCardAccordion(event) {
     if (event) event.preventDefault()
 
-    // Если кликнули по самому крестику удаления — игнорируем раскрытие аккордеона
+    // Ignore accordion toggle if delete button was clicked directly
     if (event.target.closest('.rui-btn-remove-card')) return
 
     const card = event.currentTarget.closest(`[data-${this.identifier}-target="ruleCard"]`)
@@ -106,11 +109,11 @@ export default class extends Controller {
       
       if (isHidden) {
         body.classList.remove('hidden')
-        card.classList.add('is-open') // Заголовок снизу теряет скругления и сливается с формой
+        card.classList.add('is-open') // Add active state class
       } else {
         body.classList.add('hidden')
-        card.classList.remove('is-open') // Возвращаем аккуратные скругления со всех сторон
-        this.updateCardSummary(card) // Обновляем подпись при сворачивании
+        card.classList.remove('is-open') // Remove active state class
+        this.updateCardSummary(card) // Update rule text on collapse
       }
     }
   }

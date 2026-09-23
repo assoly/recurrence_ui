@@ -1,23 +1,21 @@
 <%# app/views/recurrence_ui/_rule_card.html.erb %>
-<div data-<%= identifier %>-target="ruleCard" class="group relative py-0.5 w-full">
+<div data-<%= identifier %>-target="ruleCard" class="group rui-card-container w-full">
   
-  <%# 1. Rule Header: Summary Accordion Link & Delete action %>
-  <div class="flex items-center gap-2 py-0.5 select-none">
+  <%# 1. Rule Header: Card border & Clickable Area %>
+  <div class="rui-card-header" data-action="click-><%= identifier %>#toggleCardAccordion">
     
-    <%# Remove Rule Button (Крестик удаления) %>
+    <%# Full Rule Text Summary %>
+    <span data-item="cardSummary" class="rui-accordion-link">
+      <%= t('recurrence_ui.labels.new_rule', default: 'New rule') %>
+    </span>
+
+    <%# Delete Button (Positioned on the Right) %>
     <button type="button" 
             data-action="click-><%= identifier %>#removeRule" 
             title="<%= t('recurrence_ui.actions.remove', default: 'Delete') %>"
-            class="rui-btn-remove flex-shrink-0">
+            class="rui-btn-remove-card">
       ✕
     </button>
-
-    <%# Rule Summary Link (Toggle Accordion) %>
-    <div class="flex-1 min-w-0 cursor-pointer" data-action="click-><%= identifier %>#toggleCardAccordion">
-      <span data-item="cardSummary" class="rui-accordion-link truncate block">
-        <%= t('recurrence_ui.labels.new_rule', default: 'New rule') %>
-      </span>
-    </div>
 
   </div>
 
@@ -45,13 +43,12 @@
       </div>
     <% end %>
 
-
     <%# Termination Settings Section %>
-    <div data-item="terminationBlock" class="rui-divider pt-2">
+    <div data-item="terminationBlock">
       <%= render "recurrence_ui/termination", form: form, identifier: identifier, rec_ui: rec_ui %>
     </div>
 
-    <%# Accordion Close Action %>
+    <%# Accordion Close Action (Positioned on the Right) %>
     <div class="pt-1 text-right">
       <button type="button" 
               data-action="click-><%= identifier %>#toggleCardAccordion" 

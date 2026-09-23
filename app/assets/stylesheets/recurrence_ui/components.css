@@ -217,6 +217,51 @@
   .rui-summary-icon {
     @apply opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-400 dark:text-gray-500;
   }
-  
+  /* Rule Accordion Card Container */
+  .rui-card-container {
+    border: 1px solid var(--rui-border-color);
+    background-color: var(--rui-secondary-bg);
+    @apply rounded-md w-full my-1 transition-colors overflow-hidden;
+  }
+
+  /* Rule Header (Main Clickable Area & Border Header) */
+  .rui-card-header {
+    background-color: var(--rui-secondary-bg);
+    color: var(--rui-text-main);
+    @apply flex items-start justify-between w-full p-2.5 text-xs font-medium 
+           cursor-pointer select-none transition-colors;
+  }
+
+  .rui-card-header:hover {
+    background-color: var(--rui-hover-bg-soft);
+  }
+
+  /* Full Rule Summary Text (Text wraps naturally without truncating) */
+  .rui-accordion-link {
+    color: var(--rui-primary-bg);
+    @apply text-xs font-medium cursor-pointer leading-relaxed transition-colors select-none whitespace-normal break-words;
+  }
+
+  .rui-accordion-link:hover {
+    color: var(--rui-primary-hover);
+  }
+
+  /* Expanded Rule Card Body (Inside the same outer container) */
+  .rui-card-body {
+    background-color: var(--rui-bg-main);
+    border-top: 1px solid var(--rui-border-color);
+    @apply p-3 space-y-3 transition-colors;
+  }
+
+  /* Delete Rule Action Button (Positioned on the Right Top) */
+  .rui-btn-remove-card {
+    color: var(--rui-text-muted);
+    @apply text-xs px-1.5 py-0.5 rounded font-normal transition-colors ml-2 flex-shrink-0 cursor-pointer;
+  }
+
+  .rui-btn-remove-card:hover {
+    color: #dc2626; /* red-600 */
+    background-color: var(--rui-hover-bg-soft);
+  }
 
 }

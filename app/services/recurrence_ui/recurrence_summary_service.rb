@@ -29,19 +29,16 @@ module RecurrenceUi
     end
 
     def to_s
-      return I18n.t("recurrence_ui.one_time", locale: @locale) if @rrules.empty?
+      main_text = if @rrules.present?
+                    @rrules.map { |rule_hash| SingleRuleSummary.new(rule_hash, @locale).to_s }.join("; ")
+                  else
+                    I18n.t("recurrence_ui.one_time", locale: @locale)
+                  end
 
-      # Generate description for each rule in rrules and join with semicolons
-      rule_texts = @rrules.map { |rule_hash| SingleRuleSummary.new(rule_hash, @locale).to_s }
-      main_text = rule_texts.join("; ")
-
-      # 5. Exceptions (exdates)
       exceptions_text = format_exceptions
-      
-      # 6. Additions (rdates)
       rdates_text = format_rdates
-
-      "#{main_text}#{exceptions_text}#{rdates_text}".strip.html_safe
+      main_html = tag.span(main_text, class: "rui-meta-info rui-meta-info--main")           
+      "#{main_html}#{exceptions_text}#{rdates_text}".strip.html_safe    
     end
 
     def self.format_date(date_or_string, locale)
@@ -89,7 +86,7 @@ module RecurrenceUi
       formatted_dates = @schedule[:exdates].map { |d| self.class.format_date(d, @locale) }
       dates_str = formatted_dates.join(", ")
 
-      "<br><span class='text-muted text-sm italic'>#{except_label}: #{dates_str}</span>"
+      tag.span("#{except_label}: #{formatted_dates}", class: "rui-meta-info rui-meta-info--exceptions")
     end
 
     # Additions (rdates) formatting method
@@ -100,7 +97,7 @@ module RecurrenceUi
       formatted_dates = @schedule[:rdates].map { |d| self.class.format_date(d, @locale) }
       dates_str = formatted_dates.join(", ")
 
-      "<br><span class='text-muted text-sm italic'>#{rdate_label}: #{dates_str}</span>"
+      tag.span("#{rdate_label}: #{formatted_dates}", class: "rui-meta-info rui-meta-info--rdates")
     end
 
     # Inner class for formatting an individual rule (equivalent to _buildRuleSummaryText in JS)

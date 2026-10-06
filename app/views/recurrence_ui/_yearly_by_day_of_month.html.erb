@@ -9,7 +9,8 @@
       <%= t("recurrence_ui.labels.every", default: "Every") %>
     </span>
 
-    <%= number_field_tag nil, rec_ui.initial_interval, 
+    <%= number_field_tag nil, rec_ui.initial_interval,
+          value: 1, 
           min: 1, 
           class: "rui-input w-16 text-center",
           data: { 

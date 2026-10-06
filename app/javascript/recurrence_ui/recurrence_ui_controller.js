@@ -189,8 +189,17 @@ export default class extends Controller {
     const newCard = this.rulesContainerTarget.lastElementChild
     const body = newCard.querySelector(`[data-${this.identifier}-target="cardBody"]`)
     
-    // Открываем только вновь созданное правило для ввода данных
+    // Раскрываем тело новой карточки
     if (body) body.classList.remove('hidden')
+
+    // Запускаем первичную синхронизацию полей новой карточки
+    const select = newCard.querySelector('[data-item="ruleType"]')
+    if (select) {
+      this.toggleCardFields({ currentTarget: select })
+    }
+
+    this.toggleExceptionsBlock()
+    this.toggleRdatesBlock()
 
     this.updateCardSummary(newCard)
     this.updateHiddenHash()
@@ -216,11 +225,19 @@ export default class extends Controller {
     if (!card) return
 
     const selectedValue = select.value
-    // Ищем блоки по data-item="specificFields" без динамических таргетов
     const specificFields = card.querySelectorAll('[data-item="specificFields"]')
     
     specificFields.forEach(el => {
-      el.classList.toggle('hidden', el.dataset.rule !== selectedValue)
+      const isCurrent = el.dataset.rule === selectedValue
+      el.classList.toggle('hidden', !isCurrent)
+
+      // Если выбрали тип с полем (например, daily) и интервал не задан, выставляем 1 по умолчанию
+      if (isCurrent) {
+        const intervalInput = el.querySelector('[data-item="interval"]')
+        if (intervalInput && (!intervalInput.value || parseInt(intervalInput.value) < 1)) {
+          intervalInput.value = 1
+        }
+      }
     })
 
     this.updateHiddenHash()
@@ -386,14 +403,14 @@ export default class extends Controller {
 
   toggleExceptionsBlock() {
     if (!this.hasExceptionsBlockTarget) return
-    const hasRules = this.ruleCardTargets.length > 0
-    this.exceptionsBlockTarget.classList.toggle('hidden', !hasRules)
+    // Всегда показываем блок исключений в режиме редактирования U2
+    this.exceptionsBlockTarget.classList.remove('hidden')
   }
 
   toggleRdatesBlock() {
     if (!this.hasRdatesBlockTarget) return
-    const hasRules = this.ruleCardTargets.length > 0
-    this.rdatesBlockTarget.classList.toggle('hidden', !hasRules)
+    // Всегда показываем блок доп. дат в режиме редактирования U2
+    this.rdatesBlockTarget.classList.remove('hidden')
   }
 
   // ==========================================
@@ -403,20 +420,42 @@ export default class extends Controller {
   updateHiddenHash() {
     if (this.isInitializing) return
 
-    const rrules = this.ruleCardTargets.map(card => this._buildSingleRuleHash(card)).filter(Boolean)
+    // 1. Фильтруем и собираем только валидные rrules (игнорируем тип 'never' или сбойные правила)
+    const rrules = this.ruleCardTargets
+      .map(card => this._buildSingleRuleHash(card))
+      .filter(Boolean)
+
+    // 2. Извлекаем списки дат
     const exdates = this._getDatesArray(this.exdatesContainerTarget, 'exdateValue')
     const rdates = this._getDatesArray(this.rdatesContainerTarget, 'rdateValue')
 
-    const schedule = { rrules, exdates, rdates }
-    
-    // Cleanup empty arrays
-    if (schedule.exdates.length === 0) delete schedule.exdates
-    if (schedule.rdates.length === 0) delete schedule.rdates
+    // 3. Формируем итоговый объект расписания
+    const schedule = {}
 
+    // Записываем rrules только если они есть
+    if (rrules.length > 0) {
+      schedule.rrules = rrules
+    }
+
+    // Записываем exdates только если они есть
+    if (exdates.length > 0) {
+      schedule.exdates = exdates
+    }
+
+    // Записываем rdates только если они есть
+    if (rdates.length > 0) {
+      schedule.rdates = rdates
+    }
+
+    // 4. Записываем в hidden_field чистый JSON (если всё пусто — сохранится "{}" вместо пустых структур)
     this.hiddenFieldTarget.value = JSON.stringify(schedule)
+
+    // 5. Обновляем текстовую сводку и отладчик
     this.updateSummary()
     this.updateDebugField()
   }
+
+
   updateCardSummary(card) {
     if (!card) return
     const summaryEl = card.querySelector('[data-item="cardSummary"]')
@@ -443,14 +482,15 @@ export default class extends Controller {
     }
 
     const rrules = schedule.rrules || []
-    if (rrules.length === 0) {
-      this.summaryTextTarget.innerHTML = this.t('one_time')
-      return
+    let mainText = this.t('one_time')
+    
+    if (rrules.length > 0) {
+          // Build human-readable summary for each rule
+
+      const ruleTexts = rrules.map(ruleHash => this._buildRuleSummaryText(ruleHash))
+      mainText = ruleTexts.join('; ')
     }
 
-    // Build human-readable summary for each rule
-    const ruleTexts = rrules.map(ruleHash => this._buildRuleSummaryText(ruleHash))
-    let mainText = ruleTexts.join('; ')
 
     let exceptionsHtml = ""
     if (schedule.exdates && schedule.exdates.length > 0) {
@@ -460,7 +500,7 @@ export default class extends Controller {
         .map(d => this._formatDate(d))
         .join(', ')
 
-      exceptionsHtml = `<br><span class="text-muted text-sm italic">${exceptLabel}: ${formattedExdates}</span>`
+      exceptionsHtml = `<span class="rui-meta-info rui-meta-info--exceptions">${exceptLabel}: ${formattedExdates}</span>`    
     }
 
     let rdatesHtml = ""
@@ -471,10 +511,11 @@ export default class extends Controller {
         .map(d => this._formatDate(d))
         .join(', ')
 
-      rdatesHtml = `<br><span class="text-muted text-sm italic">${rdateLabel}: ${formattedRdates}</span>`
+      rdatesHtml = `<span class="rui-meta-info rui-meta-info--rdates">${rdateLabel}: ${formattedRdates}</span>`
     }
+    let mainHtml = `<span class="rui-meta-info rui-meta-info--main">${mainText}</span>`
 
-    this.summaryTextTarget.innerHTML = mainText + exceptionsHtml + rdatesHtml
+    this.summaryTextTarget.innerHTML = mainHtml + exceptionsHtml + rdatesHtml
   }
 
   // Updates the debug textarea with the current JSON from the hidden field
@@ -505,6 +546,9 @@ export default class extends Controller {
     if (!typeSelect) return null
 
     const ruleType = typeSelect.value
+    // Если выбрано "Без повторения", это правило не идет в массив rrules
+    if (ruleType === 'never' || !ruleType) return null
+
     const container = card.querySelector(`[data-item="specificFields"][data-rule="${ruleType}"]`)
     if (!container) return null
 

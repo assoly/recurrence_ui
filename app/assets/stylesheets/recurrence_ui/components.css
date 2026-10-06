@@ -263,5 +263,27 @@
     color: #dc2626; /* red-600 */
     background-color: var(--rui-hover-bg-soft);
   }
+  /* Базовый класс мета-информации */
+  .rui-meta-info {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    font-style: italic;
+  }
+
+  /* 1. Главная строка правил */
+  .rui-meta-info--main {
+    color: var(--rui-main-text-color, #1e293b);
+  }
+
+  /* 2. Блок исключений (Exdates) */
+  .rui-meta-info--exceptions {
+    color: var(--rui-exceptions-text-color, #b91c1c); /* Исключения (например, красноватый) */
+  }
+
+  /* 3. Блок дополнительных дат (Rdates) */
+  .rui-meta-info--rdates {
+    color: var(--rui-rdates-text-color, #047857); /* Доп. даты (например, изумрудный) */
+  }
 
 }

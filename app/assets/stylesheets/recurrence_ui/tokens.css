@@ -22,6 +22,10 @@
 
   /* Hover эффекты */
   --rui-hover-bg-soft: #eff6ff;   /* blue-50 */
+
+  --rui-rule-main-text: #1e293b;
+  --rui-rule-exception-text: #b91c1c;  /* red-700 */
+  --rui-rule-rdate-text: #047857;      /* emerald-700 */
 }
 
 /* 2. Автоматический тёмный режим (системный / Firefox DevTools) */
@@ -44,6 +48,9 @@
     --rui-secondary-border: #4b5563;
 
     --rui-hover-bg-soft: #374151;  /* gray-700 */
+    --rui-rule-main-text: #f8fafc;       /* slate-50 */
+    --rui-rule-exception-text: #fca5a5;  /* red-300 (мягче для глаза на темном) */
+    --rui-rule-rdate-text: #6ee7b7;      /* emerald-300 */
   }
 }
 
@@ -67,6 +74,9 @@
   --rui-secondary-border: #4b5563;
 
   --rui-hover-bg-soft: #374151;
+  --rui-rule-main-text: #f8fafc;       /* slate-50 */
+  --rui-rule-exception-text: #fca5a5;  /* red-300 (мягче для глаза на темном) */
+  --rui-rule-rdate-text: #6ee7b7;      /* emerald-300 */
 }
 
 /* 4. Принудительный режим "Только светлая тема" (высший приоритет) */
@@ -86,4 +96,7 @@
   --rui-secondary-text: #374151;
   --rui-secondary-border: #d1d5db;
   --rui-hover-bg-soft: #eff6ff;
+  --rui-rule-main-text: #1e293b;
+  --rui-rule-exception-text: #b91c1c;
+  --rui-rule-rdate-text: #047857;
 }

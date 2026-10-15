@@ -2,13 +2,15 @@
 ja:
   recurrence_ui:
     actions:
+      add_exdate: 除外日を追加
+      add_rdate: 追加日を追加
       add_rule: ルールを追加
       apply_code: コードを適用
       cancel: キャンセル
       code_mode: コードを編集
       done: 完了
       remove: 削除
-      save: OK
+      save: 保存
     add_exception: 例外を追加
     count_label:
       other: "%{count}回"
@@ -60,6 +62,13 @@ ja:
       - 12月
     days_of_month_fmt: "%{list}"
     debug_hint: 非表示フィールドの内容。テスト用に直接編集できます！
+    duration:
+      days:
+        other: "%{count}日"
+      hours:
+        other: "%{count}時間"
+      minutes:
+        other: "%{count}分"
     enter_exception_dates: 例外日を入力
     every: 毎
     every_week: 毎
@@ -87,7 +96,10 @@ ja:
       add_rdate: 追加日を追加
       choose_month: 月を選択
       day: 日
+      duration: ドュレーション
       editor_title: 繰り返しの設定
+      end_at: 終了日時
+      every: 毎
       except: 例外
       exceptions: 例外
       frequency: 頻度
@@ -98,8 +110,11 @@ ja:
       rdates: 追加日
       select_dates: 日付を選択
       select_nth_day: 曜日を指定
+      start_at: 開始日時
       termination: 終了
+      time_zone: 時刻帯
       times: 回
+      until: まで
       week: 週
       year: 年
     last: 最終

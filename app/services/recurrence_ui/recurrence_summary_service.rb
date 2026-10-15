@@ -86,7 +86,7 @@ module RecurrenceUi
       formatted_dates = @schedule[:exdates].map { |d| self.class.format_date(d, @locale) }
       dates_str = formatted_dates.join(", ")
 
-      tag.span("#{except_label}: #{formatted_dates}", class: "rui-meta-info rui-meta-info--exceptions")
+      tag.span("#{except_label}: #{dates_str}", class: "rui-meta-info rui-meta-info--exceptions")
     end
 
     # Additions (rdates) formatting method
@@ -97,7 +97,7 @@ module RecurrenceUi
       formatted_dates = @schedule[:rdates].map { |d| self.class.format_date(d, @locale) }
       dates_str = formatted_dates.join(", ")
 
-      tag.span("#{rdate_label}: #{formatted_dates}", class: "rui-meta-info rui-meta-info--rdates")
+      tag.span("#{rdate_label}: #{dates_str}", class: "rui-meta-info rui-meta-info--rdates")
     end
 
     # Inner class for formatting an individual rule (equivalent to _buildRuleSummaryText in JS)

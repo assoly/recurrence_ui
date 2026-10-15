@@ -9,15 +9,19 @@ module RecurrenceUi
       class_attribute :recurrence_start_time_field, default: RecurrenceUi.config.default_start_time_field
       class_attribute :recurrence_end_time_field, default: RecurrenceUi.config.default_end_time_field
       class_attribute :recurrence_time_zone_field, default: RecurrenceUi.config.default_time_zone_field
+      class_attribute :recurrence_duration_field, default: RecurrenceUi.config.default_duration_field
+
+      before_save     :calculate_missing_time_attributes
     end
 
     class_methods do
       # DSL-method for configuring fields in the model
-      def has_recurrence(rules: nil, start_time: nil, end_time: nil, time_zone: nil)
+      def has_recurrence(rules: nil, start_time: nil, end_time: nil, time_zone: nil, duration: nil)
         self.recurrence_rules_field      = rules      if rules.present?
         self.recurrence_start_time_field = start_time if start_time.present?
         self.recurrence_end_time_field   = end_time   if end_time.present?
         self.recurrence_time_zone_field  = time_zone  if time_zone.present?
+        self.recurrence_duration_field   = duration   if duration.present?
 
         field_name = recurrence_rules_field.to_s
 
@@ -89,13 +93,34 @@ module RecurrenceUi
       (raw_start || Time.current).in_time_zone(event_time_zone)
     end
 
-    def event_duration
-      return 0 unless self.class.recurrence_end_time_field && respond_to?(self.class.recurrence_end_time_field)
+    # Получение значения длительности из соответствующего поля модели (в секундах)
+    def current_duration_seconds
+      dur_field = self.class.recurrence_duration_field
+      if dur_field && respond_to?(dur_field)
+        val = public_send(dur_field)
+        return val.to_i if val.present? && val.to_i > 0
+      end
+      0
+    end
 
-      raw_end = public_send(self.class.recurrence_end_time_field)
-      return 0 if raw_end.blank?
+    # Красиво отформатированная длительность для вывода во вьюхе
+    def formatted_duration
+      dur = current_duration_seconds
+      return "—" if dur <= 0
 
-      (raw_end - recurrence_start_time).to_i
+      total_minutes = (dur / 60).to_i
+      return "—" if total_minutes <= 0
+
+      days = total_minutes / 1440
+      hours = (total_minutes % 1440) / 60
+      minutes = total_minutes % 60
+
+      parts = []
+      parts << I18n.t('recurrence_ui.duration.days', count: days) if days > 0
+      parts << I18n.t('recurrence_ui.duration.hours', count: hours) if hours > 0
+      parts << I18n.t('recurrence_ui.duration.minutes', count: minutes) if minutes > 0
+
+      parts.any? ? parts.join(' ') : I18n.t('recurrence_ui.duration.minutes', count: 0)
     end
 
     # --- Building IceCube::Schedule ---
@@ -104,7 +129,7 @@ module RecurrenceUi
       base_time = start_time_override || recurrence_start_time
       s = IceCube::Schedule.new(base_time)
 
-      dur = event_duration
+      dur = current_duration_seconds
       s.duration = dur if dur > 0
 
       raw_rules = recurrence_raw_rules
@@ -139,11 +164,29 @@ module RecurrenceUi
       end
 
       Array(data['exdates']).each do |exdate|
-        s.add_exception_time(event_time_zone.parse(exdate.to_s)) if exdate.present?
+        next if exdate.blank?
+        parsed_date = Date.parse(exdate.to_s) rescue nil
+        next unless parsed_date
+
+        exact_datetime = base_time.change(
+          year:  parsed_date.year,
+          month: parsed_date.month,
+          day:   parsed_date.day
+        )
+        s.add_exception_time(exact_datetime)
       end
 
       Array(data['rdates']).each do |rdate|
-        s.add_recurrence_time(event_time_zone.parse(rdate.to_s)) if rdate.present?
+        next if rdate.blank?
+        parsed_date = Date.parse(rdate.to_s) rescue nil
+        next unless parsed_date
+
+        exact_datetime = base_time.change(
+          year:  parsed_date.year,
+          month: parsed_date.month,
+          day:   parsed_date.day
+        )
+        s.add_recurrence_time(exact_datetime)
       end
 
       s
@@ -164,6 +207,29 @@ module RecurrenceUi
       return I18n.t("recurrence_ui.once", default: "Once") if recurrence_raw_rules.blank?
 
       schedule.to_s
+    end
+    private 
+    def calculate_missing_time_attributes
+      dur_field = self.class.recurrence_duration_field
+      end_field = self.class.recurrence_end_time_field
+      start_field = self.class.recurrence_start_time_field
+
+      return unless dur_field && end_field && start_field
+      return unless respond_to?(start_field) && respond_to?(end_field) && respond_to?("#{dur_field}=")
+
+      start_val = public_send(start_field)
+      end_val = public_send(end_field)
+      current_dur = respond_to?(dur_field) ? public_send(dur_field) : nil
+
+      # Если есть старт и окончание, но нет длительности — считаем длительность
+      if start_val.present? && end_val.present? && current_dur.blank?
+        calculated_dur = (end_val - start_val).to_i
+        public_send("#{dur_field}=", calculated_dur) if calculated_dur > 0
+      # Если есть старт и длительность, но нет окончания — вычисляем окончание
+      elsif start_val.present? && current_dur.present? && end_val.blank? && respond_to?("#{end_field}=")
+        calculated_end = start_val + current_dur.seconds
+        public_send("#{end_field}=", calculated_end)
+      end
     end
   end
 end

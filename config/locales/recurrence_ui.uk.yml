@@ -1,18 +1,21 @@
+---
 uk:
   recurrence_ui:
     actions:
+      add_exdate: Додати виняток
+      add_rdate: Додати дату
       add_rule: Додати правило
       apply_code: Застосувати код
       cancel: Скасувати
       code_mode: Редагувати код
       done: Готово
       remove: Видалити
-      save: OK
+      save: Зберегти
     add_exception: Додати виняток
     count_label:
-      one: "%{count} раз"
       few: "%{count} рази"
       many: "%{count} разів"
+      one: "%{count} раз"
       other: "%{count} рази"
     date:
       abbr_day_names:
@@ -62,6 +65,22 @@ uk:
       - грудень
     days_of_month_fmt: "%{list} числа"
     debug_hint: Підсумковий JSON для IceCube. Ви можете редагувати його безпосередньо для тестування!
+    duration:
+      days:
+        few: "%{count} дні"
+        many: "%{count} днів"
+        one: "%{count} день"
+        other: "%{count} дня"
+      hours:
+        few: "%{count} години"
+        many: "%{count} годин"
+        one: "%{count} година"
+        other: "%{count} години"
+      minutes:
+        few: "%{count} хвилини"
+        many: "%{count} хвилин"
+        one: "%{count} хвилина"
+        other: "%{count} хвилини"
     enter_exception_dates: Введіть дати винятків
     every: Кожен
     every_week: Кожен
@@ -89,7 +108,10 @@ uk:
       add_rdate: Додати додаткову дату
       choose_month: Оберіть місяць
       day: день
+      duration:  Тривалість одного випадку
       editor_title: Налаштування повторення
+      end_at: Час завершення одного випадку
+      every: Кожен
       except: За винятком
       exceptions: Винятки
       frequency: Частота
@@ -100,8 +122,11 @@ uk:
       rdates: Додаткові дати
       select_dates: Обрати дати
       select_nth_day: Обрати N-й день
+      start_at: Дата початку першого випадку та час одного випадку
       termination: Завершення завдання
+      time_zone: Часовий пояс
       times: разів
+      until: До
       week: тиждень
       year: рік
     last: останній

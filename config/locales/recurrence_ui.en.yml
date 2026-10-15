@@ -2,13 +2,15 @@
 en:
   recurrence_ui:
     actions:
+      add_exdate: Add exception
+      add_rdate: Add additional date
       add_rule: Add rule
       apply_code: Apply Code
       cancel: Cancel
       code_mode: Edit Code
       done: Done
       remove: Remove
-      save: OK
+      save: Save
     add_exception: Add exception
     count_label:
       one: "%{count} time"
@@ -61,6 +63,16 @@ en:
       - December
     days_of_month_fmt: the %{list}
     debug_hint: Hidden field contents. You can edit this directly for testing!
+    duration:
+      days:
+        one: "%{count} day"
+        other: "%{count} days"
+      hours:
+        one: "%{count} hour"
+        other: "%{count} hours"
+      minutes:
+        one: "%{count} minute"
+        other: "%{count} minutes"
     enter_exception_dates: Enter exception dates
     every: Every
     every_week: Every
@@ -88,7 +100,10 @@ en:
       add_rdate: Add additional date
       choose_month: Choose month
       day: Day
+      duration: Duration of one occurrence
       editor_title: Recurrence Settings
+      end_at: Ending time of one occurrence
+      every: Every
       except: Exceptions
       exceptions: Exceptions
       frequency: Frequency
@@ -99,8 +114,11 @@ en:
       rdates: Additional Dates
       select_dates: Select dates
       select_nth_day: Select N-th day
+      start_at: Start date of first occurrence and start time of one occurrence
       termination: Termination
+      time_zone: Часовой пояс
       times: times
+      until: До
       week: week
       year: year
     last: last

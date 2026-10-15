@@ -269,21 +269,22 @@
     margin-top: 0.25rem;
     font-size: 0.875rem;
     font-style: italic;
+    transition: color 0.2s ease;
   }
 
   /* 1. Главная строка правил */
   .rui-meta-info--main {
-    color: var(--rui-main-text-color, #1e293b);
+     color: var(--rui-rule-main-text);  
   }
 
   /* 2. Блок исключений (Exdates) */
   .rui-meta-info--exceptions {
-    color: var(--rui-exceptions-text-color, #b91c1c); /* Исключения (например, красноватый) */
+    color: var(--rui-rule-exception-text); /* Исключения (например, красноватый) */
   }
 
   /* 3. Блок дополнительных дат (Rdates) */
   .rui-meta-info--rdates {
-    color: var(--rui-rdates-text-color, #047857); /* Доп. даты (например, изумрудный) */
+    color: var(--rui-rule-rdate-text); /* Доп. даты (например, изумрудный) */
   }
 
 }

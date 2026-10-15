@@ -1,12 +1,11 @@
 # app/components/recurrence_ui/picker_component.rb
 module RecurrenceUi
   class PickerComponent < ViewComponent::Base
-    attr_reader :record, :field_name, :i18n_prefix, :identifier, :locale, :time_zone, :week_start, :enabled_rule_types
+    attr_reader :record, :i18n_prefix, :identifier, :locale, :time_zone, :week_start, :enabled_rule_types
 
     def initialize(
       record:,
       form: nil,
-      field_name: :recurring_rules,
       i18n_prefix: 'recurrence_ui',
       locale: nil,
       time_zone: nil,
@@ -15,7 +14,6 @@ module RecurrenceUi
     )
       @raw_form    = form
       @record      = record
-      @field_name  = field_name
       @i18n_prefix = i18n_prefix
       @identifier  = "recurrence-ui"
 
@@ -29,7 +27,13 @@ module RecurrenceUi
 
       log_configuration_details if Rails.env.development?
     end
-
+    def field_name
+      @field_name ||= if record.class.respond_to?(:recurrence_rules_field)
+        record.class.recurrence_rules_field
+      else
+        RecurrenceUi.config.default_recurring_rules_field
+      end
+    end
     def form
       @form ||= @raw_form || ActionView::Helpers::FormBuilder.new(
         record_name,
@@ -37,6 +41,21 @@ module RecurrenceUi
         helpers,
         {}
       )
+    end
+    # --- Динамические хелперы для имён полей из модели ---
+    def start_time_field
+      @start_time_field ||= record.class.respond_to?(:recurrence_start_time_field) ? record.class.recurrence_start_time_field : :start_at
+    end
+
+    def end_time_field
+      @end_time_field ||= record.class.respond_to?(:recurrence_end_time_field) ? record.class.recurrence_end_time_field : :end_at
+    end
+
+    def duration_field
+      @duration_field ||= record.class.respond_to?(:recurrence_duration_field) ? record.class.recurrence_duration_field : :duration
+    end
+    def time_zone_field
+      @time_zone_field ||= record.class.respond_to?(:recurrence_time_zone_field) ? record.class.recurrence_time_zone_field : :time_zone
     end
 
     def rules

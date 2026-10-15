@@ -2,13 +2,15 @@
 ru:
   recurrence_ui:
     actions:
+      add_exdate: Добавить исключение
+      add_rdate: Добавить дату
       add_rule: Добавить правило
       apply_code: Применить код
       cancel: Отмена
       code_mode: Редактировать код
       done: Готово
       remove: Удалить
-      save: OK
+      save: Сохранить
     add_exception: Добавить исключение
     count_label:
       few: "%{count} раза"
@@ -63,6 +65,22 @@ ru:
       - декабрь
     days_of_month_fmt: "%{list} числа"
     debug_hint: Результирующий JSON для IceCube. Вы можете редактировать его напрямую для тестирования!
+    duration:
+      days:
+        few: "%{count} дня"
+        many: "%{count} дней"
+        one: "%{count} день"
+        other: "%{count} дня"
+      hours:
+        few: "%{count} часа"
+        many: "%{count} часов"
+        one: "%{count} час"
+        other: "%{count} часа"
+      minutes:
+        few: "%{count} минуты"
+        many: "%{count} минут"
+        one: "%{count} минута"
+        other: "%{count} минуты"
     enter_exception_dates: Введите даты исключений
     every: Каждый
     every_week: Каждую
@@ -90,7 +108,10 @@ ru:
       add_rdate: Добавить дополнительную дату
       choose_month: Выберите месяц
       day: день
+      duration: Длительность одного события
       editor_title: Настройка повторения
+      end_at: Время окончания одного события
+      every: Каждый
       except: Исключая
       exceptions: Исключения
       frequency: Частота
@@ -101,8 +122,11 @@ ru:
       rdates: Дополнительные даты
       select_dates: Выбрать даты
       select_nth_day: Выбрать N-й день
+      start_at: Дата начала первого события и время одного события
       termination: Завершение
+      time_zone: Часовой пояс
       times: раз
+      until: До
       week: неделю
       year: год
     last: последний
@@ -145,7 +169,7 @@ ru:
       '3': 3-я
       '4': 4-я
       '5': 5-я
-    once: Once
+    once: Однократно
     one_time: Без повторения
     ordinals:
       day_of_month:

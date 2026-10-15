@@ -1,18 +1,21 @@
+---
 be:
   recurrence_ui:
     actions:
+      add_exdate: Дадаць выключэнне
+      add_rdate: Дадаць дату
       add_rule: Дадаць правіла
       apply_code: Ужыць код
       cancel: Скасаваць
       code_mode: Рэдагаваць код
       done: Гатова
       remove: Выдаліць
-      save: OK
+      save: Зберегці
     add_exception: Дадаць выключэнне
     count_label:
-      one: "%{count} раз"
       few: "%{count} разы"
       many: "%{count} разоў"
+      one: "%{count} раз"
       other: "%{count} разы"
     date:
       abbr_day_names:
@@ -62,6 +65,22 @@ be:
       - снежань
     days_of_month_fmt: "%{list} ліку"
     debug_hint: Выніковы JSON для IceCube. Вы можаце рэдагаваць яго напрамую для тэставання!
+    duration:
+      days:
+        few: "%{count} дні"
+        many: "%{count} дзен"
+        one: "%{count} дзень"
+        other: "%{count} дня"
+      hours:
+        few: "%{count} гадзіны"
+        many: "%{count} гадзін"
+        one: "%{count} гадзіна"
+        other: "%{count} гадзіны"
+      minutes:
+        few: "%{count} хвіліны"
+        many: "%{count} хвілін"
+        one: "%{count} хвіліна"
+        other: "%{count} хвіліны"
     enter_exception_dates: Увядзіце даты выключэнняў
     every: Кожны
     every_week: Кожны
@@ -89,7 +108,10 @@ be:
       add_rdate: Дадаць дадатковую дату
       choose_month: Выберыце месяц
       day: дзень
+      duration: Duration
       editor_title: Налада паўтарэння
+      end_at: End at
+      every: Every
       except: Акрамя
       exceptions: Выключэнні
       frequency: Чакласць
@@ -100,8 +122,11 @@ be:
       rdates: Дадатковыя даты
       select_dates: Выбраць даты
       select_nth_day: Выбраць N-ы дзень
+      start_at: Start at
       termination: Завяршэнне задачы
+      time_zone: Часовой пояс
       times: раз
+      until: До
       week: тыдзень
       year: год
     last: апошні

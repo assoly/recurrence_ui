@@ -25,12 +25,14 @@ module RecurrenceUi
                   :default_recurring_rules_field,
                   :default_start_time_field,
                   :default_end_time_field,
-                  :default_time_zone_field
+                  :default_time_zone_field,
+                  :default_duration_field
     
     def initialize
       @locale = nil
       @time_zone = nil
       @week_start = nil
+      @duration = nil
       @theme_mode = :auto     # Example: :auto (default), :light (light only), :dark (dark only)
       @supported_locales = SUPPORTED_LOCALES
       @enabled_rule_types = ALL_RULE_TYPES.dup
@@ -38,6 +40,7 @@ module RecurrenceUi
       @default_start_time_field      = :start_at
       @default_end_time_field        = :end_at
       @default_time_zone_field       = :time_zone
+      @default_duration_field        = :duration
     end
 
     def resolved_locale(requested = nil)

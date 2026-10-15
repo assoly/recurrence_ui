@@ -1,18 +1,49 @@
-<%# Main Component Container %>
+<%# app/components/recurrence_ui/picker_component.html.erb %>
 <% I18n.with_locale(locale) do %>
-  <% theme_attr = RecurrenceUi.configuration.theme_mode %>
   <div data-controller="<%= identifier %>" 
        data-<%= identifier %>-time-zone-value="<%= time_zone %>"
        data-<%= identifier %>-translations-value="<%= t('recurrence_ui', locale: locale).to_json %>"
        data-<%= identifier %>-locale-value="<%= locale %>"
        class="rui-container"
-       data-rui-theme="<%= theme_attr %>">  
+       data-rui-theme="<%= RecurrenceUi.configuration.theme_mode %>">  
 
-    <%# 1. Summary Link Header %>
-    <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
+    <%# 1. Секция полей времени, окончания и часового пояса (рендерится прямо внутри гема) %>
+    <div class="space-y-4 pb-4 border-b border-[var(--rui-border-color)]">
+      
+      <%# Время начала и окончания %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <%= form.label start_time_field, t('recurrence_ui.labels.start_at'), class: "rui-label" %>
+          <%= form.datetime_field start_time_field, class: "rui-input w-full" %>
+        </div>
 
-    <%# 2. Main Edit Mode Panel %>
-    <div data-<%= identifier %>-target="editMode" class="hidden space-y-3">  
+        <div>
+          <%= form.label end_time_field, t('recurrence_ui.labels.end_at'), class: "rui-label" %>
+          <%= form.datetime_field end_time_field, class: "rui-input w-full" %>
+        </div>
+         <div>
+          <%= form.label duration_field, t('recurrence_ui.labels.duration'), class: "rui-label" %>
+          <%= form.number_field duration_field, class: "rui-input w-full" %>
+        </div>
+      </div>
+
+      <%# Выбор часового пояса %>
+      <div>
+        <%= form.label time_zone_field, t('recurrence_ui.labels.time_zone'), class: "rui-label" %>
+        <%= form.time_zone_select time_zone_field, 
+              ActiveSupport::TimeZone.us_zones, 
+              { default: time_zone }, 
+              { class: "rui-select w-full cursor-pointer" } %>
+      </div>
+    </div>
+
+    <%# 2. Summary Link Header (Сводка правила) %>
+    <div class="pt-2">
+      <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
+    </div>
+
+    <%# 3. Main Edit Mode Panel %>
+    <div data-<%= identifier %>-target="editMode" class="hidden space-y-3 pt-2">  
       
       <%# Header bar with Code Editor toggle %>
       <div class="rui-panel-header flex items-center justify-between">
@@ -33,7 +64,7 @@
           <%# Dynamic Rule Cards Container %>
           <div data-<%= identifier %>-target="rulesContainer" class="space-y-2"></div>
 
-         <%# Add Rule Action Button %>
+          <%# Add Rule Action Button %>
           <div class="pt-1">
             <button type="button" 
                     data-action="click-><%= identifier %>#addRule" 

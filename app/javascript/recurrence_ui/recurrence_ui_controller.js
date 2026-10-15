@@ -22,8 +22,8 @@ export default class extends Controller {
     "cardBody",     // Раскрывающийся блок с полями карточки (Level 3)
     "startDate", 
     "startTime", 
-    "endDate", 
-    "endTime", 
+    "endDateField", 
+    "endTimeField", 
     "modeDuration", 
     "modeEnd", 
     "daysField", 
@@ -94,7 +94,7 @@ export default class extends Controller {
     if (this.hasModeEndTarget) {
       const isEndMode = this.modeEndTarget.checked
       
-      if (this.hasEndDateTarget) this.endDateTarget.disabled = !isEndMode
+      if (this.hasEndDateFieldTarget) this.endDateFieldTarget.disabled = !isEndMode
       if (this.hasEndTimeFieldTarget) this.endTimeFieldTarget.disabled = !isEndMode
       if (this.hasDaysFieldTarget) this.daysFieldTarget.disabled = isEndMode
       if (this.hasHoursFieldTarget) this.hoursFieldTarget.disabled = isEndMode
@@ -115,7 +115,7 @@ export default class extends Controller {
     if (this.hasMinutesFieldTarget) this.minutesFieldTarget.disabled = isEndMode
 
     // 2. Блокируем/разблокируем поля точного окончания (дата и время)
-    if (this.hasEndDateTarget) this.endDateTarget.disabled = !isEndMode
+    if (this.hasEndDateFieldTarget) this.endDateFieldTarget.disabled = !isEndMode
     if (this.hasEndTimeFieldTarget) this.endTimeFieldTarget.disabled = !isEndMode
 
     // 3. Если выбрали режим окончания — автоматически подставляем дату начала в дату окончания, если она пустая

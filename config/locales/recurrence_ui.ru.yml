@@ -108,9 +108,9 @@ ru:
       add_rdate: Добавить дополнительную дату
       choose_month: Выберите месяц
       day: день
-      duration: Длительность одного события
+      duration: Длительность
       editor_title: Настройка повторения
-      end_at: Время окончания одного события
+      end_at: Окончание
       every: Каждый
       except: Исключая
       exceptions: Исключения
@@ -119,10 +119,11 @@ ru:
       new_rule: Новое правило
       one_time: Без повторения
       raw_json: Raw JSON
-      rdates: Дополнительные даты
+      recurrence: Повторение
+      rdates: Дополнения
       select_dates: Выбрать даты
       select_nth_day: Выбрать N-й день
-      start_at: Дата начала первого события и время одного события
+      start_at: Начало 
       termination: Завершение
       time_zone: Часовой пояс
       times: раз

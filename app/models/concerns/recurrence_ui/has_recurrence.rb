@@ -209,6 +209,7 @@ module RecurrenceUi
       schedule.to_s
     end
     private 
+    
     def calculate_missing_time_attributes
       dur_field = self.class.recurrence_duration_field
       end_field = self.class.recurrence_end_time_field

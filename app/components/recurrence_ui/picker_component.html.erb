@@ -9,34 +9,120 @@
 
     <%# 1. Секция полей времени, окончания и часового пояса (рендерится прямо внутри гема) %>
     <div class="space-y-4 pb-4 border-b border-[var(--rui-border-color)]">
-      
-      <%# Время начала и окончания %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <!-- Контейнер сетки: на мобильных 1 колонка (друг под другом), на экранах sm и выше — ровно 3 колонки в ряд -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div>
+      <%= form.label :start_at, t('recurrence_ui.labels.start_at'), class: "rui-label" %>
+      <div class="grid grid-cols-2 gap-1">
         <div>
-          <%= form.label start_time_field, t('recurrence_ui.labels.start_at'), class: "rui-label" %>
-          <%= form.datetime_field start_time_field, class: "rui-input w-full" %>
+          <%= form.date_field :start_date, 
+                value: record.start_at&.to_date || Date.today, 
+                class: "rui-input w-full",
+                data: { "#{identifier}_target": "startDate", action: "change->#{identifier}#calculate" } %>
         </div>
-
         <div>
-          <%= form.label end_time_field, t('recurrence_ui.labels.end_at'), class: "rui-label" %>
-          <%= form.datetime_field end_time_field, class: "rui-input w-full" %>
+          <%= form.time_field :start_time, 
+                value: record.start_at&.strftime('%H:%M') || '09:00', 
+                class: "rui-input",
+                data: { "#{identifier}_target": "startTime", action: "change->#{identifier}#calculate" } %>
         </div>
-         <div>
-          <%= form.label duration_field, t('recurrence_ui.labels.duration'), class: "rui-label" %>
-          <%= form.number_field duration_field, class: "rui-input w-full" %>
-        </div>
-      </div>
-
-      <%# Выбор часового пояса %>
-      <div>
-        <%= form.label time_zone_field, t('recurrence_ui.labels.time_zone'), class: "rui-label" %>
-        <%= form.time_zone_select time_zone_field, 
-              ActiveSupport::TimeZone.us_zones, 
-              { default: time_zone }, 
-              { class: "rui-select w-full cursor-pointer" } %>
-      </div>
+      </div>  
+    </div>
+    <!-- 3. Временная зона -->
+    <div>
+      <%= form.label :time_zone, t('recurrence_ui.labels.time_zone'), class: "rui-label" %>
+      <%= form.time_zone_select :time_zone, 
+            ActiveSupport::TimeZone.us_zones, 
+            { default: record.time_zone.presence || Time.zone.name }, 
+            { class: "rui-input rui-select cursor-pointer w-full" } %>
     </div>
 
+  </div>
+</div>
+
+
+
+<!-- Блок выбора: Окончание или Длительность -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  
+  <!-- Вариант 4.1: Длительность (активна по умолчанию) -->
+  <div class="flex items-start space-x-3">
+    <%= form.radio_button :duration_mode, :duration, 
+          checked: true, 
+          class: "mt-1 shrink-0",
+          data: { "#{identifier}_target": "modeDuration", action: "change->#{identifier}#toggleDurationEndMode" } %>
+    <div class="flex-1 min-w-0">
+      <label class="rui-label"><%= t('recurrence_ui.labels.duration') %></label>
+      
+      <!-- Контейнер с flex-nowrap и gap-2, чтобы всё гарантированно было в одну строку -->
+      <div class="flex flex-nowrap items-center gap-2 mt-1" data-<%= identifier %>-target="durationContainer">
+        
+        <!-- Дни -->
+        <div class="flex items-center space-x-1 shrink-0">
+          <%= form.number_field :duration_days, 
+                value: 0, min: 0, 
+                class: "rui-input w-16 text-center", 
+                disabled: false,
+                data: { "#{identifier}_target": "daysField" } %>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.days.one', count: 1).gsub('1', '').strip %></span>
+        </div>
+
+        <!-- Часы -->
+        <div class="flex items-center space-x-1 shrink-0">
+          <%= form.number_field :duration_hours, 
+                value: 1, min: 0, max: 23, 
+                class: "rui-input w-16 text-center", 
+                disabled: false,
+                data: { "#{identifier}_target": "hoursField" } %>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.hours.one', count: 1).gsub('1', '').strip %></span>
+        </div>
+
+        <!-- Минуты -->
+        <div class="flex items-center space-x-1 shrink-0">
+          <%= form.number_field :duration_minutes, 
+                value: 0, min: 0, max: 59, 
+                class: "rui-input w-16 text-center", 
+                disabled: false,
+                data: { "#{identifier}_target": "minutesField" } %>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.minutes.one', count: 1).gsub('1', '').strip %></span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Вариант 4.2: Дата и время окончания (неактивны по умолчанию) -->
+  <div class="flex items-start space-x-3">
+    <%= form.radio_button :duration_mode, :end_at, 
+          checked: false, 
+          class: "mt-1 shrink-0",
+          data: { "#{identifier}_target": "modeEnd", action: "change->#{identifier}#toggleDurationEndMode" } %>
+    
+    <div class="flex-1 min-w-0">
+      <label class="rui-label"><%= t('recurrence_ui.labels.end_at') %></label>  
+      <!-- Поля даты и времени окончания в ряд -->
+      <div class="grid grid-cols-2 gap-1 mt-1">
+        <div>
+          <%= form.date_field :end_date, 
+                value: record.end_at&.to_date || Date.today, 
+                class: "rui-input w-full",
+                data: { "#{identifier}_target": "endDate", action: "change->#{identifier}#calculate" } %>
+        </div>
+        <div>
+          <%= form.time_field :end_time,
+                value: record.end_at&.strftime('%H:%M') || '09:00', 
+                class: ["rui-input", ("rui-input-error" if record.errors[:end_time].any?)],
+                data: { "#{identifier}_target": "endTime" } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="rui-panel-header flex items-center justify-between">
+        <span class="rui-header-title">
+          <%= t('recurrence_ui.labels.recurrence') %>
+        </span>
     <%# 2. Summary Link Header (Сводка правила) %>
     <div class="pt-2">
       <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
@@ -48,11 +134,11 @@
       <%# Header bar with Code Editor toggle %>
       <div class="rui-panel-header flex items-center justify-between">
         <span class="rui-header-title">
-          <%= t('recurrence_ui.labels.editor_title', default: 'Recurrence') %>
+          <%= t('recurrence_ui.labels.recurrence') %>
         </span>
         <button type="button" 
                 data-action="click-><%= identifier %>#toggleCodeEditor" 
-                title="<%= t('recurrence_ui.actions.code_mode', default: 'Code Mode') %>"
+                title="<%= t('recurrence_ui.actions.code_mode') %>"
                 class="rui-btn-secondary font-mono text-xs px-2 py-1">
           &lt;/&gt;
         </button>
@@ -76,13 +162,12 @@
 
         <%# Exceptions & Additional Dates Grid %>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 rui-divider">
-          <div data-<%= identifier %>-target="exceptionsBlock" class="hidden">
-            <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
-          </div>  
-          
           <div data-<%= identifier %>-target="rdatesBlock" class="hidden">
             <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
           </div>
+          <div data-<%= identifier %>-target="exceptionsBlock" class="hidden">
+            <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
+          </div>            
         </div>
 
         <%# Bottom Action Bar %>
@@ -105,12 +190,12 @@
           <button type="button" 
                   data-action="click-><%= identifier %>#toggleCodeEditor" 
                   class="rui-btn-secondary">
-            <%= t('recurrence_ui.actions.cancel', default: 'Cancel') %>
+            <%= t('recurrence_ui.actions.cancel') %>
           </button>
           <button type="button" 
                   data-action="click-><%= identifier %>#applyCodeChanges" 
                   class="rui-btn-primary">
-            <%= t('recurrence_ui.actions.apply_code', default: 'Apply Code') %>
+            <%= t('recurrence_ui.actions.apply_code') %>
           </button>
         </div>
       </div>
@@ -129,5 +214,6 @@
 
     <%# Hidden Form Field for Rails submission %>
     <%= form.hidden_field field_name, value: rules_json, data: { "#{identifier}_target": "hiddenField" } %>
+  </div>
   </div>
 <% end %>

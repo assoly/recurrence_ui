@@ -19,7 +19,16 @@ export default class extends Controller {
     "visualEditor", // Блок с карточками и кнопками (Level 2)
     "codeEditor",   // Блок с textarea для JSON (Level 2 alt)
     "cardHeader",   // Текстовая заголовок-шапка карточки (для аккордеона Level 3)
-    "cardBody"     // Раскрывающийся блок с полями карточки (Level 3)
+    "cardBody",     // Раскрывающийся блок с полями карточки (Level 3)
+    "startDate", 
+    "startTime", 
+    "endDate", 
+    "endTime", 
+    "modeDuration", 
+    "modeEnd", 
+    "daysField", 
+    "hoursField", 
+    "minutesField"
   ]
 
   ruleSnapshot = null
@@ -28,6 +37,7 @@ export default class extends Controller {
     this.isInitializing = true
     this.initializeState()
     this.updateDebugField()
+    this.initializeDurationMode()
     this.isInitializing = false
   }
 
@@ -79,6 +89,43 @@ export default class extends Controller {
       this.updateSummary()
     }
   }
+  // Установка начального состояния полей на основе выбранной радиокнопки
+  initializeDurationMode() {
+    if (this.hasModeEndTarget) {
+      const isEndMode = this.modeEndTarget.checked
+      
+      if (this.hasEndDateTarget) this.endDateTarget.disabled = !isEndMode
+      if (this.hasEndTimeFieldTarget) this.endTimeFieldTarget.disabled = !isEndMode
+      if (this.hasDaysFieldTarget) this.daysFieldTarget.disabled = isEndMode
+      if (this.hasHoursFieldTarget) this.hoursFieldTarget.disabled = isEndMode
+      if (this.hasMinutesFieldTarget) this.minutesFieldTarget.disabled = isEndMode
+    }
+  }
+  // =========================================
+  //Переключение длительности и окончания одного события
+  // =========================================
+
+  // Переключение между режимом "Длительность" и "Точное окончание"
+  toggleDurationEndMode(event) {
+    const isEndMode = this.hasModeEndTarget && this.modeEndTarget.checked
+
+    // 1. Блокируем/разблокируем поля длительности
+    if (this.hasDaysFieldTarget) this.daysFieldTarget.disabled = isEndMode
+    if (this.hasHoursFieldTarget) this.hoursFieldTarget.disabled = isEndMode
+    if (this.hasMinutesFieldTarget) this.minutesFieldTarget.disabled = isEndMode
+
+    // 2. Блокируем/разблокируем поля точного окончания (дата и время)
+    if (this.hasEndDateTarget) this.endDateTarget.disabled = !isEndMode
+    if (this.hasEndTimeFieldTarget) this.endTimeFieldTarget.disabled = !isEndMode
+
+    // 3. Если выбрали режим окончания — автоматически подставляем дату начала в дату окончания, если она пустая
+    if (isEndMode && this.hasStartDateTarget && this.hasEndDateFieldTarget) {
+      if (!this.endDateFieldTarget.value && this.startDateTarget.value) {
+        this.endDateFieldTarget.value = this.startDateTarget.value
+      }
+    }
+  }
+
   // Переключение U1 -> U2 (Раскрытие общего модуля)
   // Toggle Main Panel Accordion Mode
   toggleMainAccordion() {

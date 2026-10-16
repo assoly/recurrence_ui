@@ -18,11 +18,11 @@
             <%= form.date_field :start_date, 
                   value: record.start_at&.to_date || Date.today, 
                   class: "rui-input w-36 shrink-0",
-                  data: { "#{identifier}_target": "startDate", action: "change->#{identifier}#calculate" } %>
+                  data: { "#{identifier}_target": "startDate", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
             <%= form.time_field :start_time, 
                   value: record.start_at&.strftime('%H:%M') || '09:00', 
                   class: "rui-input w-24 shrink-0",
-                  data: { "#{identifier}_target": "startTime", action: "change->#{identifier}#calculate" } %>
+                  data: { "#{identifier}_target": "startTime", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
           </div>  
         </div>
 
@@ -38,79 +38,78 @@
       </div>
     </div>
 
-    <!-- Блок выбора: Длительность или Окончание -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+<!-- Блок выбора: Длительность или Окончание -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+  
+  <!-- Вариант 4.1: Длительность -->
+  <div class="flex items-start space-x-3 p-2 rounded-lg transition-colors cursor-pointer hover:bg-gray-50"
+       data-action="click-><%= identifier %>#selectDurationMode">
+    <%= form.radio_button :duration_mode, :duration, 
+          checked: true, 
+          class: "mt-1 shrink-0 pointer-events-none",
+          data: { "#{identifier}_target": "modeDuration", action: "change->#{identifier}#toggleDurationEndMode" } %>
+    <div class="flex-1 min-w-0">
+      <span class="rui-label font-medium select-none"><%= t('recurrence_ui.labels.duration') %></span>
       
-      <!-- Вариант 4.1: Длительность (активна по умолчанию) -->
-      <div class="flex items-start space-x-3">
-        <%= form.radio_button :duration_mode, :duration, 
-              checked: true, 
-              class: "mt-1 shrink-0",
-              data: { "#{identifier}_target": "modeDuration", action: "change->#{identifier}#toggleDurationEndMode" } %>
-        <div class="flex-1 min-w-0">
-          <label class="rui-label"><%= t('recurrence_ui.labels.duration') %></label>
-          
-          <div class="flex flex-nowrap items-center gap-2 mt-1" data-<%= identifier %>-target="durationContainer">
-            <!-- Дни -->
-            <div class="flex items-center space-x-1 shrink-0">
-              <%= form.number_field :duration_days, 
-                    value: 0, min: 0, 
-                    class: "rui-input w-16 text-center", 
-                    disabled: false,
-                    data: { "#{identifier}_target": "daysField" } %>
-              <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.days.one', count: 1).gsub('1', '').strip %></span>
-            </div>
+      <div class="flex flex-nowrap items-center gap-2 mt-1" data-<%= identifier %>-target="durationContainer">
+        <!-- Дни -->
+        <div class="flex items-center space-x-1 shrink-0">
+          <%= form.number_field :duration_days, 
+                value: 0, min: 0, 
+                class: "rui-input w-16 text-center", 
+                data: { "#{identifier}_target": "daysField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.days.one', count: 1).gsub('1', '').strip %></span>
+        </div>
 
-            <!-- Часы -->
-            <div class="flex items-center space-x-1 shrink-0">
-              <%= form.number_field :duration_hours, 
-                    value: 1, min: 0, max: 23, 
-                    class: "rui-input w-16 text-center", 
-                    disabled: false,
-                    data: { "#{identifier}_target": "hoursField" } %>
-              <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.hours.one', count: 1).gsub('1', '').strip %></span>
-            </div>
+        <!-- Часы -->
+        <div class="flex items-center space-x-1 shrink-0">
+          <%= form.number_field :duration_hours, 
+                value: 1, min: 0, max: 23, 
+                class: "rui-input w-16 text-center", 
+                data: { "#{identifier}_target": "hoursField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.hours.one', count: 1).gsub('1', '').strip %></span>
+        </div>
 
-            <!-- Минуты -->
-            <div class="flex items-center space-x-1 shrink-0">
-              <%= form.number_field :duration_minutes, 
-                    value: 0, min: 0, max: 59, 
-                    class: "rui-input w-16 text-center", 
-                    disabled: false,
-                    data: { "#{identifier}_target": "minutesField" } %>
-              <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.minutes.one', count: 1).gsub('1', '').strip %></span>
-            </div>
-          </div>
+        <!-- Минуты -->
+        <div class="flex items-center space-x-1 shrink-0">
+          <%= form.number_field :duration_minutes, 
+                value: 0, min: 0, max: 59, 
+                class: "rui-input w-16 text-center", 
+                data: { "#{identifier}_target": "minutesField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.minutes.one', count: 1).gsub('1', '').strip %></span>
         </div>
       </div>
-
-      <!-- Вариант 4.2: Дата и время окончания (неактивны, когда выбрана Длительность) -->
-      <div class="flex items-start space-x-3">
-        <%= form.radio_button :duration_mode, :end_at, 
-              checked: false, 
-              class: "mt-1 shrink-0",
-              data: { "#{identifier}_target": "modeEnd", action: "change->#{identifier}#toggleDurationEndMode" } %>
-        
-        <div class="flex-1 min-w-0">
-          <label class="rui-label"><%= t('recurrence_ui.labels.end_at') %></label>  
-          
-          <!-- 2. Дата и время окончания (всегда на одной строке, не тянутся, disabled) -->
-          <div class="flex items-center space-x-2 mt-1">
-            <%= form.date_field :end_date, 
-                  value: record.end_at&.to_date || Date.today, 
-                  class: "rui-input w-36 shrink-0 disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed",
-                  disabled: true,
-                  data: { "#{identifier}_target": "endDateField", action: "change->#{identifier}#calculate" } %>
-            <%= form.time_field :end_time,
-                  value: record.end_at&.strftime('%H:%M') || '09:00', 
-                  class: ["rui-input w-24 shrink-0 disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed", ("rui-input-error" if record.errors[:end_time].any?)],
-                  disabled: true,
-                  data: { "#{identifier}_target": "endTimeField" } %>
-          </div>
-        </div>
-      </div>
-
     </div>
+  </div>
+
+  <!-- Вариант 4.2: Дата и время окончания -->
+  <div class="flex items-start space-x-3 p-2 rounded-lg transition-colors cursor-pointer hover:bg-gray-50"
+       data-action="click-><%= identifier %>#selectEndMode">
+    <%= form.radio_button :duration_mode, :end_at, 
+          checked: false, 
+          class: "mt-1 shrink-0 pointer-events-none",
+          data: { "#{identifier}_target": "modeEnd", action: "change->#{identifier}#toggleDurationEndMode" } %>
+    
+    <div class="flex-1 min-w-0">
+      <span class="rui-label font-medium select-none"><%= t('recurrence_ui.labels.end_at') %></span>  
+      
+      <!-- Поля даты и времени окончания -->
+      <div class="flex items-center space-x-2 mt-1">
+        <%= form.date_field :end_date, 
+              value: record.end_at&.to_date || Date.today, 
+              class: "rui-input w-36 shrink-0 disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed",
+              disabled: true,
+              data: { "#{identifier}_target": "endDateField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
+        <%= form.time_field :end_time,
+              value: record.end_at&.strftime('%H:%M') || '09:00', 
+              class: ["rui-input w-24 shrink-0 disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed", ("rui-input-error" if record.errors[:end_time].any?)],
+              disabled: true,
+              data: { "#{identifier}_target": "endTimeField" } %>
+      </div>
+    </div>
+  </div>
+
+</div>
 
     <!-- 4. При показе саммари: только заголовок Повторение и саммари под ним -->
     <div data-<%= identifier %>-target="displayMode" class="space-y-1 my-4">

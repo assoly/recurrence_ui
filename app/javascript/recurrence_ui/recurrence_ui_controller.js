@@ -118,14 +118,74 @@ export default class extends Controller {
     if (this.hasEndDateFieldTarget) this.endDateFieldTarget.disabled = !isEndMode
     if (this.hasEndTimeFieldTarget) this.endTimeFieldTarget.disabled = !isEndMode
 
-    // 3. Если выбрали режим окончания — автоматически подставляем дату начала в дату окончания, если она пустая
-    if (isEndMode && this.hasStartDateTarget && this.hasEndDateFieldTarget) {
-      if (!this.endDateFieldTarget.value && this.startDateTarget.value) {
-        this.endDateFieldTarget.value = this.startDateTarget.value
-      }
+    // 3. Если выбрали режим окончания — сразу пересчитываем дату/время окончания на базе Старта и Длительности
+    if (isEndMode) {
+      this.calculateEndDateFromDuration()
+    }
+  }
+  
+  // Выбор режима "Длительность" при клике на блок
+  selectDurationMode(event) {
+    // Если кликнули прямо на инпут внутри блока, даем ему стандартно сфокусироваться
+    if (event.target.tagName === 'INPUT') return
+
+    if (this.hasModeDurationTarget && !this.modeDurationTarget.checked) {
+      this.modeDurationTarget.checked = true
+      // Вызываем существующий метод переключения полей
+      this.toggleDurationEndMode()
     }
   }
 
+  // Выбор режима "Окончание" при клике на блок
+  selectEndMode(event) {
+    if (event.target.tagName === 'INPUT') return
+
+    if (this.hasModeEndTarget && !this.modeEndTarget.checked) {
+      this.modeEndTarget.checked = true
+      this.toggleDurationEndMode()
+      
+      // Фокусируемся на поле даты окончания для удобства
+      if (this.hasEndDateFieldTarget && !this.endDateFieldTarget.disabled) {
+        this.endDateFieldTarget.focus()
+      }
+    }
+  }
+  // Метод пересчета даты и времени окончания на основе Старта + Длительность
+  calculateEndDateFromDuration() {
+    if (!this.hasStartDateTarget || !this.hasStartTimeTarget) return
+    if (!this.hasEndDateFieldTarget || !this.hasEndTimeFieldTarget) return
+
+    const startDateVal = this.startDateTarget.value
+    const startTimeVal = this.startTimeTarget.value || "09:00"
+
+    if (!startDateVal) return
+
+    // Собираем объект Date из даты и времени начала
+    const startDateTime = new Date(`${startDateVal}T${startTimeVal}`)
+    if (isNaN(startDateTime.getTime())) return
+
+    // Получаем значения длительности с защитой от пустых полей
+    const days = parseInt(this.hasDaysFieldTarget ? this.daysFieldTarget.value : 0) || 0
+    const hours = parseInt(this.hasHoursFieldTarget ? this.hoursFieldTarget.value : 0) || 0
+    const minutes = parseInt(this.hasMinutesFieldTarget ? this.minutesFieldTarget.value : 0) || 0
+
+    // Считаем общую длительность в миллисекундах
+    const totalMs = (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60) * 1000
+
+    // Прибавляем к старту
+    const endDateTime = new Date(startDateTime.getTime() + totalMs)
+
+    // Форматируем обратно в YYYY-MM-DD для date_field
+    const year = endDateTime.getFullYear()
+    const month = String(endDateTime.getMonth() + 1).padStart(2, '0')
+    const day = String(endDateTime.getDate()).padStart(2, '0')
+    this.endDateFieldTarget.value = `${year}-${month}-${day}`
+
+    // Форматируем в HH:MM для time_field
+    const endHours = String(endDateTime.getHours()).padStart(2, '0')
+    const endMinutes = String(endDateTime.getMinutes()).padStart(2, '0')
+    this.endTimeFieldTarget.value = `${endHours}:${endMinutes}`
+  }
   // Переключение U1 -> U2 (Раскрытие общего модуля)
   // Toggle Main Panel Accordion Mode
   toggleMainAccordion() {

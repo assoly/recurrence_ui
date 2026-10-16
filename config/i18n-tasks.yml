@@ -175,7 +175,8 @@ ignore_unused:
   - 'recurrence_ui.units.*'
   - 'recurrence_ui.date.*'
 
-
+ignore_inconsistent_interpolations:
+  - 'recurrence_ui.summary.*'
 # - 'activerecord.attributes.*'
 # - '{devise,kaminari,will_paginate}.*'
 # - 'simple_form.{yes,no}'

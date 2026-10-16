@@ -177,23 +177,23 @@ ru:
         other: "%{count}-ю"
     summary:
       daily:
-        one: "Каждый день %{until}"
-        other: "Каждый %{count_f} день %{until}"
+        one: Каждый день %{until}
+        other: Каждый %{count_f} день %{until}
       monthly_by_day_of_month:
-        one: "Каждый месяц: %{days_of_month} %{until}"
-        other: "Каждый %{count_f} месяц: %{days_of_month} %{until}"
+        one: 'Каждый месяц: %{days_of_month} %{until}'
+        other: 'Каждые %{count_f} месяц: %{days_of_month} %{until}'
       monthly_by_weekday:
-        one: "Каждый месяц: %{weekdays} %{until}"
-        other: "Каждый %{count_f} месяц: %{weekdays} %{until}"
+        one: 'Каждый месяц: %{weekdays} %{until}'
+        other: 'Каждый %{count_f} месяц: %{weekdays} %{until}'
       weekly:
-        one: "Каждую неделю по %{weekdays} %{until}"
-        other: "Каждую %{count_f} неделю по %{weekdays} %{until}"
+        one: Каждую неделю по %{weekdays} %{until}
+        other: Каждую %{count_f} неделю по %{weekdays} %{until}
       yearly_by_day_of_month:
-        one: "Каждый год в %{month}: %{days_of_month} %{until}"
-        other: "Каждый %{count_f} год в %{month}: %{days_of_month} %{until}"
+        one: 'Каждый год в %{month}: %{days_of_month} %{until}'
+        other: 'Каждый %{count_f} год в %{month}: %{days_of_month} %{until}'
       yearly_by_weekday:
-        one: "Каждый год в %{month}: %{weekdays} %{until}"
-        other: "Каждый %{count_f} год в %{month}: %{weekdays} %{until}"
+        one: 'Каждый год в %{month}: %{weekdays} %{until}'
+        other: 'Каждый %{count_f} год в %{month}: %{weekdays} %{until}'
     termination_types:
       count: Количество раз
       never: Бесконечно

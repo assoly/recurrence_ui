@@ -16,11 +16,11 @@
           <%= form.label :start_at, t('recurrence_ui.labels.start_at'), class: "rui-label block" %>
           <div class="flex items-center space-x-2 mt-1">
             <%= form.date_field :start_date, 
-                  value: record.start_at&.to_date || Date.today, 
+                  value: record.public_send(start_time_field)&.to_date || Date.today, 
                   class: "rui-input w-36 shrink-0",
                   data: { "#{identifier}_target": "startDate", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
             <%= form.time_field :start_time, 
-                  value: record.start_at&.strftime('%H:%M') || '09:00', 
+                  value: record.public_send(start_time_field)&.strftime('%H:%M') || '09:00', 
                   class: "rui-input w-24 shrink-0",
                   data: { "#{identifier}_target": "startTime", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
           </div>  
@@ -31,7 +31,7 @@
           <%= form.label :time_zone, t('recurrence_ui.labels.time_zone'), class: "rui-label block" %>
           <%= form.time_zone_select :time_zone, 
                 ActiveSupport::TimeZone.us_zones, 
-                { default: record.time_zone.presence || Time.zone.name }, 
+                { default: record.public_send(time_zone_field).presence || Time.zone.name }, 
                 { class: "rui-input rui-select cursor-pointer w-full mt-1" } %>
         </div>
 

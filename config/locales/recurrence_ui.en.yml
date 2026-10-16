@@ -89,8 +89,8 @@ en:
     labels:
       choose_month: Choose month
       day: Day
-      duration: Duration of one occurrence
-      end_at: Ending time of one occurrence
+      duration: Duration
+      end_at: End at
       every: Every
       exceptions: Exceptions
       frequency: Frequency
@@ -98,11 +98,11 @@ en:
       new_rule: New rule
       raw_json: Raw JSON
       rdates: Additional Dates
-      recurrence: Повторение
+      recurrence: Recurrence
       select_dates: Select dates
-      start_at: Start date of first occurrence and start time of one occurrence
+      start_at: Start at
       termination: Termination
-      time_zone: Часовой пояс
+      time_zone: Time Zone
       times: times
       week: week
       year: year
@@ -142,23 +142,23 @@ en:
         other: "%{count}"
     summary:
       daily:
-        one: "Every day %{until}"
-        other: "Every %{count} days %{until}"
+        one: Every day %{until}
+        other: Every %{count} days %{until}
       monthly_by_day_of_month:
-        one: "Every month on: %{days_of_month} %{until}"
-        other: "Every %{count} months on: %{days_of_month} %{until}"
+        one: 'Every month on: %{days_of_month} %{until}'
+        other: 'Every %{count} months on: %{days_of_month} %{until}'
       monthly_by_weekday:
-        one: "Every month on: %{weekdays} %{until}"
-        other: "Every %{count} months on: %{weekdays} %{until}"
+        one: 'Every month on: %{weekdays} %{until}'
+        other: 'Every %{count} months on: %{weekdays} %{until}'
       weekly:
-        one: "Every week on %{weekdays} %{until}"
-        other: "Every %{count} weeks on %{weekdays} %{until}"
+        one: Every week on %{weekdays} %{until}
+        other: Every %{count} weeks on %{weekdays} %{until}
       yearly_by_day_of_month:
-        one: "Every year in %{month}: %{days_of_month} %{until}"
-        other: "Every %{count} years in %{month}: %{days_of_month} %{until}"
+        one: 'Every year in %{month}: %{days_of_month} %{until}'
+        other: 'Every %{count} years in %{month}: %{days_of_month} %{until}'
       yearly_by_weekday:
-        one: "Every year in %{month}: %{weekdays} %{until}"
-        other: "Every %{count} years in %{month}: %{weekdays} %{until}"
+        one: 'Every year in %{month}: %{weekdays} %{until}'
+        other: 'Every %{count} years in %{month}: %{weekdays} %{until}'
     termination_types:
       count: After number of times
       never: Never

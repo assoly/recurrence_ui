@@ -38,7 +38,6 @@
     color: var(--rui-text-main);
     @apply block font-semibold tracking-wider mb-1;
   }
-
   .rui-inline-label {
     color: var(--rui-text-main);
     @apply text-sm font-medium;
@@ -55,7 +54,7 @@
   background-color: var(--rui-primary-hover);
 }
 
-/* Состояние, когда дата ещё не введена */
+/* Condition, when date is not yet entered */
 .rui-btn-primary:disabled {
   background-color: var(--rui-secondary-bg);
   color: var(--rui-text-muted);
@@ -114,18 +113,18 @@
     border-color: var(--rui-border-color);
     @apply border-t my-2;
   }
-/* Крупный заголовок редактора */
+/* Large header for the editor */
   .rui-header-title {
     color: var(--rui-text-main);
     @apply text-base font-semibold tracking-tight;
   }
 
-  /* Шапка панели редактирования */
+  /* Panel header for editing */
   .rui-panel-header {
     border-bottom: 1px solid var(--rui-border-color);
     @apply flex items-center justify-between pb-2 mb-3;
   }
-  /* Шапка панели редактирования (заголовок слева, кнопка справа) */
+  /* Header for the editing panel (title on the left, button on the right) */
   .rui-panel-header {
     border-bottom: 1px solid var(--rui-border-color);
     @apply flex items-center justify-between pb-2 mb-3;

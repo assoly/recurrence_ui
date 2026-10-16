@@ -10,7 +10,7 @@ module RecurrenceUi
     }.freeze
 
     def initialize(schedule_hash, options = {})
-      @schedule = schedule_hash.with_indifferent_access
+      @schedule = schedule_hash.with_indifferent_access.except(:duration_mode, 'duration_mode')
       
       # 1. Configuration resolution priority (Method options -> Initializer -> Gem/Rails defaults)
       @locale     = resolve_locale(options[:locale])

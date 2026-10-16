@@ -124,32 +124,6 @@ export default class extends Controller {
     }
   }
   
-  // Выбор режима "Длительность" при клике на блок
-  selectDurationMode(event) {
-    // Если кликнули прямо на инпут внутри блока, даем ему стандартно сфокусироваться
-    if (event.target.tagName === 'INPUT') return
-
-    if (this.hasModeDurationTarget && !this.modeDurationTarget.checked) {
-      this.modeDurationTarget.checked = true
-      // Вызываем существующий метод переключения полей
-      this.toggleDurationEndMode()
-    }
-  }
-
-  // Выбор режима "Окончание" при клике на блок
-  selectEndMode(event) {
-    if (event.target.tagName === 'INPUT') return
-
-    if (this.hasModeEndTarget && !this.modeEndTarget.checked) {
-      this.modeEndTarget.checked = true
-      this.toggleDurationEndMode()
-      
-      // Фокусируемся на поле даты окончания для удобства
-      if (this.hasEndDateFieldTarget && !this.endDateFieldTarget.disabled) {
-        this.endDateFieldTarget.focus()
-      }
-    }
-  }
   // Метод пересчета даты и времени окончания на основе Старта + Длительность
   calculateEndDateFromDuration() {
     if (!this.hasStartDateTarget || !this.hasStartTimeTarget) return

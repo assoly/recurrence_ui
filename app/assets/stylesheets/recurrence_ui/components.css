@@ -35,7 +35,7 @@
 
   /* Labels and Captions */
   .rui-label {
-    color: var(--rui-text-muted);
+    color: var(--rui-text-main);
     @apply block font-semibold tracking-wider mb-1;
   }
 

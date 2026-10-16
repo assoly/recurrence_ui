@@ -11,7 +11,6 @@ ja:
       done: 完了
       remove: 削除
       save: 保存
-    add_exception: 例外を追加
     count_label:
       other: "%{count}回"
     date:
@@ -61,16 +60,16 @@ ja:
       - 11月
       - 12月
     days_of_month_fmt: "%{list}"
-    debug_hint: 非表示フィールドの内容。テスト用に直接編集できます！
     duration:
       days:
+        one: "%{count}日"
         other: "%{count}日"
       hours:
+        one: "%{count}時間"
         other: "%{count}時間"
       minutes:
+        one: "%{count}分"
         other: "%{count}分"
-    enter_exception_dates: 例外日を入力
-    every: 毎
     every_week: 毎
     in_month_names_yearly:
     -
@@ -86,35 +85,24 @@ ja:
     - 10月
     - 11月
     - 12月
-    interval:
-      day: 日
-      month: ヶ月
-      week: 週間
-      year: 年
     labels:
-      add_exception: 例外を追加
-      add_rdate: 追加日を追加
       choose_month: 月を選択
       day: 日
       duration: ドュレーション
-      editor_title: 繰り返しの設定
       end_at: 終了日時
       every: 毎
-      except: 例外
       exceptions: 例外
       frequency: 頻度
       month: 月
       new_rule: 新しいルール
-      one_time: 繰り返しなし
       raw_json: Raw JSON
       rdates: 追加日
+      recurrence: Повторение
       select_dates: 日付を選択
-      select_nth_day: 曜日を指定
       start_at: 開始日時
       termination: 終了
       time_zone: 時刻帯
       times: 回
-      until: まで
       week: 週
       year: 年
     last: 最終
@@ -146,28 +134,27 @@ ja:
         other: "%{count}週間"
     summary:
       daily:
-        one: 毎日 %{until}
+        one: "毎日 %{until}"
         other: "%{count}日ごと %{until}"
       monthly_by_day_of_month:
-        one: 毎月 %{days_of_month} %{until}
+        one: "毎月 %{days_of_month} %{until}"
         other: "%{count}か月ごと %{days_of_month} %{until}"
       monthly_by_weekday:
-        one: 毎月 %{weekdays} %{until}
+        one: "毎月 %{weekdays} %{until}"
         other: "%{count}か月ごと %{weekdays} %{until}"
       weekly:
-        one: 毎週 %{weekdays} %{until}
+        one: "毎週 %{weekdays} %{until}"
         other: "%{count}週間ごと %{weekdays} %{until}"
       yearly_by_day_of_month:
-        one: 毎年 %{month} %{days_of_month} %{until}
+        one: "毎年 %{month} %{days_of_month} %{until}"
         other: "%{count}年ごと %{month} %{days_of_month} %{until}"
       yearly_by_weekday:
-        one: 毎年 %{month} %{weekdays} %{until}
+        one: "毎年 %{month} %{weekdays} %{until}"
         other: "%{count}年ごと %{month} %{weekdays} %{until}"
     termination_types:
       count: 回数指定
       never: なし
       until: 指定日
-    times_label: 回
     types:
       daily: 毎日
       monthly_by_day_of_month: 毎月 (日付指定)

@@ -11,7 +11,6 @@ be:
       done: Гатова
       remove: Выдаліць
       save: Зберегці
-    add_exception: Дадаць выключэнне
     count_label:
       few: "%{count} разы"
       many: "%{count} разоў"
@@ -64,7 +63,6 @@ be:
       - лістапад
       - снежань
     days_of_month_fmt: "%{list} ліку"
-    debug_hint: Выніковы JSON для IceCube. Вы можаце рэдагаваць яго напрамую для тэставання!
     duration:
       days:
         few: "%{count} дні"
@@ -81,8 +79,6 @@ be:
         many: "%{count} хвілін"
         one: "%{count} хвіліна"
         other: "%{count} хвіліны"
-    enter_exception_dates: Увядзіце даты выключэнняў
-    every: Кожны
     every_week: Кожны
     in_month_names_yearly:
     -
@@ -98,35 +94,24 @@ be:
     - кастрычніку
     - лістападзе
     - снежні
-    interval:
-      day: дзень
-      month: месяц
-      week: тыдзень
-      year: год
     labels:
-      add_exception: Дадаць выключэнне
-      add_rdate: Дадаць дадатковую дату
       choose_month: Выберыце месяц
       day: дзень
-      duration: Duration
-      editor_title: Налада паўтарэння
-      end_at: End at
-      every: Every
-      except: Акрамя
+      duration: Працягласць
+      end_at: Час заканчэння аднаго выпадку
+      every: Кожны
       exceptions: Выключэнні
       frequency: Чакласць
       month: месяц
       new_rule: Новае правіла
-      one_time: Без паўтарэння
       raw_json: Raw JSON
       rdates: Дадатковыя даты
+      recurrence: Повторение
       select_dates: Выбраць даты
-      select_nth_day: Выбраць N-ы дзень
       start_at: Start at
       termination: Завяршэнне задачы
       time_zone: Часовой пояс
       times: раз
-      until: До
       week: тыдзень
       year: год
     last: апошні
@@ -213,7 +198,6 @@ be:
       count: Колькасць разоў
       never: Бясконца
       until: Да даты
-    times_label: раз
     types:
       daily: Штодня
       monthly_by_day_of_month: Штомесяц (па днях месяца)

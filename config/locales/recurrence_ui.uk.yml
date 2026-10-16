@@ -11,7 +11,6 @@ uk:
       done: Готово
       remove: Видалити
       save: Зберегти
-    add_exception: Додати виняток
     count_label:
       few: "%{count} рази"
       many: "%{count} разів"
@@ -64,7 +63,6 @@ uk:
       - листопад
       - грудень
     days_of_month_fmt: "%{list} числа"
-    debug_hint: Підсумковий JSON для IceCube. Ви можете редагувати його безпосередньо для тестування!
     duration:
       days:
         few: "%{count} дні"
@@ -81,8 +79,6 @@ uk:
         many: "%{count} хвилин"
         one: "%{count} хвилина"
         other: "%{count} хвилини"
-    enter_exception_dates: Введіть дати винятків
-    every: Кожен
     every_week: Кожен
     in_month_names_yearly:
     -
@@ -98,35 +94,24 @@ uk:
     - жовтні
     - листопаді
     - грудні
-    interval:
-      day: день
-      month: місяць
-      week: тиждень
-      year: рік
     labels:
-      add_exception: Додати виняток
-      add_rdate: Додати додаткову дату
       choose_month: Оберіть місяць
       day: день
-      duration:  Тривалість одного випадку
-      editor_title: Налаштування повторення
+      duration: Тривалість одного випадку
       end_at: Час завершення одного випадку
       every: Кожен
-      except: За винятком
       exceptions: Винятки
       frequency: Частота
       month: місяць
       new_rule: Нове правило
-      one_time: Без повторення
       raw_json: Raw JSON
       rdates: Додаткові дати
+      recurrence: Повторение
       select_dates: Обрати дати
-      select_nth_day: Обрати N-й день
       start_at: Дата початку першого випадку та час одного випадку
       termination: Завершення завдання
       time_zone: Часовий пояс
       times: разів
-      until: До
       week: тиждень
       year: рік
     last: останній
@@ -213,7 +198,6 @@ uk:
       count: Кількість разів
       never: Безкінечно
       until: До дати
-    times_label: разів
     types:
       daily: Щодня
       monthly_by_day_of_month: Щомісяця (за днем місяця)

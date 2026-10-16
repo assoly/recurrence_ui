@@ -146,6 +146,9 @@ module RecurrenceUi
       raw_data = recurrence_raw_rules
       return s if raw_data.blank?
 
+      # Превращаем в хэш с строковыми ключами на всякий случай
+      raw_data = raw_data.deep_stringify_keys if raw_data.is_a?(Hash)
+
       # Достаем массив правил безопасно, игнорируя UI-ключи типа duration_mode
       rules_array = raw_data['rrules'] || (raw_data['rule_type'] ? [raw_data] : [])
 
@@ -171,7 +174,8 @@ module RecurrenceUi
         end
       end
 
-      Array(data['exdates']).each do |exdate|
+      # ИСПРАВЛЕНО: заменено data на raw_data
+      Array(raw_data['exdates']).each do |exdate|
         next if exdate.blank?
         parsed_date = Date.parse(exdate.to_s) rescue nil
         next unless parsed_date
@@ -184,7 +188,8 @@ module RecurrenceUi
         s.add_exception_time(exact_datetime)
       end
 
-      Array(data['rdates']).each do |rdate|
+      # ИСПРАВЛЕНО: заменено data на raw_data
+      Array(raw_data['rdates']).each do |rdate|
         next if rdate.blank?
         parsed_date = Date.parse(rdate.to_s) rescue nil
         next unless parsed_date

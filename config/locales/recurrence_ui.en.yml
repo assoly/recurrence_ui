@@ -11,7 +11,6 @@ en:
       done: Done
       remove: Remove
       save: Save
-    add_exception: Add exception
     count_label:
       one: "%{count} time"
       other: "%{count} times"
@@ -62,7 +61,6 @@ en:
       - November
       - December
     days_of_month_fmt: the %{list}
-    debug_hint: Hidden field contents. You can edit this directly for testing!
     duration:
       days:
         one: "%{count} day"
@@ -73,8 +71,6 @@ en:
       minutes:
         one: "%{count} minute"
         other: "%{count} minutes"
-    enter_exception_dates: Enter exception dates
-    every: Every
     every_week: Every
     in_month_names_yearly:
     -
@@ -90,35 +86,24 @@ en:
     - October
     - November
     - December
-    interval:
-      day: day
-      month: month
-      week: week
-      year: year
     labels:
-      add_exception: Add exception
-      add_rdate: Add additional date
       choose_month: Choose month
       day: Day
       duration: Duration of one occurrence
-      editor_title: Recurrence Settings
       end_at: Ending time of one occurrence
       every: Every
-      except: Exceptions
       exceptions: Exceptions
       frequency: Frequency
       month: Month
       new_rule: New rule
-      one_time: Does not repeat
       raw_json: Raw JSON
       rdates: Additional Dates
+      recurrence: Повторение
       select_dates: Select dates
-      select_nth_day: Select N-th day
       start_at: Start date of first occurrence and start time of one occurrence
       termination: Termination
       time_zone: Часовой пояс
       times: times
-      until: До
       week: week
       year: year
     last: last
@@ -157,28 +142,27 @@ en:
         other: "%{count}"
     summary:
       daily:
-        one: Every day %{until}
-        other: Every %{count} days %{until}
+        one: "Every day %{until}"
+        other: "Every %{count} days %{until}"
       monthly_by_day_of_month:
-        one: 'Every month on: %{days_of_month} %{until}'
-        other: 'Every %{count} months on: %{days_of_month} %{until}'
+        one: "Every month on: %{days_of_month} %{until}"
+        other: "Every %{count} months on: %{days_of_month} %{until}"
       monthly_by_weekday:
-        one: 'Every month on: %{weekdays} %{until}'
-        other: 'Every %{count} months on: %{weekdays} %{until}'
+        one: "Every month on: %{weekdays} %{until}"
+        other: "Every %{count} months on: %{weekdays} %{until}"
       weekly:
-        one: Every week on %{weekdays} %{until}
-        other: Every %{count} weeks on %{weekdays} %{until}
+        one: "Every week on %{weekdays} %{until}"
+        other: "Every %{count} weeks on %{weekdays} %{until}"
       yearly_by_day_of_month:
-        one: 'Every year in %{month}: %{days_of_month} %{until}'
-        other: 'Every %{count} years in %{month}: %{days_of_month} %{until}'
+        one: "Every year in %{month}: %{days_of_month} %{until}"
+        other: "Every %{count} years in %{month}: %{days_of_month} %{until}"
       yearly_by_weekday:
-        one: 'Every year in %{month}: %{weekdays} %{until}'
-        other: 'Every %{count} years in %{month}: %{weekdays} %{until}'
+        one: "Every year in %{month}: %{weekdays} %{until}"
+        other: "Every %{count} years in %{month}: %{weekdays} %{until}"
     termination_types:
       count: After number of times
       never: Never
       until: On date
-    times_label: times
     types:
       daily: Daily
       monthly_by_day_of_month: Monthly (by day of month)

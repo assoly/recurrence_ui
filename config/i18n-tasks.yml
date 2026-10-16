@@ -164,9 +164,18 @@ ignore_missing:
   - 'recurrence_ui.nth_names.neutral.*'
   - 'recurrence_ui.ordinals.*'
   - 'recurrence_ui.units.*'
-
 ## Consider these keys used:
-# ignore_unused:
+ignore_unused:
+  - 'recurrence_ui.summary.*'
+  # 1. Игнорируем роды и формы плюрализации в ordinals/nth_names для японского
+  - 'recurrence_ui.nth_names.female.*'
+  - 'recurrence_ui.nth_names.male.*'
+  - 'recurrence_ui.nth_names.neutral.*'
+  - 'recurrence_ui.ordinals.*'
+  - 'recurrence_ui.units.*'
+  - 'recurrence_ui.date.*'
+
+
 # - 'activerecord.attributes.*'
 # - '{devise,kaminari,will_paginate}.*'
 # - 'simple_form.{yes,no}'

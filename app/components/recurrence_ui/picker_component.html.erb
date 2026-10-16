@@ -57,7 +57,7 @@
                 value: initial_duration_days, min: 0, 
                 class: "rui-input w-16 text-center", 
                 data: { "#{identifier}_target": "daysField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
-          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.days.one', count: 1).gsub('1', '').strip %></span>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.days', count: 1).gsub('1', '').strip %></span>
         </div>
 
         <!-- Часы -->
@@ -66,7 +66,7 @@
                 value: initial_duration_hours, min: 0, max: 23, 
                 class: "rui-input w-16 text-center", 
                 data: { "#{identifier}_target": "hoursField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
-          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.hours.one', count: 1).gsub('1', '').strip %></span>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.hours', count: 1).gsub('1', '').strip %></span>
         </div>
 
         <!-- Минуты -->
@@ -75,7 +75,7 @@
                 value: initial_duration_minutes, min: 0, max: 59, 
                 class: "rui-input w-16 text-center", 
                 data: { "#{identifier}_target": "minutesField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
-          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.minutes.one', count: 1).gsub('1', '').strip %></span>
+          <span class="text-sm text-gray-600"><%= t('recurrence_ui.duration.minutes', count: 1).gsub('1', '').strip %></span>
         </div>
       </div>
     </div>

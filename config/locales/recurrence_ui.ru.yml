@@ -11,7 +11,6 @@ ru:
       done: Готово
       remove: Удалить
       save: Сохранить
-    add_exception: Добавить исключение
     count_label:
       few: "%{count} раза"
       many: "%{count} раз"
@@ -64,7 +63,6 @@ ru:
       - ноябрь
       - декабрь
     days_of_month_fmt: "%{list} числа"
-    debug_hint: Результирующий JSON для IceCube. Вы можете редактировать его напрямую для тестирования!
     duration:
       days:
         few: "%{count} дня"
@@ -81,8 +79,6 @@ ru:
         many: "%{count} минут"
         one: "%{count} минута"
         other: "%{count} минуты"
-    enter_exception_dates: Введите даты исключений
-    every: Каждый
     every_week: Каждую
     in_month_names_yearly:
     -
@@ -98,36 +94,24 @@ ru:
     - октябре
     - ноябре
     - декабре
-    interval:
-      day: день
-      month: месяц
-      week: неделя
-      year: год
     labels:
-      add_exception: Добавить исключение
-      add_rdate: Добавить дополнительную дату
       choose_month: Выберите месяц
       day: день
       duration: Длительность
-      editor_title: Настройка повторения
       end_at: Окончание
       every: Каждый
-      except: Исключая
       exceptions: Исключения
       frequency: Частота
       month: месяц
       new_rule: Новое правило
-      one_time: Без повторения
       raw_json: Raw JSON
-      recurrence: Повторение
       rdates: Дополнения
+      recurrence: Повторение
       select_dates: Выбрать даты
-      select_nth_day: Выбрать N-й день
-      start_at: Начало 
+      start_at: Начало
       termination: Завершение
       time_zone: Часовой пояс
       times: раз
-      until: До
       week: неделю
       year: год
     last: последний
@@ -193,28 +177,27 @@ ru:
         other: "%{count}-ю"
     summary:
       daily:
-        one: Каждый день %{until}
-        other: Каждый %{count_f} день %{until}
+        one: "Каждый день %{until}"
+        other: "Каждый %{count_f} день %{until}"
       monthly_by_day_of_month:
-        one: 'Каждый месяц: %{days_of_month} %{until}'
-        other: 'Каждый %{count_f} месяц: %{days_of_month} %{until}'
+        one: "Каждый месяц: %{days_of_month} %{until}"
+        other: "Каждый %{count_f} месяц: %{days_of_month} %{until}"
       monthly_by_weekday:
-        one: 'Каждый месяц: %{weekdays} %{until}'
-        other: 'Каждый %{count_f} месяц: %{weekdays} %{until}'
+        one: "Каждый месяц: %{weekdays} %{until}"
+        other: "Каждый %{count_f} месяц: %{weekdays} %{until}"
       weekly:
-        one: Каждую неделю по %{weekdays} %{until}
-        other: Каждую %{count_f} неделю по %{weekdays} %{until}
+        one: "Каждую неделю по %{weekdays} %{until}"
+        other: "Каждую %{count_f} неделю по %{weekdays} %{until}"
       yearly_by_day_of_month:
-        one: 'Каждый год в %{month}: %{days_of_month} %{until}'
-        other: 'Каждый %{count_f} год в %{month}: %{days_of_month} %{until}'
+        one: "Каждый год в %{month}: %{days_of_month} %{until}"
+        other: "Каждый %{count_f} год в %{month}: %{days_of_month} %{until}"
       yearly_by_weekday:
-        one: 'Каждый год в %{month}: %{weekdays} %{until}'
-        other: 'Каждый %{count_f} год в %{month}: %{weekdays} %{until}'
+        one: "Каждый год в %{month}: %{weekdays} %{until}"
+        other: "Каждый %{count_f} год в %{month}: %{weekdays} %{until}"
     termination_types:
       count: Количество раз
       never: Бесконечно
       until: До даты
-    times_label: раз
     types:
       daily: Ежедневно
       monthly_by_day_of_month: Ежемесячно (по дню месяца)

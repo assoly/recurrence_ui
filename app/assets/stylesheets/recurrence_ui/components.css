@@ -238,7 +238,7 @@
   /* Full Rule Summary Text (Text wraps naturally without truncating) */
   .rui-accordion-link {
     color: var(--rui-primary-bg);
-    @apply text-xs font-medium cursor-pointer leading-relaxed transition-colors select-none whitespace-normal break-words;
+    @apply text-xs font-medium cursor-pointer leading-relaxed transition-colors select-none whitespace-normal;
   }
 
   .rui-accordion-link:hover {
@@ -255,7 +255,7 @@
   /* Delete Rule Action Button (Positioned on the Right Top) */
   .rui-btn-remove-card {
     color: var(--rui-text-muted);
-    @apply text-xs px-1.5 py-0.5 rounded font-normal transition-colors ml-2 flex-shrink-0 cursor-pointer;
+    @apply text-xs px-1.5 py-0.5 rounded font-normal transition-colors ml-2 cursor-pointer;
   }
 
   .rui-btn-remove-card:hover {

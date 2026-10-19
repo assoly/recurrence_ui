@@ -1,5 +1,4 @@
-.recurrence-ui-hidden,
-.hidden {
+.recurrence-ui-hidden{
   display: none !important;
 }
 

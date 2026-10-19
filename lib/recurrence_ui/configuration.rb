@@ -6,6 +6,7 @@ module RecurrenceUi
     DEFAULT_LOCALE = 'en'.freeze
     DEFAULT_TIME_ZONE = 'UTC'.freeze
     DEFAULT_WEEK_START = 0
+    DEFAULT_DURATION = 0 # Default duration in seconds if not specified
     ALL_RULE_TYPES = %w[
           never
           daily

@@ -9,9 +9,9 @@ module RecurrenceUi
       class_attribute :recurrence_end_time_field,   default: RecurrenceUi.config.default_end_time_field
       class_attribute :recurrence_time_zone_field,  default: RecurrenceUi.config.default_time_zone_field
       class_attribute :recurrence_duration_field,   default: RecurrenceUi.config.default_duration_field
-      attr_accessor :start_date, :start_time, 
-                    :duration_mode, :duration_days, :duration_hours, :duration_minutes, 
-                    :end_date, :end_time
+      attr_accessor :form_start_date, :form_start_time, 
+                    :form_duration_mode, :form_duration_days, :form_duration_hours, :form_duration_minutes, 
+                    :form_end_date, :form_end_time
 
       before_save :process_recurrence_time_attributes
     end
@@ -30,7 +30,7 @@ module RecurrenceUi
         # ЧТЕНИЕ: Возвращаем Hash с rules и метаданными UI
         define_method(field_name) do
           raw_val = read_attribute(field_name)
-          return { 'duration_mode' => 'duration', 'rrules' => [] }.with_indifferent_access if raw_val.blank?
+          return { 'form_duration_mode' => 'duration', 'rrules' => [] }.with_indifferent_access if raw_val.blank?
 
           parsed = if raw_val.is_a?(Hash)
                      raw_val.with_indifferent_access
@@ -41,7 +41,7 @@ module RecurrenceUi
                    end
 
           # Гарантируем наличие дефолтов
-          parsed[:duration_mode] ||= 'duration'
+          parsed[:form_duration_mode] ||= 'duration'
           parsed
         end
 
@@ -67,14 +67,14 @@ module RecurrenceUi
           recurrence_end_time_field.to_sym,
           recurrence_time_zone_field.to_sym,
           recurrence_duration_field.to_sym,
-          :start_date,
-          :start_time,
-          :duration_mode,
-          :duration_days,
-          :duration_hours,
-          :duration_minutes,
-          :end_date,
-          :end_time
+          :form_start_date,
+          :form_start_time,
+          :form_duration_mode,
+          :form_duration_days,
+          :form_duration_hours,
+          :form_duration_minutes,
+          :form_end_date,
+          :form_end_time
         ]
       end
     
@@ -149,7 +149,7 @@ module RecurrenceUi
       # Превращаем в хэш с строковыми ключами на всякий случай
       raw_data = raw_data.deep_stringify_keys if raw_data.is_a?(Hash)
 
-      # Достаем массив правил безопасно, игнорируя UI-ключи типа duration_mode
+      # Достаем массив правил безопасно, игнорируя UI-ключи типа form_duration_mode
       rules_array = raw_data['rrules'] || (raw_data['rule_type'] ? [raw_data] : [])
 
       rules_array.each do |rule_hash|
@@ -238,11 +238,11 @@ module RecurrenceUi
       current_rules = recurrence_raw_rules.deep_dup
 
       # Сохраняем выбранный в форме режим в общие метаданные правил
-      if duration_mode.present?
-        current_rules[:duration_mode] = duration_mode
+      if form_duration_mode.present?
+        current_rules[:form_duration_mode] = form_duration_mode
       end
 
-      if duration_mode == 'end_at' && end_date.present?
+      if form_duration_mode == 'end_at' && end_date.present?
         end_time_str = end_time.presence || '09:00'
         parsed_end = tz.parse("#{end_date} #{end_time_str}")
 
@@ -252,9 +252,9 @@ module RecurrenceUi
           write_attribute(dur_field, calculated_dur) if dur_field && respond_to?("#{dur_field}=") && read_attribute(dur_field) != calculated_dur
         end
       else
-        days    = duration_days.to_i
-        hours   = duration_hours.to_i
-        minutes = duration_minutes.to_i
+        days    = form_duration_days.to_i
+        hours   = form_duration_hours.to_i
+        minutes = form_duration_minutes.to_i
         total_seconds = (days * 1.day + hours * 1.hour + minutes * 1.minute).to_i
         total_seconds = 1.hour if total_seconds <= 0
 
@@ -264,7 +264,7 @@ module RecurrenceUi
         write_attribute(end_field, calculated_end) if end_field && respond_to?("#{end_field}=") && read_attribute(end_field) != calculated_end
       end
 
-      # Записываем обновленный хэш (вместе с duration_mode) обратно через наш сеттер
+      # Записываем обновленный хэш (вместе с form_duration_mode) обратно через наш сеттер
       public_send("#{self.class.recurrence_rules_field}=", current_rules)
     end
   end

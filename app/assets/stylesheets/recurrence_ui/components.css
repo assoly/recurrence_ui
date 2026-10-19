@@ -27,7 +27,14 @@
   .rui-select:disabled,
   .rui-textarea:disabled {
     background-color: var(--rui-input-disabled-bg);
+    color: var(--rui-text-muted) !important;
+    opacity: 0.6;
   }
+/* Подписи возле полей ввода (день, час, мин) */
+.rui-duration-unit {
+  color: var(--rui-text-muted);
+  @apply text-sm;
+}
 
   .rui-input-sm {
     @apply text-xs px-2 py-1 rounded;

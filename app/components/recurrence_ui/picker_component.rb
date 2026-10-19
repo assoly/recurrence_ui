@@ -44,29 +44,29 @@ module RecurrenceUi
     end
     # --- Динамические хелперы для вычисления начальных значений длительности ---
     # Вычисляет количество дней длительности из записи
-    def initial_duration_days
+    def initial_form_duration_days
       dur = record.public_send(duration_field).to_i
       return 0 if dur <= 0
       (dur / 1.day).to_i
     end
 
     # Вычисляет оставшиеся часы длительности
-    def initial_duration_hours
+    def initial_form_duration_hours
       dur = record.public_send(duration_field).to_i
       return 1 if dur <= 0 # дефолтное значение, если пусто
       ((dur % 1.day) / 1.hour).to_i
     end
 
     # Вычисляет оставшиеся минуты длительности
-    def initial_duration_minutes
+    def initial_form_duration_minutes
       dur = record.public_send(duration_field).to_i
       return 0 if dur <= 0
       ((dur % 1.hour) / 1.minute).to_i
     end
 
     # Определяет, какая радиокнопка должна быть выбрана при открытии формы (:duration или :end_at)
-    def initial_duration_mode
-      saved_mode = rules[:duration_mode]
+    def initial_form_duration_mode
+      saved_mode = rules[:form_duration_mode]
       return saved_mode.to_sym if saved_mode.present?
 
       :duration # дефолт

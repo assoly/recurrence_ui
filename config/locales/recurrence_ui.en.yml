@@ -62,6 +62,9 @@ en:
       - December
     days_of_month_fmt: the %{list}
     duration:
+      form_days: "Days"
+      form_hours: "Hours"
+      form_minutes: "Minutes"
       days:
         one: "%{count} day"
         other: "%{count} days"

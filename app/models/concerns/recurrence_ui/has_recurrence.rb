@@ -89,12 +89,14 @@ module RecurrenceUi
     end
 
     def event_time_zone
-      tz_name = nil
-      if self.class.recurrence_time_zone_field && respond_to?(self.class.recurrence_time_zone_field)
-        tz_name = public_send(self.class.recurrence_time_zone_field)
-      end
-      zone_name = tz_name.presence || Time.zone&.name
-      ActiveSupport::TimeZone[zone_name] || Time.zone
+      tz_name = if self.class.recurrence_time_zone_field &&
+                  respond_to?(self.class.recurrence_time_zone_field)
+                  public_send(self.class.recurrence_time_zone_field)
+                end
+
+      ActiveSupport::TimeZone[tz_name.presence] ||
+        Time.zone ||
+        ActiveSupport::TimeZone[Rails.application.config.time_zone]
     end
 
     def recurrence_start_time
@@ -222,9 +224,9 @@ module RecurrenceUi
     def process_recurrence_time_attributes
       tz = event_time_zone
 
-      if respond_to?(:start_date=) && start_date.present?
-        time_str = start_time.presence || '09:00'
-        parsed_start = tz.parse("#{start_date} #{time_str}")
+      if respond_to?(:form_start_date=) && form_start_date.present?
+        time_str = form_start_time.presence || '09:00'
+        parsed_start = tz.parse("#{form_start_date} #{time_str}")
         write_attribute(self.class.recurrence_start_time_field, parsed_start) if parsed_start
       end
 
@@ -242,9 +244,9 @@ module RecurrenceUi
         current_rules[:form_duration_mode] = form_duration_mode
       end
 
-      if form_duration_mode == 'end_at' && end_date.present?
-        end_time_str = end_time.presence || '09:00'
-        parsed_end = tz.parse("#{end_date} #{end_time_str}")
+      if form_duration_mode == 'end_at' && form_end_date.present?
+        end_time_str = form_end_time.presence || '09:00'
+        parsed_end = tz.parse("#{form_end_date} #{end_time_str}")
 
         if parsed_end.present?
           write_attribute(end_field, parsed_end) if read_attribute(end_field) != parsed_end

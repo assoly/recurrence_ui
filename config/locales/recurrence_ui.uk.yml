@@ -64,6 +64,9 @@ uk:
       - грудень
     days_of_month_fmt: "%{list} числа"
     duration:
+      form_days: "Дні"
+      form_hours: "Години"
+      form_minutes: "Хвилини"
       days:
         few: "%{count} дні"
         many: "%{count} днів"

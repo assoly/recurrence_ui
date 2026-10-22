@@ -64,6 +64,9 @@ be:
       - снежань
     days_of_month_fmt: "%{list} ліку"
     duration:
+      form_days: "Дні"
+      form_hours: "Гадзіны" 
+      form_minutes: "Хвіліны"
       days:
         few: "%{count} дні"
         many: "%{count} дзен"

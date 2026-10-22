@@ -61,6 +61,9 @@ ja:
       - 12月
     days_of_month_fmt: "%{list}"
     duration:
+      form_days: "日"
+      form_hours: "時間"
+      form_minutes: "分"
       days:
         one: "%{count}日"
         other: "%{count}日"

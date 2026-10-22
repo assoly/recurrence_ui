@@ -1,6 +1,6 @@
-# app/components/recurrence_ui/picker_component.rb
+# app/components/recurrence_ui/recurrence_picker_component.rb
 module RecurrenceUi
-  class PickerComponent < ViewComponent::Base
+  class RecurrencePickerComponent < ViewComponent::Base
     attr_reader :record, :i18n_prefix, :identifier, :locale, :time_zone, :week_start, :enabled_rule_types
 
     def initialize(
@@ -82,7 +82,34 @@ module RecurrenceUi
     def end_time_field
       @end_time_field ||= record.class.respond_to?(:recurrence_end_time_field) ? record.class.recurrence_end_time_field : :end_at
     end
+    # Возвращает начало события в часовом поясе самого события.
+    def initial_start_at
+      value = record.public_send(start_time_field)
+      return if value.blank?
 
+      value.in_time_zone(event_time_zone)
+    end
+
+    # Возвращает окончание события в часовом поясе самого события.
+    def initial_end_at
+      value = record.public_send(end_time_field)
+      return if value.blank?
+
+      value.in_time_zone(event_time_zone)
+    end
+
+    # Определяет часовой пояс события.
+    def event_time_zone
+      if record.respond_to?(:event_time_zone)
+        record.event_time_zone
+      else
+        zone_name = record.public_send(time_zone_field) if
+          record.respond_to?(time_zone_field)
+
+        ActiveSupport::TimeZone[zone_name.presence] ||
+          ActiveSupport::TimeZone[Rails.application.config.time_zone]
+      end
+    end
     def duration_field
       @duration_field ||= record.class.respond_to?(:recurrence_duration_field) ? record.class.recurrence_duration_field : :duration
     end
@@ -158,7 +185,7 @@ module RecurrenceUi
       RecurrenceUi::RecurrenceSummaryService.new(
         rule_hash,
         locale: locale,
-        time_zone: time_zone,
+        time_zone: event_time_zone,
         week_start: week_start
       ).to_s
     end

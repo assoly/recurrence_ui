@@ -98,9 +98,10 @@ module RecurrenceUi
                   public_send(self.class.recurrence_time_zone_field)
                 end
 
-      ActiveSupport::TimeZone[tz_name.presence] ||
-        Time.zone ||
-        ActiveSupport::TimeZone[Rails.application.config.time_zone]
+      # Если часовой пояс не задан (nil или пустая строка), безопасно возвращаем Time.zone приложения
+      return Time.zone unless tz_name.present?
+
+      ActiveSupport::TimeZone[tz_name] || Time.zone || ActiveSupport::TimeZone[Rails.application.config.time_zone]
     end
 
     def recurrence_start_time

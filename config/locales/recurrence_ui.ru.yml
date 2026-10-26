@@ -83,6 +83,10 @@ ru:
         one: "%{count} минута"
         other: "%{count} минуты"
     every_week: Каждую
+    time:
+      formats:
+        time_only: "%H:%M"          
+        separator: ", в "
     in_month_names_yearly:
     -
     - январе

@@ -79,15 +79,35 @@ module RecurrenceUi
       end
     
     end
-
     
+    def summary(options = {})
+      RecurrenceFormatterService.new(self, options)
+    end
+    
+    def formatted_duration
+      summary.duration
+    end
+
+    def recurring_text
+      summary.to_s
+    end
+
+    # Если нужны шорткаты для времени с учетом зоны и форматирования:
+    def formatted_start_time(zone_type = :event, format = :default, show_zone: false)
+      summary.start_time(zone_type, format, show_zone: show_zone)
+    end
+
+    def formatted_end_time(zone_type = :event, format = :default, show_zone: false)
+      summary.end_time(zone_type, format, show_zone: show_zone)
+    end
+
 
     # --- Instance Methods ---
 
     def recurrence_raw_rules
       public_send(self.class.recurrence_rules_field)
     end
-
+ 
     def event_time_zone
       tz_name = if self.class.recurrence_time_zone_field &&
                   respond_to?(self.class.recurrence_time_zone_field)
@@ -107,6 +127,23 @@ module RecurrenceUi
       (raw_start || Time.current).in_time_zone(event_time_zone)
     end
 
+    def recurrence_end_time
+      end_field = self.class.recurrence_end_time_field
+      return nil unless end_field && respond_to?(end_field)
+
+      raw_end = public_send(end_field)
+      return nil unless raw_end.present?
+
+      raw_end.in_time_zone(event_time_zone)
+    end
+    def start_time_in_zone(zone_type = :event)
+      time_in_zone(recurrence_start_time, zone_type)
+    end
+
+    def end_time_in_zone(zone_type = :event)
+      time_in_zone(recurrence_end_time, zone_type)
+    end
+
     # Получение значения длительности (в секундах)
     def current_duration_seconds
       dur_field = self.class.recurrence_duration_field
@@ -116,25 +153,7 @@ module RecurrenceUi
       end
       0
     end
-    # Отформатированная длительность для вывода во вьюхе
-    def formatted_duration
-      dur = current_duration_seconds
-      return "—" if dur <= 0
-
-      total_minutes = (dur / 60).to_i
-      return "—" if total_minutes <= 0
-
-      days = total_minutes / 1440
-      hours = (total_minutes % 1440) / 60
-      minutes = total_minutes % 60
-
-      parts = []
-      parts << I18n.t('recurrence_ui.duration.days', count: days) if days > 0
-      parts << I18n.t('recurrence_ui.duration.hours', count: hours) if hours > 0
-      parts << I18n.t('recurrence_ui.duration.minutes', count: minutes) if minutes > 0
-
-      parts.any? ? parts.join(' ') : I18n.t('recurrence_ui.duration.minutes', count: 0)
-    end
+   
 
     # --- Building IceCube::Schedule ---
 
@@ -176,7 +195,6 @@ module RecurrenceUi
         end
       end
 
-      # ИСПРАВЛЕНО: заменено data на raw_data
       Array(raw_data['exdates']).each do |exdate|
         next if exdate.blank?
         parsed_date = Date.parse(exdate.to_s) rescue nil
@@ -190,7 +208,6 @@ module RecurrenceUi
         s.add_exception_time(exact_datetime)
       end
 
-      # ИСПРАВЛЕНО: заменено data на raw_data
       Array(raw_data['rdates']).each do |rdate|
         next if rdate.blank?
         parsed_date = Date.parse(rdate.to_s) rescue nil
@@ -210,17 +227,24 @@ module RecurrenceUi
     def upcoming_occurrences(limit = 5, from_time = Time.current)
       schedule.next_occurrences(limit, from_time.in_time_zone(event_time_zone))
     end
+    def upcoming_occurrences_in_zone(limit = 5, from_time = Time.current, zone_type = :event)
+      target_zone = resolve_zone_type(zone_type)
+      schedule.next_occurrences(limit, from_time.in_time_zone(target_zone))
+    end
+
 
     def rule
       schedule.recurrence_rules.first
     end
 
-    def recurring_text
-      return I18n.t("recurrence_ui.once", default: "Once") if recurrence_raw_rules.blank?
-      schedule.to_s
-    end
-
     private
+    
+    def time_in_zone(time, zone_type = :event)
+      return nil unless time
+
+      target_zone = resolve_zone_type(zone_type)
+      time.in_time_zone(target_zone)
+    end
     def process_recurrence_time_attributes
       tz = event_time_zone
 
@@ -268,6 +292,16 @@ module RecurrenceUi
 
       # Записываем обновленный хэш (вместе с form_duration_mode) обратно через наш сеттер
       public_send("#{self.class.recurrence_rules_field}=", current_rules)
+    end
+    def resolve_zone_type(zone_type)
+      case zone_type
+      when :event
+        event_time_zone
+      when :application, :app
+        Time.zone
+      else
+        Time.find_zone(zone_type) || Time.zone
+      end
     end
   end
 end

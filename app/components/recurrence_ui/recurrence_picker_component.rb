@@ -182,7 +182,7 @@ module RecurrenceUi
       rule_hash = rules
       return "" if rule_hash.blank?
 
-      RecurrenceUi::RecurrenceSummaryService.new(
+      RecurrenceUi::RecurrenceFormatterService.new(
         rule_hash,
         locale: locale,
         time_zone: event_time_zone,

@@ -75,6 +75,10 @@ en:
         one: "%{count} minute"
         other: "%{count} minutes"
     every_week: Every
+    time:
+      formats:
+        time_only: "%H:%M"
+        separator: " at "
     in_month_names_yearly:
     -
     - January

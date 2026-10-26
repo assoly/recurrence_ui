@@ -83,23 +83,7 @@ module RecurrenceUi
     def summary(options = {})
       RecurrenceFormatterService.new(self, options)
     end
-    
-    def formatted_duration
-      summary.duration
-    end
 
-    def recurring_text
-      summary.to_s
-    end
-
-    # Если нужны шорткаты для времени с учетом зоны и форматирования:
-    def formatted_start_time(zone_type = :event, format = :default, show_zone: false)
-      summary.start_time(zone_type, format, show_zone: show_zone)
-    end
-
-    def formatted_end_time(zone_type = :event, format = :default, show_zone: false)
-      summary.end_time(zone_type, format, show_zone: show_zone)
-    end
 
 
     # --- Instance Methods ---
@@ -236,6 +220,8 @@ module RecurrenceUi
     def rule
       schedule.recurrence_rules.first
     end
+
+    delegate :formatted_start_time, :formatted_end_time, :formatted_duration, :formatted_upcoming_occurrences, :to_s, to: :summary
 
     private
     

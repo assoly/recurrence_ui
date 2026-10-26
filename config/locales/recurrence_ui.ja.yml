@@ -74,6 +74,10 @@ ja:
         one: "%{count}分"
         other: "%{count}分"
     every_week: 毎
+    time:
+      formats:
+        time_only: "%H時%M分"
+        separator: " "
     in_month_names_yearly:
     -
     - 1月

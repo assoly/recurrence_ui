@@ -118,7 +118,7 @@ module RecurrenceUi
     # @param format [Symbol] Localization format key for I18n.l (e.g., :default, :short).
     # @return [String] Formatted duration string or "—" if event/time is absent.
 
-    def duration
+    def formatted_duration
       dur = @event.current_duration_seconds
       return "—" if dur <= 0
 
@@ -136,6 +136,31 @@ module RecurrenceUi
 
       parts.any? ? parts.join(' ') : I18n.t('recurrence_ui.duration.minutes', count: 0)
     end
+# Форматированные ближайшие повторения с умной проверкой окончания
+    def formatted_upcoming_occurrences(limit = 5, zone_type = :event, show_end_time: false, show_zone: false)
+      return [] unless @event
+
+      target_zone = resolve_zone_type(zone_type)
+      occurrences = @event.upcoming_occurrences_in_zone(limit, Time.current, zone_type)
+
+      occurrences.map do |occ|
+        start_str = format_full_datetime(occ.start_time, show_zone: show_zone)
+
+        if show_end_time && occ.end_time.present?
+          end_str = if occ.start_time.to_date == occ.end_time.to_date
+                      format_time_only(occ.end_time, show_zone: show_zone)
+                    else
+                      format_full_datetime(occ.end_time, show_zone: show_zone)
+                    end
+          
+          # Разделитель между началом и окончанием (можно настроить в YAML или оставить дефис)
+          separator = " – " 
+          "#{start_str}#{separator}#{end_str}"
+        else
+          start_str
+        end
+      end
+    end
 
     # Calculates and formats upcoming occurrences of the event.
     #
@@ -147,8 +172,7 @@ module RecurrenceUi
     def upcoming_occurrences(limit = 5, zone_type = :event, format = :default, show_zone: false)
       return [] unless @event
 
-      target_zone = resolve_zone_type(zone_type)
-      occurrences = @event.upcoming_occurrences(limit, target_zone)
+      occurrences = @event.upcoming_occurrences_in_zone(limit, Time.current, zone_type)
 
       occurrences.map do |occ|
         start_str = I18n.l(occ.start_time, format: format, locale: @locale)

@@ -86,7 +86,7 @@ ru:
     time:
       formats:
         time_only: "%H:%M"          
-        separator: ", в "
+        separator: ", "
     in_month_names_yearly:
     -
     - январе

@@ -78,7 +78,7 @@ en:
     time:
       formats:
         time_only: "%H:%M"
-        separator: " at "
+        separator: ", "
     in_month_names_yearly:
     -
     - January

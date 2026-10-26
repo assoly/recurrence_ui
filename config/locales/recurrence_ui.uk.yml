@@ -83,6 +83,10 @@ uk:
         one: "%{count} хвилина"
         other: "%{count} хвилини"
     every_week: Кожен
+    time:
+      formats:
+        time_only: "%H:%M"
+        separator: ", "
     in_month_names_yearly:
     -
     - січні

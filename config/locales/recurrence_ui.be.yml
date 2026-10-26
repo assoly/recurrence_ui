@@ -83,6 +83,10 @@ be:
         one: "%{count} хвіліна"
         other: "%{count} хвіліны"
     every_week: Кожны
+    time:
+      formats:
+        time_only: "%H:%M"
+        separator: ", "
     in_month_names_yearly:
     -
     - студзені

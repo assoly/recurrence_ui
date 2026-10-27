@@ -1,6 +1,7 @@
 # app/components/recurrence_ui/recurrence_picker_component.rb
 module RecurrenceUi
   class RecurrencePickerComponent < ViewComponent::Base
+    include ActionView::Helpers::TranslationHelper
     attr_reader :record, :i18n_prefix, :identifier, :locale, :time_zone, :week_start, :enabled_rule_types
 
     def initialize(
@@ -100,13 +101,13 @@ module RecurrenceUi
 
     # Определяет часовой пояс события.
     def event_time_zone
-      if record.respond_to?(:event_time_zone)
+      if record.respond_to?(:event_time_zone) && record.event_time_zone.present?
         record.event_time_zone
       else
-        zone_name = record.public_send(time_zone_field) if
-          record.respond_to?(time_zone_field)
+        zone_name = record.respond_to?(time_zone_field) ? record.public_send(time_zone_field) : nil
 
-        ActiveSupport::TimeZone[zone_name.presence] ||
+        ActiveSupport::TimeZone[zone_name.presence] || 
+          Time.zone || 
           ActiveSupport::TimeZone[Rails.application.config.time_zone]
       end
     end

@@ -192,6 +192,16 @@ To get started:
 4. Create a branch, make your changes, and open a pull request.
 
 Please make sure your changes are covered by tests where appropriate.
+## 🧪 Testing
+
+*Note: The test suite is currently under active development. Contributions are very welcome!*
+
+### Planned Test Suite
+
+- [ ] **Models & Concerns (`HasRecurrence`):** Test attribute mapping, JSON parsing, virtual form attributes, and `IceCube::Schedule` generation.
+- [ ] **Formatter Service (`RecurrenceFormatterService`):** Validate human-readable summaries, smart date/time deduplication, and month declensions.
+- [ ] **Internationalization (I18n):** Automated checks to ensure all locales (`en`, `ru`, `uk`, `be`, `ja`) share a consistent translation key structure.
+- [ ] **ViewComponents:** Test proper rendering and Stimulus data-attribute bindings for form components.
 
 ## 📄 License
 

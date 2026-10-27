@@ -107,11 +107,11 @@ Use the attribute names that match your application's database schema and the at
 
 ## 🎨 View Integration
 
-Render the recurrence editor inside a Rails form using `RecurrenceUi::FormContainerComponent`:
+Render the recurrence editor inside a Rails form using `RecurrenceUi::RecurrencePickerComponent`:
 
 ```erb
 <%= form_with model: @event do |form| %>
-  <%= render RecurrenceUi::FormContainerComponent.new(
+  <%= render RecurrenceUi::RecurrencePickerComponent.new(
         form: form,
         record: @event,
         locale: params[:locale],
@@ -169,12 +169,14 @@ For example:
 ```
 
 Use the CSS variables supported by the gem to customize the interface. The example above illustrates the approach; available tokens and theme selectors depend on the styles provided by your version of Recurrence UI.
+
 ## 🚀 Example Application
 
 If you want to see `recurrence_ui` in action, check out the [rails-recurrence-ui-dummy](https://github.com/assoly/rails-recurrence-ui-dummy) repository. It demonstrates a fully configured Ruby on Rails application featuring:
 - Database models with `HasRecurrence` integration.
 - Form views using `ViewComponent` and Tailwind CSS.
 - Initializer and internationalization (i18n) setup.
+
 ## 🤝 Contributing
 
 Contributions, bug reports, and feature requests are welcome!
@@ -197,6 +199,7 @@ To get started:
 4. Create a branch, make your changes, and open a pull request.
 
 Please make sure your changes are covered by tests where appropriate.
+
 ## 🧪 Testing
 
 *Note: The test suite is currently under active development. Contributions are very welcome!*

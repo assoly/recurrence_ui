@@ -169,7 +169,12 @@ For example:
 ```
 
 Use the CSS variables supported by the gem to customize the interface. The example above illustrates the approach; available tokens and theme selectors depend on the styles provided by your version of Recurrence UI.
+## 🚀 Example Application
 
+If you want to see `recurrence_ui` in action, check out the [rails-recurrence-ui-dummy](https://github.com/assoly/rails-recurrence-ui-dummy) repository. It demonstrates a fully configured Ruby on Rails application featuring:
+- Database models with `HasRecurrence` integration.
+- Form views using `ViewComponent` and Tailwind CSS.
+- Initializer and internationalization (i18n) setup.
 ## 🤝 Contributing
 
 Contributions, bug reports, and feature requests are welcome!

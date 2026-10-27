@@ -4,7 +4,7 @@
 
 Built on top of [ice_cube](https://github.com/ice-cube-ruby/ice_cube), it provides reusable UI components powered by [ViewComponent](https://viewcomponent.org/) and styled with Tailwind CSS.
 
-[![Gem Version](https://badge.fury.io/rb/recurrence_ui.svg)](https://badge.fury.io/rb/recurrence_ui)
+[![Gem Version](https://img.shields.io/gem/v/recurrence_ui.svg)](https://rubygems.org/gems/recurrence_ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## ✨ Features

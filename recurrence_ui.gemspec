@@ -21,14 +21,14 @@ Gem::Specification.new do |spec|
   end
 
   # ==========================================
-  # Основные (Runtime) зависимости
+  # Main (Runtime) dependencies
   # ==========================================
   
   # Rails & Core UI framework
   spec.add_dependency "rails", ">= 7.1.0"
   spec.add_dependency "view_component", ">= 3.0"
   
-  # Работа с расписаниями
+  # Schedule management
   spec.add_dependency "ice_cube", "~> 0.16"
   
   # Internationalization (I18n) support
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails-i18n"
   
   # ==========================================
-  # Зависимости для разработки и тестирования (Опционально)
+  # Development and test dependencies (Optional)
   # ==========================================
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "rspec-rails"

@@ -5,14 +5,22 @@ module RecurrenceUi
   class Engine < ::Rails::Engine
     isolate_namespace RecurrenceUi
 
-    # 1. Tailwind CSS v3 paths
-    initializer "recurrence_ui.tailwindcss" do |app|
-      if app.config.respond_to?(:tailwindcss)
-        app.config.tailwindcss.content_paths << Engine.root.join("app/components/**/*.{erb,haml,html,slim,rb}").to_s
-        app.config.tailwindcss.content_paths << Engine.root.join("app/views/**/*.{erb,haml,html,slim,rb}").to_s
+    ## 1.A Tailwind CSS v3 paths
+    #initializer "recurrence_ui.tailwindcss" do |app|
+    #  if app.config.respond_to?(:tailwindcss)
+    #    app.config.tailwindcss.content_paths << Engine.root.join("app/components/**/*.{erb,haml,html,slim,rb}").to_s
+    #    app.config.tailwindcss.content_paths << Engine.root.join("app/views/**/*.{erb,haml,html,slim,rb}").to_s
+    #  end
+    #end
+    ## 1.B Tailwind CSS v4 paths
+    initializer "recurrence_ui.tailwind_v4_sources" do |app|
+      # Автоматически добавляем путь к вьюхам и компонентам гема в Tailwind v4, 
+      # если в приложении настроен сборщик tailwindcss
+      if app.config.respond_to?(:tailwindcss) && app.config.tailwindcss.respond_to?(:content_paths)
+        app.config.tailwindcss.content_paths << Engine.root.join("app/views/**/*").to_s
+        app.config.tailwindcss.content_paths << Engine.root.join("app/components/**/*").to_s
       end
     end
-
     # 2. Add importmap support for the gem
     initializer "recurrence_ui.importmap", before: "importmap" do |app|
       if app.config.respond_to?(:importmap)

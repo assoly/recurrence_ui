@@ -125,6 +125,46 @@ Render the recurrence editor inside a Rails form using `RecurrenceUi::Recurrence
 
 The `locale`, `time_zone`, and `week_start` options can be supplied dynamically when needed. If omitted, the component can use the applicable defaults provided by your integration.
 
+Add required params to controller of your Model.
+```erb
+def event_params
+      params.require(:event).permit(
+         #other params
+         *Event.recurrence_permitted_params # add this with name of your Model 
+         )
+    end
+```
+Configure gem:
+```erb
+# config/initializers/recurrence_ui.rb
+require "recurrence_ui"
+RecurrenceUi.configure do |config|
+  config.locale = :en # Default locale for all components of the gem (if no locale is passed to the component)
+  config.time_zone = "Asia/Tokyo" # Default time zone for all components of the gem (if no time_zone is passed to the component)
+  config.week_start = 1 # Week starts on Monday
+
+  # Configuration for the enabled rule types in the UI:
+  config.enabled_rule_types = %w[
+    never
+    weekly
+    daily
+    monthly_by_day_of_month
+  ]
+  # All other options will be filtered out, and the order will be preserved as specified above.
+  # config.enabled_rule_types = %w[
+  #   never
+  #   daily
+  #   weekly
+  #   monthly_by_day_of_month
+  #   monthly_by_weekday
+  #   yearly_by_day_of_month
+  #   yearly_by_weekday
+  # ]
+end
+```
+
+
+
 ## 🌍 Internationalization
 
 Recurrence UI currently supports the following locales:

@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+    Dir["{app/{assets,components,controllers,helpers,javascript,jobs,mailers,models,services,views},config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
   end
 
   spec.bindir        = "exe"
@@ -28,12 +29,12 @@ Gem::Specification.new do |spec|
   # ==========================================
   # Main (Runtime) dependencies (bounded)
   # ==========================================
-  spec.add_runtime_dependency "rails",          "~> 7.1", ">= 7.1.0"
+  spec.add_dependency "rails", ">= 7.1.0", "< 9.0"  
   spec.add_runtime_dependency "view_component", "~> 3.0"
   spec.add_runtime_dependency "ice_cube",       "~> 0.16"
   spec.add_runtime_dependency "i18n",           "~> 1.14"
-  spec.add_runtime_dependency "rails-i18n",     "~> 7.0"
-  
+  spec.add_runtime_dependency "rails-i18n", ">= 7.0", "< 9.0"  
+
   # ==========================================
   # Development and test dependencies (bounded)
   # ==========================================

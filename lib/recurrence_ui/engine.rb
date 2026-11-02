@@ -6,11 +6,11 @@ module RecurrenceUi
     isolate_namespace RecurrenceUi
 
     # 1. Add importmap support for the gem
-    #initializer "recurrence_ui.importmap", before: "importmap" do |app|
-    #  if app.config.respond_to?(:importmap)
-    #    app.config.importmap.paths << Engine.root.join("config/importmap.rb")
-    #  end
-    #end
+    initializer "recurrence_ui.importmap", before: "importmap" do |app|
+      if app.config.respond_to?(:importmap)
+        app.config.importmap.paths << Engine.root.join("config/importmap.rb")
+      end
+    end
 
     # 2. Assets (только стили и картинки, если нужны, т.к. JS обслуживает Importmap)
     initializer "recurrence_ui.assets" do |app|
@@ -21,7 +21,7 @@ module RecurrenceUi
 
     # 3. i18n locales
     initializer "recurrence_ui.locales" do |app|
-      config.i18n.load_path += Dir[Engine.root.join("config", "locales", "*.{rb,yml}")]
+      app.config.i18n.load_path += Dir[Engine.root.join("config", "locales", "*.{rb,yml}")]
     end
 
     # Add components to the global ViewComponent / ActionView search

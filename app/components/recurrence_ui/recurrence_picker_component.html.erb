@@ -1,4 +1,4 @@
-<%# app/components/recurrence_ui/recurrence_picker_component.html.erb %>
+<%# app/components/recurrence_ui/picker_component.html.erb %>
 <% I18n.with_locale(locale) do %>
   <div data-controller="<%= identifier %>" 
        data-<%= identifier %>-time-zone-value="<%= time_zone %>"
@@ -7,20 +7,47 @@
        class="rui-container"
        data-rui-theme="<%= RecurrenceUi.configuration.theme_mode %>">  
 
-    <%# 1. Секция полей времени, окончания и часового пояса %>
-    <div class="space-y-4 pb-4 border-b border-[var(--rui-border-color)]">
-      <%= render "recurrence_ui/start_at", form: form, identifier: identifier, rec_ui: self %>
-      <%= render "recurrence_ui/time_zone", form: form, identifier: identifier, rec_ui: self %>
-    </div>
-  </div>
+    <%# 1. Секция полей времени начала и часового пояса %>
+    <% if show_start_date_time || show_time_zone %>
+      <div class="space-y-4 pb-4 border-b border-[var(--rui-border-color)]">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <% if show_start_date_time %>
+            <div>
+              <%= render "recurrence_ui/start_at", form: form, identifier: identifier, rec_ui: self %>
+            </div>
+          <% end %>
 
-<!-- Блок выбора: Длительность или Окончание -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-  <%= render "recurrence_ui/duration", form: form, identifier: identifier, rec_ui: self %>
-  <%= render "recurrence_ui/end_at", form: form, identifier: identifier, rec_ui: self %>
-</div>
+          <% if show_time_zone %>
+            <div>
+              <%= render "recurrence_ui/time_zone", form: form, identifier: identifier, rec_ui: self %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
 
-    <!-- 4. При показе саммари: только заголовок Повторение и саммари под ним -->
+    <%# 2. Блок выбора: Длительность и/или Окончание %>
+    <% if show_duration || show_end_date_time %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+        <% if show_duration && show_end_date_time %>
+          <!-- Оба варианта доступны — рендерим с переключением через радиокнопки -->
+          <%= render "recurrence_ui/duration", form: form, identifier: identifier, rec_ui: self %>
+          <%= render "recurrence_ui/end_at", form: form, identifier: identifier, rec_ui: self %>
+        <% elsif show_duration %>
+          <!-- Только длительность (без радиокнопок, всегда активна) -->
+          <div class="col-span-2">
+            <%= render "recurrence_ui/duration", form: form, identifier: identifier, rec_ui: self %>
+          </div>
+        <% elsif show_end_date_time %>
+          <!-- Только дата/время окончания (без радиокнопок, всегда активна) -->
+          <div class="col-span-2">
+            <%= render "recurrence_ui/end_at", form: form, identifier: identifier, rec_ui: self %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- 3. Остальные блоки (режим отображения, саммари, визуальный редактор правил и т.д.) без изменений -->
     <div data-<%= identifier %>-target="displayMode" class="space-y-1">
       <div class="rui-panel-header">
         <span class="rui-label">
@@ -32,10 +59,8 @@
       </div>
     </div>
 
-    <!-- 5. Режим редактирования: заголовок Повторение + кнопка кода напротив, все поля под ними -->
+    <!-- Режим редактирования -->
     <div data-<%= identifier %>-target="editMode" class="hidden space-y-3 pt-2">  
-      
-      <!-- Шапка с кнопкой кода справа напротив заголовка Повторение -->
       <div class="rui-panel-header flex items-center justify-between">
         <span class="rui-header-title">
           <%= t('recurrence_ui.labels.recurrence') %>
@@ -48,13 +73,9 @@
         </button>
       </div>
 
-      <%# Visual Rule Editor Section %>
       <div data-<%= identifier %>-target="visualEditor" class="space-y-3">
         <div class="space-y-1">
-          <%# Dynamic Rule Cards Container %>
           <div data-<%= identifier %>-target="rulesContainer" class="space-y-2"></div>
-
-          <%# Add Rule Action Button %>
           <div class="pt-1">
             <button type="button" 
                     data-action="click-><%= identifier %>#addRule" 
@@ -64,59 +85,46 @@
           </div>
         </div>
 
-        <%# Exceptions & Additional Dates Grid %>
+        <%# Исключения и RDates отображаются по флагам %>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 rui-divider">
-          <div data-<%= identifier %>-target="rdatesBlock" class="hidden">
-            <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
-          </div>
-          <div data-<%= identifier %>-target="exceptionsBlock" class="hidden">
-            <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
-          </div>            
+          <% if show_rdates %>
+            <div data-<%= identifier %>-target="rdatesBlock" class="hidden">
+              <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+            </div>
+          <% end %>
+          <% if show_exceptions %>
+            <div data-<%= identifier %>-target="exceptionsBlock" class="hidden">
+              <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
+            </div>            
+          <% end %>
         </div>
 
-        <%# Bottom Action Bar %>
         <div class="pt-2">
           <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
         </div>
       </div>
 
-      <%# Raw JSON / Code Editor Panel %>
+      <!-- JSON редактор -->
       <div data-<%= identifier %>-target="codeEditor" class="hidden space-y-3">
         <div>
-          <label class="rui-label">
-            <%= t('recurrence_ui.labels.raw_json', default: 'Raw JSON') %>
-          </label>
-          <textarea data-<%= identifier %>-target="iceCubeField" 
-                    rows="6" 
-                    class="rui-textarea font-mono text-xs w-full"></textarea>
+          <label class="rui-label"><%= t('recurrence_ui.labels.raw_json', default: 'Raw JSON') %></label>
+          <textarea data-<%= identifier %>-target="iceCubeField" rows="6" class="rui-textarea font-mono text-xs w-full"></textarea>
         </div>
         <div class="flex items-center justify-end space-x-2">
-          <button type="button" 
-                  data-action="click-><%= identifier %>#toggleCodeEditor" 
-                  class="rui-btn-secondary">
+          <button type="button" data-action="click-><%= identifier %>#toggleCodeEditor" class="rui-btn-secondary">
             <%= t('recurrence_ui.actions.cancel') %>
           </button>
-          <button type="button" 
-                  data-action="click-><%= identifier %>#applyCodeChanges" 
-                  class="rui-btn-primary">
+          <button type="button" data-action="click-><%= identifier %>#applyCodeChanges" class="rui-btn-primary">
             <%= t('recurrence_ui.actions.apply_code') %>
           </button>
         </div>
       </div>
-
     </div>
 
-    <%# Rule Card Template %>
     <template data-<%= identifier %>-target="ruleCardTemplate">
-      <%= render "recurrence_ui/rule_card", 
-                 form: form, 
-                 identifier: identifier, 
-                 days_for_ui: days_for_ui, 
-                 rec_ui: self, 
-                 rule_options: rule_options %>
+      <%= render "recurrence_ui/rule_card", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: self, rule_options: rule_options %>
     </template>
 
-    <%# Hidden Form Field %>
     <%= form.hidden_field field_name, value: rules_json, data: { "#{identifier}_target": "hiddenField" } %>
   </div>
 <% end %>

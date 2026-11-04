@@ -2,7 +2,24 @@
 module RecurrenceUi
   class RecurrencePickerComponent < ViewComponent::Base
     include ActionView::Helpers::TranslationHelper
-    attr_reader :record, :i18n_prefix, :identifier, :locale, :time_zone, :week_start, :enabled_rule_types
+    attr_reader( 
+        :record, 
+        :i18n_prefix, 
+        :identifier, 
+        :locale, 
+        :time_zone, 
+        :week_start, 
+        :enabled_rule_types,
+        # UI display options
+        :allow_multiple_rules, #show multiple rules in the UI if false - you can only have one rule at a time
+        :show_duration, # show duration field in the UI
+        :show_start_date_time, # show start time field in the UI
+        :show_end_date_time, # show end time (for  one occurrence) field in the UI
+        :show_exceptions, # show exception dates field in the UI
+        :show_rdates, # show additional date field in the UI
+        :show_termination, # show termination field in the UI (end date or count of occurrences)
+        :show_time_zone # show time zone field in the UI  
+    )
 
     def initialize(
       record:,
@@ -11,7 +28,17 @@ module RecurrenceUi
       locale: nil,
       time_zone: nil,
       week_start: nil,
-      enabled_rule_types: nil
+      # selected rule types for the UI, if not specified - all types will be shown
+      enabled_rule_types: nil,
+      # UI display options
+      allow_multiple_rules: nil,
+      show_duration: nil,
+      show_start_date_time: nil,
+      show_end_date_time: nil,
+      show_exceptions: nil,
+      show_rdates: nil,
+      show_termination: nil,
+      show_time_zone: nil
     )
       @raw_form    = form
       @record      = record
@@ -25,6 +52,16 @@ module RecurrenceUi
       @locale     = RecurrenceUi.config.resolved_locale(locale)
       @time_zone  = RecurrenceUi.config.resolved_time_zone(time_zone)
       @week_start = RecurrenceUi.config.resolved_week_start(week_start)
+
+      # Resolve UI display options with fallbacks
+      @allow_multiple_rules = RecurrenceUi.config.resolved_allow_multiple_rules(allow_multiple_rules)
+      @show_duration = RecurrenceUi.config.resolved_show_duration(show_duration)
+      @show_start_date_time = RecurrenceUi.config.resolved_show_start_date_time(show_start_date_time)
+      @show_end_date_time = RecurrenceUi.config.resolved_show_end_date_time(show_end_date_time)
+      @show_exceptions = RecurrenceUi.config.resolved_show_exceptions(show_exceptions)
+      @show_rdates = RecurrenceUi.config.resolved_show_rdates(show_rdates)
+      @show_termination = RecurrenceUi.config.resolved_show_termination(show_termination)
+      @show_time_zone = RecurrenceUi.config.resolved_show_time_zone(show_time_zone)
 
       log_configuration_details if Rails.env.development?
     end

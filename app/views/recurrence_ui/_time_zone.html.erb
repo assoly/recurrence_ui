@@ -1,0 +1,9 @@
+<%# Time zone #%>
+      <div>
+        <%= form.label :time_zone, t('recurrence_ui.labels.time_zone'), class: "rui-label block" %>
+        <%= form.time_zone_select :time_zone, 
+          ActiveSupport::TimeZone.all, 
+          { default: rec_ui.record.public_send(rec_ui.time_zone_field).presence || Time.zone.name }, 
+          { class: "rui-input rui-select cursor-pointer w-full mt-1" } 
+        %>
+      </div>

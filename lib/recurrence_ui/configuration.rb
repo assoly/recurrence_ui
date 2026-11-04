@@ -17,17 +17,29 @@ module RecurrenceUi
           yearly_by_weekday
         ].freeze
 
-    attr_accessor :enabled_rule_types, 
+    attr_accessor :enabled_rule_types, #all rule  types that showing in select box in the UI, if not specified - all types will be shown
                   :locale, 
                   :time_zone, 
-                  :week_start, 
+                  :week_start, # 0 for Sunday, 1 for Monday
+                  :duration, # default duration in seconds if not specified
                   :supported_locales, 
-                  :theme_mode,
+                  :theme_mode, 
+                  # default values for the fields in the UI and in DB
                   :default_recurring_rules_field,
                   :default_start_time_field,
                   :default_end_time_field,
                   :default_time_zone_field,
-                  :default_duration_field
+                  :default_duration_field,
+                  # UI display options
+                  :allow_multiple_rules, #show multiple rules in the UI if false - you can only have one rule at a time
+                  :show_duration, # show duration field in the UI
+                  :show_start_date_time, # show start time field in the UI
+                  :show_end_date_time, # show end time (for  one occurrence) field in the UI
+                  :show_exceptions, # show exception dates field in the UI
+                  :show_rdates, # show additional date field in the UI
+                  :show_termination, # show termination field in the UI (end date or count of occurrences)
+                  :show_time_zone # show time zone field in the UI  
+
     
     def initialize
       @locale = nil
@@ -42,6 +54,17 @@ module RecurrenceUi
       @default_end_time_field        = :end_at
       @default_time_zone_field       = :time_zone
       @default_duration_field        = :duration
+
+
+      # UI display options
+      @allow_multiple_rules = true
+      @show_duration = true
+      @show_start_date_time = true
+      @show_end_date_time = true
+      @show_exceptions = true
+      @show_rdates = true
+      @show_termination = true
+      @show_time_zone = true
     end
 
     def resolved_locale(requested = nil)
@@ -97,6 +120,41 @@ module RecurrenceUi
       valid_types.presence || ALL_RULE_TYPES
     end
 
+    # Methods for resolving boolean display options with default values
+    def resolved_allow_multiple_rules(passed = nil)
+      passed.nil? ? @allow_multiple_rules : !!passed
+    end
+    def resolved_show_duration(passed = nil)
+      passed.nil? ? @show_duration : !!passed
+    end
+    def resolved_show_start_date_time(passed = nil)
+      passed.nil? ? @show_start_date_time : !!passed
+    end
+
+    def resolved_show_end_date_time(passed = nil)
+      passed.nil? ? @show_end_date_time : !!passed
+    end
+     def resolved_show_exceptions(passed = nil)
+      passed.nil? ? @show_exceptions : !!passed
+    end
+    def resolved_show_rdates(passed = nil)
+      passed.nil? ? @show_rdates : !!passed
+    end
+    def resolved_show_termination(passed = nil)
+      passed.nil? ? @show_termination : !!passed
+    end
+    def resolved_show_time_zone(passed = nil)
+      passed.nil? ? @show_time_zone : !!passed
+    end
+    class << self
+      def configuration
+        @configuration ||= Configuration.new
+      end
+
+      def configure
+        yield(configuration)
+      end
+    end
     private
     # Logs a warning in development mode if an unsupported locale is received
     def log_unsupported_locale_warning(locale)

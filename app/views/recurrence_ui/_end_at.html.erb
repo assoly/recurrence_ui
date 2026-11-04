@@ -1,0 +1,25 @@
+<%# End at #%>
+  <label class="flex items-start space-x-3 p-2 rounded-lg transition-colors cursor-pointer hover:bg-[var(--rui-hover-bg-soft)]">
+    <%= form.radio_button :form_duration_mode, :end_at, 
+          checked: (rec_ui.initial_form_duration_mode == :end_at), 
+          class: "mt-1 shrink-0",
+          data: { "#{identifier}_target": "modeEnd", action: "change->#{identifier}#toggleDurationEndMode" } %>
+    
+    <div class="flex-1 min-w-0">
+      <span class="rui-label"><%= t('recurrence_ui.labels.end_at') %></span>  
+      
+      <!-- Поля даты и времени окончания -->
+      <div class="flex items-center space-x-2 mt-1" onclick="event.stopPropagation()">
+        <%= form.date_field :form_end_date, 
+              value: rec_ui.initial_end_at&.to_date || Date.current, 
+              class: "rui-input w-36 shrink-0 disabled:opacity-50 disabled:--rui-input-disabled-bg disabled:cursor-not-allowed",
+              disabled: (rec_ui.initial_form_duration_mode != :end_at),
+              data: { "#{identifier}_target": "endDateField"} %>
+        <%= form.time_field :form_end_time,
+              value: rec_ui.initial_end_at&.strftime('%H:%M') || '09:00', 
+              class: ["rui-input w-24 shrink-0 disabled:opacity-50 disabled:--rui-input-disabled-bg disabled:cursor-not-allowed", ("rui-input-error" if rec_ui.record.errors[:form_end_time].any?)],
+              disabled: (rec_ui.initial_form_duration_mode != :end_at),
+              data: { "#{identifier}_target": "endTimeField" } %>
+      </div>
+    </div>
+  </label>

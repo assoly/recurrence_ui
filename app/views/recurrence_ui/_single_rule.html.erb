@@ -1,0 +1,30 @@
+<%# app/views/recurrence_ui/_single_rule.html.erb %>
+<div class="space-y-4">
+  <%# Frequency Selector Block %>
+  <div>
+    <label class="rui-label">
+      <%= t('recurrence_ui.labels.frequency', default: 'Частота') %>
+    </label>
+    <select data-<%= identifier %>-target="ruleType" 
+            data-action="change-><%= identifier %>#toggleSingleFields" 
+            class="rui-select w-full">
+      <% rule_options.each do |label, value| %>
+        <option value="<%= value %>" <%= "selected" if current_rule_type == value %>><%= label %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <%# Dynamic Specific Rule Fields (для одного правила используем data-target вместо data-item) %>
+  <% rule_options.map(&:last).each do |rule| %>
+    <div data-<%= identifier %>-target="singleSpecificFields" data-rule="<%= rule %>" class="hidden space-y-3">
+      <%= render "recurrence_ui/#{rule}", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: rec_ui %>
+    </div>
+  <% end %>
+
+  <%# Termination Settings Section (если включен показ termination) %>
+  <% if show_termination %>
+    <div class="pt-2 border-t border-[var(--rui-border-color)]">
+      <%= render "recurrence_ui/termination", form: form, identifier: identifier, rec_ui: self %>
+    </div>
+  <% end %>
+</div>

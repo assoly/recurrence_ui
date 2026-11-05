@@ -79,7 +79,6 @@
       </div>
     <% end %>
 
-    <!-- 3. Остальные блоки (режим отображения, саммари, визуальный редактор правил и т.д.) без изменений -->
     <div data-<%= identifier %>-target="displayMode" class="space-y-1">
       <div class="rui-panel-header">
         <span class="rui-label">
@@ -91,71 +90,87 @@
       </div>
     </div>
 
-    <!-- Режим редактирования -->
-    <div data-<%= identifier %>-target="editMode" class="hidden space-y-3 pt-2">  
-      <div class="rui-panel-header flex items-center justify-between">
-        <span class="rui-header-title">
-          <%= t('recurrence_ui.labels.recurrence') %>
-        </span>
-        <button type="button" 
-                data-action="click-><%= identifier %>#toggleCodeEditor" 
-                title="<%= t('recurrence_ui.actions.code_mode') %>"
-                class="rui-btn-secondary font-mono text-xs px-2 py-1">
-          &lt;/&gt;
-        </button>
-      </div>
+<!-- Режим редактирования -->
+<div data-<%= identifier %>-target="editMode" class="hidden space-y-3 pt-2">  
+  <div class="rui-panel-header flex items-center justify-between">
+    <span class="rui-header-title">
+      <%= t('recurrence_ui.labels.recurrence') %>
+    </span>
+    <button type="button" 
+            data-action="click-><%= identifier %>#toggleCodeEditor" 
+            title="<%= t('recurrence_ui.actions.code_mode') %>"
+            class="rui-btn-secondary font-mono text-xs px-2 py-1">
+      &lt;/&gt;
+    </button>
+  </div>
 
-      <div data-<%= identifier %>-target="visualEditor" class="space-y-3">
-        <div class="space-y-1">
-          <div data-<%= identifier %>-target="rulesContainer" class="space-y-2"></div>
-          <div class="pt-1">
-            <button type="button" 
-                    data-action="click-><%= identifier %>#addRule" 
-                    class="rui-link-action">
-              <span class="font-bold">+</span> <%= t('recurrence_ui.actions.add_rule', default: 'Add rule') %>
-            </button>
-          </div>
-        </div>
-
-        <%# Исключения и RDates отображаются по флагам %>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 rui-divider">
-          <% if show_rdates %>
-            <div data-<%= identifier %>-target="rdatesBlock" class="hidden">
-              <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
-            </div>
-          <% end %>
-          <% if show_exceptions %>
-            <div data-<%= identifier %>-target="exceptionsBlock" class="hidden">
-              <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
-            </div>            
-          <% end %>
-        </div>
-
-        <div class="pt-2">
-          <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
-        </div>
-      </div>
-
-      <!-- JSON редактор -->
-      <div data-<%= identifier %>-target="codeEditor" class="hidden space-y-3">
-        <div>
-          <label class="rui-label"><%= t('recurrence_ui.labels.raw_json', default: 'Raw JSON') %></label>
-          <textarea data-<%= identifier %>-target="iceCubeField" rows="6" class="rui-textarea font-mono text-xs w-full"></textarea>
-        </div>
-        <div class="flex items-center justify-end space-x-2">
-          <button type="button" data-action="click-><%= identifier %>#toggleCodeEditor" class="rui-btn-secondary">
-            <%= t('recurrence_ui.actions.cancel') %>
-          </button>
-          <button type="button" data-action="click-><%= identifier %>#applyCodeChanges" class="rui-btn-primary">
-            <%= t('recurrence_ui.actions.apply_code') %>
+  <div data-<%= identifier %>-target="visualEditor" class="space-y-3">
+    
+    <% if allow_multiple_rules %>
+      <%# --- ВАРИАНТ А: Множественные правила (через карточки _rule_card) --- %>
+      <div class="space-y-1">
+        <div data-<%= identifier %>-target="rulesContainer" class="space-y-2"></div>
+        <div class="pt-1">
+          <button type="button" 
+                  data-action="click-><%= identifier %>#addRule" 
+                  class="rui-link-action">
+            <span class="font-bold">+</span> <%= t('recurrence_ui.actions.add_rule', default: 'Add rule') %>
           </button>
         </div>
       </div>
+    <% else %>
+      <%# --- ВАРИАНТ Б: Одиночное правило (плоский интерфейс без карточек) --- %>
+      <div class="space-y-3">
+        <%= render "recurrence_ui/single_rule", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: self, rule_options: rule_options %>
+      </div>
+    <% end %>
+
+    <%# Исключения и RDates отображаются по флагам (общие для обоих режимов) %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 rui-divider">
+      <% if show_rdates %>
+        <div data-<%= identifier %>-target="rdatesBlock" class="hidden">
+          <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+        </div>
+      <% end %>
+      <% if show_exceptions %>
+        <div data-<%= identifier %>-target="exceptionsBlock" class="hidden">
+          <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
+        </div>            
+      <% end %>
     </div>
 
-    <template data-<%= identifier %>-target="ruleCardTemplate">
-      <%= render "recurrence_ui/rule_card", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: self, rule_options: rule_options %>
-    </template>
+    <div class="pt-2">
+      <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
+    </div>
+  </div>
+
+  <!-- JSON редактор (остается общим) -->
+  <div data-<%= identifier %>-target="codeEditor" class="hidden space-y-3">
+    <div>
+      <label class="rui-label"><%= t('recurrence_ui.labels.raw_json', default: 'Raw JSON') %></label>
+      <textarea data-<%= identifier %>-target="iceCubeField" rows="6" class="rui-textarea font-mono text-xs w-full"></textarea>
+    </div>
+    <div class="flex items-center justify-end space-x-2">
+      <button type="button" data-action="click-><%= identifier %>#toggleCodeEditor" class="rui-btn-secondary">
+        <%= t('recurrence_ui.actions.cancel') %>
+      </button>
+      <button type="button" data-action="click-><%= identifier %>#applyCodeChanges" class="rui-btn-primary">
+        <%= t('recurrence_ui.actions.apply_code') %>
+      </button>
+    </div>
+  </div>
+</div>
+
+<%# Template нужен только если разрешено несколько правил %>
+<% if allow_multiple_rules %>
+  <template data-<%= identifier %>-target="ruleCardTemplate">
+    <%= render "recurrence_ui/rule_card", 
+               form: form, 
+               identifier: identifier, 
+               days_for_ui: days_for_ui, 
+               rec_ui: self, 
+               rule_options: rule_options %>
+  </template>
 
     <%= form.hidden_field field_name, value: rules_json, data: { "#{identifier}_target": "hiddenField" } %>
   </div>

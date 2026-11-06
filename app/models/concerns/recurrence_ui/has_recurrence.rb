@@ -70,69 +70,80 @@ module RecurrenceUi
           :form_duration_mode, :form_duration_days, :form_duration_hours, :form_duration_minutes,
           :form_end_date, :form_end_time
         ]
+        end
       end
-    end
 
-    def summary(options = {})
-      RecurrenceFormatterService.new(self, options)
-    end
+      def summary(options = {})
+        RecurrenceFormatterService.new(self, options)
+      end
 
-    # --- Instance Methods с защитой от отсутствующих полей ---
+      # --- Instance Methods с защитой от отсутствующих полей ---
 
-    def recurrence_raw_rules
-      public_send(self.class.recurrence_rules_field)
-    end
+      def recurrence_raw_rules
+        public_send(self.class.recurrence_rules_field)
+      end
     
-    def event_time_zone
-      attr = self.class.recurrence_time_zone_field
-      tz_name = safe_read_attribute(attr) if attr.present?
-      
-      return Time.zone unless tz_name.present?
+          # Определяет часовой пояс события.
+      def event_time_zone
+        tz_name = nil
 
-      ActiveSupport::TimeZone[tz_name] || Time.zone || ActiveSupport::TimeZone[Rails.application.config.time_zone]
-    end
+        # Если поле таймзоны настроено через has_recurrence и существует у модели
+        attr = self.class.recurrence_time_zone_field
+        if attr.present?
+          tz_name = public_send(attr) if respond_to?(attr)
+        end
 
-    def recurrence_start_time
-      attr = self.class.recurrence_start_time_field
-      raw_start = safe_read_attribute(attr) if attr.present?
-      
-      (raw_start || Time.current).in_time_zone(event_time_zone)
-    end
+        # Фоллбэки: значение из поля -> таймзона приложения -> глобальный конфиг Rails
+        zone_name = tz_name.presence || Time.zone&.name
+        ActiveSupport::TimeZone[zone_name] || Time.zone || ActiveSupport::TimeZone[Rails.application.config.time_zone]
+      end
 
-    def recurrence_end_time
-      attr = self.class.recurrence_end_time_field
-      return nil unless attr.present?
+    
+      def recurrence_start_time
+        attr = self.class.recurrence_start_time_field
+        return nil unless attr.present?
 
-      raw_end = safe_read_attribute(attr)
-      return nil unless raw_end.present?
+        raw_start = safe_read_attribute(attr)
+        return nil unless raw_start.present? # <--- если в базе пусто, возвращаем nil
 
-      raw_end.in_time_zone(event_time_zone)
-    end
+        raw_start.in_time_zone(event_time_zone)
+      end
 
-    def start_time_in_zone(zone_type = :event)
-      time_in_zone(recurrence_start_time, zone_type)
-    end
+      def recurrence_end_time #возвращает Time в часовом поясе события, либо nil, если поле не настроено или не существует у модели
+        attr = self.class.recurrence_end_time_field
+        return nil unless attr.present?
 
-    def end_time_in_zone(zone_type = :event)
-      time_in_zone(recurrence_end_time, zone_type)
-    end
+        raw_end = safe_read_attribute(attr)
+        return nil unless raw_end.present?
+
+        raw_end.in_time_zone(event_time_zone)
+      end
+
+      def start_time_in_zone(zone_type = :event)
+        return nil unless recurrence_start_time
+        time_in_zone(recurrence_start_time, zone_type)
+      end
+
+      def end_time_in_zone(zone_type = :event)
+        return nil unless recurrence_end_time
+        time_in_zone(recurrence_end_time, zone_type)
+      end
 
     def current_duration_seconds
       attr = self.class.recurrence_duration_field
-      return 0 unless attr.present?
+      return nil unless attr.present? && respond_to?(attr)
 
       val = safe_read_attribute(attr)
-      return val.to_i if val.present? && val.to_i > 0
-      0
+      val.present? ? val.to_i : nil # Возвращаем nil, если в базе пусто, а не 0
     end
 
     # Сборка IceCube (остается без изменений, так как опирается на безопасные методы выше)
     def schedule(start_time_override = nil)
-      base_time = start_time_override || recurrence_start_time
+      base_time = start_time_override || recurrence_start_time || Time.current.in_time_zone(event_time_zone)
       s = IceCube::Schedule.new(base_time)
 
       dur = current_duration_seconds
-      s.duration = dur if dur > 0
+      s.duration = dur if dur.present? && dur > 0
 
       raw_data = recurrence_raw_rules
       return s if raw_data.blank?
@@ -226,7 +237,7 @@ module RecurrenceUi
       elsif respond_to?("#{field_name}=")
         public_send("#{field_name}=", value)
       end
-    rescue StandardError => e
+      rescue StandardError => e
       Rails.logger.warn("[RecurrenceUi] Could not write to attribute #{field_name}: #{e.message}")
       false
     end
@@ -284,6 +295,7 @@ module RecurrenceUi
     end
 
     def resolve_zone_type(zone_type)
+      zone_type = :application if event_time_zone.nil?
       case zone_type
       when :event
         event_time_zone

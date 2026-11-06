@@ -1,21 +1,20 @@
     <%# app/views/recurrence_ui/_start_at.html.erb %>
-
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     
     <!-- 1. Дата и время начала (всегда на одной строке, не тянутся) -->
     <div>
         <%= form.label :start_at, t('recurrence_ui.labels.start_at'), class: "rui-label block" %>
-        <div class="flex items-center space-x-2 mt-1">
-        <%= form.date_field :form_start_date, 
-            value: rec_ui.initial_start_at&.to_date || Date.current,                  
-            class: "rui-input w-36 shrink-0",
-            data: { "#{identifier}_target": "startDate", 
-            action: "change->#{identifier}#calculateEndDateFromDuration" } %>
-        <%= form.time_field :form_start_time, 
-                value: rec_ui.initial_start_at&.strftime('%H:%M') || '09:00', 
-                class: "rui-input w-24 shrink-0",
-                data: { "#{identifier}_target": "startTime", 
-                action: "change->#{identifier}#calculateEndDateFromDuration" } 
-        %>
-    </div>  
+            <div class="flex items-center space-x-2 mt-1">
+                <%= form.date_field :form_start_date, 
+                    value: form.object.start_time_in_zone(:event)&.to_date || Date.current,                  
+                    class: "rui-input w-36 shrink-0",
+                    data: { "#{identifier}_target": "startDate", 
+                    action: "change->#{identifier}#calculateEndDateFromDuration" } %>
+                <%= form.time_field :form_start_time, 
+                        value: form.object.start_time_in_zone(:event)&.strftime('%H:%M') || RecurrenceUi::RecurrencePickerComponent::DEFAULT_START_TIME.strftime('%H:%M'), 
+                        class: "rui-input w-24 shrink-0",
+                        data: { "#{identifier}_target": "startTime", 
+                        action: "change->#{identifier}#calculateEndDateFromDuration" } 
+                %>
+            </div>  
     </div>

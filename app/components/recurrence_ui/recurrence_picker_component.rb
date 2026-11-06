@@ -8,7 +8,10 @@ module RecurrenceUi
         :identifier, 
         :locale, 
         :time_zone, 
-        :week_start, 
+        :week_start,
+        :start_time,
+        :end_time,
+        :duration, 
         :enabled_rule_types,
         # UI display options
         :allow_multiple_rules, #show multiple rules in the UI if false - you can only have one rule at a time
@@ -28,6 +31,8 @@ module RecurrenceUi
       locale: nil,
       time_zone: nil,
       week_start: nil,
+      start_time: nil,
+      duration: nil,
       # selected rule types for the UI, if not specified - all types will be shown
       enabled_rule_types: nil,
       # UI display options
@@ -52,6 +57,9 @@ module RecurrenceUi
       @locale     = RecurrenceUi.config.resolved_locale(locale)
       @time_zone  = RecurrenceUi.config.resolved_time_zone(time_zone)
       @week_start = RecurrenceUi.config.resolved_week_start(week_start)
+      @start_time = RecurrenceUi.config.resolved_start_time(start_time)
+      @duration = RecurrenceUi.config.resolved_duration(duration)
+      @end_time = RecurrenceUi.config.resolved_end_time(end_time)
 
       # Resolve UI display options with fallbacks
       @allow_multiple_rules = RecurrenceUi.config.resolved_allow_multiple_rules(allow_multiple_rules)
@@ -109,50 +117,49 @@ module RecurrenceUi
 
       :duration # дефолт
     end
+    # Есть ли настройка для отображения стартового времени и есть ли поле в базе.
+    def show_start_date_time?
+      return false unless @show_start_date_time
+      
+      # Проверяем, задано ли имя поля и отвечает ли за него рекорд
+      start_time_field.present? && record.respond_to?(start_time_field)
+    end
+
+    def show_duration?
+      return false unless @show_duration
+      
+      duration_field.present? && record.respond_to?(duration_field)
+    end
+
+    def show_end_date_time?
+      return false unless @show_end_date_time
+      end_time_field.present? && record.respond_to?(end_time_field)
+    end
+
+    # Показывать ли блок часового пояса
+    def show_time_zone?
+      return false unless @show_time_zone
+      
+      time_zone_field.present? && record.respond_to?(time_zone_field)
+    end
     
     
     # --- Динамические хелперы для имён полей из модели ---
 
     def start_time_field
-      @start_time_field ||= record.class.respond_to?(:recurrence_start_time_field) ? record.class.recurrence_start_time_field : :start_at
+      @start_time_field ||= record.class.respond_to?(:recurrence_start_time_field) ? record.class.recurrence_start_time_field : nil
     end
 
     def end_time_field
-      @end_time_field ||= record.class.respond_to?(:recurrence_end_time_field) ? record.class.recurrence_end_time_field : :end_at
+      @end_time_field ||= record.class.respond_to?(:recurrence_end_time_field) ? record.class.recurrence_end_time_field : nil
     end
     # Возвращает начало события в часовом поясе самого события.
-    def initial_start_at
-      value = record.public_send(start_time_field)
-      return if value.blank?
 
-      value.in_time_zone(event_time_zone)
-    end
-
-    # Возвращает окончание события в часовом поясе самого события.
-    def initial_end_at
-      value = record.public_send(end_time_field)
-      return if value.blank?
-
-      value.in_time_zone(event_time_zone)
-    end
-
-    # Определяет часовой пояс события.
-    def event_time_zone
-      if record.respond_to?(:event_time_zone) && record.event_time_zone.present?
-        record.event_time_zone
-      else
-        zone_name = record.respond_to?(time_zone_field) ? record.public_send(time_zone_field) : nil
-
-        ActiveSupport::TimeZone[zone_name.presence] || 
-          Time.zone || 
-          ActiveSupport::TimeZone[Rails.application.config.time_zone]
-      end
-    end
     def duration_field
-      @duration_field ||= record.class.respond_to?(:recurrence_duration_field) ? record.class.recurrence_duration_field : :duration
+      @duration_field ||= record.class.respond_to?(:recurrence_duration_field) ? record.class.recurrence_duration_field : nil
     end
     def time_zone_field
-      @time_zone_field ||= record.class.respond_to?(:recurrence_time_zone_field) ? record.class.recurrence_time_zone_field : :time_zone
+      @time_zone_field ||= record.class.respond_to?(:recurrence_time_zone_field) ? record.class.recurrence_time_zone_field : nil
     end
 
     def rules

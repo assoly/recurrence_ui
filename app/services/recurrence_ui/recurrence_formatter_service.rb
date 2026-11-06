@@ -120,8 +120,7 @@ module RecurrenceUi
 
     def formatted_duration
       dur = @event.current_duration_seconds
-      return "—" if dur <= 0
-
+      return "—" if dur.nil? || dur <= 0
       total_minutes = (dur / 60).to_i
       return "—" if total_minutes <= 0
 

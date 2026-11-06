@@ -38,6 +38,10 @@ export default class extends Controller {
     this.initializeState()
     this.updateDebugField()
     this.initializeDurationMode()
+    // Принудительно инициализируем видимость полей для режима «Одно правило»
+    this.element.querySelectorAll('select[data-action*="toggleSingleFields"]').forEach(select => {
+      this.toggleSingleFields({ target: select, currentTarget: select })
+    })
     this.isInitializing = false
   }
 

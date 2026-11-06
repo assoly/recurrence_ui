@@ -5,8 +5,10 @@ module RecurrenceUi
     SUPPORTED_LOCALES = %w[en ru ja uk be].freeze # Locales for which yml files are available in the gem
     DEFAULT_LOCALE = 'en'.freeze
     DEFAULT_TIME_ZONE = 'UTC'.freeze
+    DEFAULT_START_TIME = '09:00'.freeze # Default start time if not specified
     DEFAULT_WEEK_START = 0
     DEFAULT_DURATION = 0 # Default duration in seconds if not specified
+    DEFAULT_END_TIME = '17:00'.freeze # Default end time if not specified
     ALL_RULE_TYPES = %w[
           never
           daily
@@ -21,15 +23,13 @@ module RecurrenceUi
                   :locale, 
                   :time_zone, 
                   :week_start, # 0 for Sunday, 1 for Monday
+                  :start_time,
+                  :end_time,
                   :duration, # default duration in seconds if not specified
                   :supported_locales, 
                   :theme_mode, 
                   # default values for the fields in the UI and in DB
                   :default_recurring_rules_field,
-                  :default_start_time_field,
-                  :default_end_time_field,
-                  :default_time_zone_field,
-                  :default_duration_field,
                   # UI display options
                   :allow_multiple_rules, #show multiple rules in the UI if false - you can only have one rule at a time
                   :show_duration, # show duration field in the UI
@@ -46,14 +46,13 @@ module RecurrenceUi
       @time_zone = nil
       @week_start = nil
       @duration = nil
+      @start_time = nil
+      @end_time = nil
       @theme_mode = :auto     # Example: :auto (default), :light (light only), :dark (dark only)
       @supported_locales = SUPPORTED_LOCALES
       @enabled_rule_types = ALL_RULE_TYPES.dup
       @default_recurring_rules_field = :recurring_rules
-      @default_start_time_field      = :start_at
-      @default_end_time_field        = :end_at
-      @default_time_zone_field       = :time_zone
-      @default_duration_field        = :duration
+      
 
 
       # UI display options
@@ -118,6 +117,18 @@ module RecurrenceUi
       #Use only valid types, preserving the user-defined order
       valid_types = candidate.select { |t| ALL_RULE_TYPES.include?(t) }
       valid_types.presence || ALL_RULE_TYPES
+    end
+    # Методы для резолва дефолтных значений длительности и времени старта
+    def resolved_duration(passed = nil)
+      passed.present? ? passed : (@duration.presence || DEFAULT_DURATION)
+    end
+
+    def resolved_start_time(passed = nil)
+      # Если передано явно — используем его, иначе берем из конфига @start_time, либо захардкоженный дефолт
+      passed.presence || @start_time.presence || DEFAULT_START_TIME
+    end
+    def resolved_end_time(passed = nil)
+      passed.presence || @end_time.presence || DEFAULT_END_TIME
     end
 
     # Methods for resolving boolean display options with default values

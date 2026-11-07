@@ -39,8 +39,9 @@ export default class extends Controller {
     this.updateDebugField()
     this.initializeDurationMode()
     // Принудительно инициализируем видимость полей для режима «Одно правило»
-    this.element.querySelectorAll('select[data-action*="toggleSingleFields"]').forEach(select => {
-      this.toggleSingleFields({ target: select, currentTarget: select })
+
+    this.element.querySelectorAll('select[data-action*="toggleCardFields"]').forEach(select => {
+      this.toggleCardFields({ currentTarget: select })
     })
     this.isInitializing = false
   }
@@ -164,21 +165,6 @@ export default class extends Controller {
     const endMinutes = String(endDateTime.getMinutes()).padStart(2, '0')
     this.endTimeFieldTarget.value = `${endHours}:${endMinutes}`
   }
-  
-  toggleSingleFields(event) {
-  const selectedType = event.target.value;
-  
-  // Ищем все специфичные блоки внутри одиночного режима
-  const specificFields = event.currentTarget.closest('.space-y-4').querySelectorAll('[data-recurrence-ui-target="singleSpecificFields"]');
-  
-  specificFields.forEach(block => {
-    if (block.dataset.rule === selectedType) {
-      block.classList.remove('hidden');
-    } else {
-      block.classList.add('hidden');
-    }
-  });
-}
   // Переключение U1 -> U2 (Раскрытие общего модуля)
   // Toggle Main Panel Accordion Mode
   toggleMainAccordion() {

@@ -8,29 +8,22 @@
        data-rui-theme="<%= RecurrenceUi.configuration.theme_mode %>">  
 
     <%# 1. Секция полей времени начала и часового пояса %>
-    
-    <% if show_start_date_time?  %>
-      <div class="space-y-4 pb-4 border-b border-[var(--rui-border-color)]">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <% if show_start_date_time? %>
-            <div>
-              <%= render "recurrence_ui/start_at", form: form, identifier: identifier, rec_ui: self %>
-            </div>
-          <% end %>
-
-          <% if show_time_zone? %>
-            <div>
-              <%= render "recurrence_ui/time_zone", form: form, identifier: identifier, rec_ui: self %>
-            </div>
-          <% end %>
+    <div class="flex flex-wrap gap-4 my-4">
+      <% if show_start_date_time? %>
+        <div class="flex-1 min-w-[280px] p-2">
+          <%= render "recurrence_ui/start_at", form: form, identifier: identifier, rec_ui: self %>
         </div>
-      </div>
-    <% end %>
+      <% end %>
 
-    <%# 2. Блок выбора: Длительность и/или Окончание %>
-    <% if show_duration? || show_end_date_time? %>
-      <div class="flex flex-wrap gap-4 my-4">
-        <% if show_duration? && show_end_date_time? %>
+      <% if show_time_zone? %>
+        <div  class="flex-1 min-w-[280px] p-2" >
+          <%= render "recurrence_ui/time_zone", form: form, identifier: identifier, rec_ui: self %>
+        </div>
+      <% end %>
+      
+      <%# 2. Блок выбора: Длительность и/или Окончание %>
+      <% if show_duration? && show_end_date_time? %>
+        <div class="flex flex-wrap gap-4 my-4">
           <!-- Карточка Длительности -->
           <label class="flex-1 min-w-[280px] flex items-start space-x-3 p-2 rounded-lg transition-colors cursor-pointer hover:bg-[var(--rui-hover-bg-soft)]">
             <%= form.radio_button :form_duration_mode, :duration, 
@@ -58,20 +51,19 @@
               </div>
             </div>
           </label>
-        <% elsif show_duration? %>
-          <div class="flex-1 min-w-[280px] p-2">
-            <span class="rui-label font-medium select-none block mb-1"><%= t('recurrence_ui.labels.duration') %></span>
-            <%= render "recurrence_ui/duration", form: form, identifier: identifier, rec_ui: self %>
-          </div>
-        <% elsif show_end_date_time? %>
-          <div class="flex-1 min-w-[280px] p-2">
-            <span class="rui-label font-medium select-none block mb-1"><%= t('recurrence_ui.labels.end_at') %></span>  
-            <%= render "recurrence_ui/end_at", form: form, identifier: identifier, rec_ui: self %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-
+        </div>
+      <% elsif show_duration? %>
+        <div class="flex-1 min-w-[280px] p-2">
+          <span class="rui-label font-medium select-none block mb-1"><%= t('recurrence_ui.labels.duration') %></span>
+          <%= render "recurrence_ui/duration", form: form, identifier: identifier, rec_ui: self %>
+        </div>
+      <% elsif show_end_date_time? %>
+        <div class="flex-1 min-w-[280px] p-2">
+          <span class="rui-label font-medium select-none block mb-1"><%= t('recurrence_ui.labels.end_at') %></span>  
+          <%= render "recurrence_ui/end_at", form: form, identifier: identifier, rec_ui: self %>
+        </div>
+      <% end %>
+    </div>
     <!-- 3. Саммари -->
     <div data-<%= identifier %>-target="displayMode" class="space-y-1">
       <div class="rui-panel-header">
@@ -112,6 +104,7 @@
             </div>
           </div>
         <% else %>
+        
           <div class="space-y-3">
             <%= render "recurrence_ui/single_rule", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: self, rule_options: rule_options %>
           </div>

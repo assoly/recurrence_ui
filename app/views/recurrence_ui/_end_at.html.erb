@@ -1,13 +1,13 @@
 <%# app/views/recurrence_ui/_end_at.html.erb %>
 <div class="flex items-center space-x-2">
   <%= form.date_field :form_end_date, 
-        value: rec_ui.initial_end_at&.to_date || Date.current, 
+        value: form.object.end_time_in_zone(:event)&.to_date || Date.current, 
         disabled: (rec_ui.initial_form_duration_mode != :end_at && rec_ui.show_duration),
         class: "rui-input w-36 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed",
         data: { "#{identifier}_target": "endDateField" } %>
 
   <%= form.time_field :form_end_time,
-        value: rec_ui.initial_end_at&.strftime('%H:%M') || '09:00', 
+        value: form.object.end_time_in_zone(:event)&.strftime('%H:%M') || '09:00', 
         disabled: (rec_ui.initial_form_duration_mode != :end_at && rec_ui.show_duration),
         class: ["rui-input w-24 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed", ("rui-input-error" if form.object.errors[:form_end_time].any?)],
         data: { "#{identifier}_target": "endTimeField" } %>

@@ -64,9 +64,9 @@ ru:
       - декабрь
     days_of_month_fmt: "%{list} числа"
     duration:
-      form_days: "Дни"
-      form_hours: "Часы"
-      form_minutes: "Минуты"
+      form_days: "д."
+      form_hours: "ч."
+      form_minutes: "м."
       days:
         few: "%{count} дня"
         many: "%{count} дней"

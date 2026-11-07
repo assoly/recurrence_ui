@@ -1,37 +1,40 @@
 <%# app/views/recurrence_ui/_duration.html.erb %>
 <div class="flex flex-nowrap items-center gap-2" data-<%= identifier %>-target="durationContainer">
   <%# Дни %>
-  <div class="flex flex-col items-center gap-1 shrink-0">
-    <span class="rui-duration-unit text-xs text-gray-500"><%= t('recurrence_ui.duration.form_days') %></span>
-    <%= form.number_field :form_duration_days,
-          value: rec_ui.initial_form_duration_days,
-          min: 0,
-          disabled: (rec_ui.initial_form_duration_mode != :duration && rec_ui.show_end_date_time),
-          class: "rui-input w-16 text-center disabled:opacity-50 disabled:cursor-not-allowed",
-          data: { "#{identifier}_target": "daysField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
-  </div>
+    <div class="flex items-center space-x-1 shrink-0">
+        <%= form.number_field :form_duration_days,
+            value: rec_ui.initial_form_duration_days,
+            min: 0,
+            disabled: (rec_ui.initial_form_duration_mode != :duration && rec_ui.show_end_date_time),
+            class: "rui-input w-16 text-center disabled:opacity-50 disabled:cursor-not-allowed",
+            data: { "#{identifier}_target": "daysField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
+        <span class="rui-duration-unit select-none"><%= t('recurrence_ui.duration.form_days') %></span>
+
+    </div>
 
   <%# Часы %>
-  <div class="flex flex-col items-center gap-1 shrink-0">
-    <span class="rui-duration-unit text-xs text-gray-500"><%= t('recurrence_ui.duration.form_hours') %></span>
-    <%= form.number_field :form_duration_hours,
-          value: rec_ui.initial_form_duration_hours,
-          min: 0,
-          max: 23,
-          disabled: (rec_ui.initial_form_duration_mode != :duration && rec_ui.show_end_date_time),
-          class: "rui-input w-16 text-center disabled:opacity-50 disabled:cursor-not-allowed",
-          data: { "#{identifier}_target": "hoursField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
-  </div>
+    <div class="flex items-center space-x-1 shrink-0">
+        <%= form.number_field :form_duration_hours,
+            value: rec_ui.initial_form_duration_hours,
+            min: 0,
+            max: 23,
+            disabled: (rec_ui.initial_form_duration_mode != :duration && rec_ui.show_end_date_time),
+            class: "rui-input w-16 text-center disabled:opacity-50 disabled:cursor-not-allowed",
+            data: { "#{identifier}_target": "hoursField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
+        <span class="rui-duration-unit select-none"><%= t('recurrence_ui.duration.form_hours') %></span>
+
+    </div>
 
   <%# Минуты %>
-  <div class="flex flex-col items-center gap-1 shrink-0">
-    <span class="rui-duration-unit text-xs text-gray-500"><%= t('recurrence_ui.duration.form_minutes') %></span>
-    <%= form.number_field :form_duration_minutes,
-          value: rec_ui.initial_form_duration_minutes,
-          min: 0,
-          max: 59,
-          disabled: (rec_ui.initial_form_duration_mode != :duration && rec_ui.show_end_date_time),
-          class: "rui-input w-16 text-center disabled:opacity-50 disabled:cursor-not-allowed",
-          data: { "#{identifier}_target": "minutesField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
-  </div>
+    <div class="flex items-center space-x-1 shrink-0">
+        <%= form.number_field :form_duration_minutes,
+            value: rec_ui.initial_form_duration_minutes,
+            min: 0,
+            max: 59,
+            disabled: (rec_ui.initial_form_duration_mode != :duration && rec_ui.show_end_date_time),
+            class: "rui-input w-16 text-center disabled:opacity-50 disabled:cursor-not-allowed",
+            data: { "#{identifier}_target": "minutesField", action: "change->#{identifier}#calculateEndDateFromDuration" } %>
+        <span class="rui-duration-unit  select-none"><%= t('recurrence_ui.duration.form_minutes') %></span>
+    
+    </div>
 </div>

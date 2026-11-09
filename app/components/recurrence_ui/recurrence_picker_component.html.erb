@@ -24,6 +24,7 @@
       <%# 2. Блок выбора: Длительность и/или Окончание %>
       <% if show_duration? && show_end_date_time? %>
         <div class="flex flex-wrap gap-4 my-4">
+        
           <!-- Карточка Длительности -->
           <label class="flex-1 min-w-[280px] flex items-start space-x-3 p-2 rounded-lg transition-colors cursor-pointer hover:bg-[var(--rui-hover-bg-soft)]">
             <%= form.radio_button :form_duration_mode, :duration, 

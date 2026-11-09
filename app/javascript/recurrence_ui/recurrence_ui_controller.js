@@ -442,6 +442,7 @@ export default class extends Controller {
   // 3. Добавление исключения (Exdate)
   addExdate(event) {
     if (event) event.preventDefault()
+    if (!this.hasExdateInputTarget || !this.hasExdatesContainerTarget || !this.hasExdateTemplateTarget) return
     this._addDateFromTemplate(this.exdateInputTarget, this.exdatesContainerTarget, this.exdateTemplateTarget)
     if (this.hasAddExdateBtnTarget) this.addExdateBtnTarget.disabled = true
   }
@@ -449,6 +450,7 @@ export default class extends Controller {
   // 4. Добавление дополнительной даты (Rdate)
   addRdate(event) {
     if (event) event.preventDefault()
+    if (!this.hasRdateInputTarget || !this.hasRdatesContainerTarget || !this.hasRdateTemplateTarget) return
     this._addDateFromTemplate(this.rdateInputTarget, this.rdatesContainerTarget, this.rdateTemplateTarget)
     if (this.hasAddRdateBtnTarget) this.addRdateBtnTarget.disabled = true
   }
@@ -511,9 +513,14 @@ export default class extends Controller {
       .map(card => this._buildSingleRuleHash(card))
       .filter(Boolean)
 
-    // 2. Извлекаем списки дат
-    const exdates = this._getDatesArray(this.exdatesContainerTarget, 'exdateValue')
-    const rdates = this._getDatesArray(this.rdatesContainerTarget, 'rdateValue')
+    // 2. Извлекаем списки дат (безопасно проверяем наличие контейнеров)
+    const exdates = this.hasExdatesContainerTarget 
+      ? this._getDatesArray(this.exdatesContainerTarget, 'exdateValue') 
+      : []
+
+    const rdates = this.hasRdatesContainerTarget 
+      ? this._getDatesArray(this.rdatesContainerTarget, 'rdateValue') 
+      : []
 
     // 3. Формируем итоговый объект расписания
     const schedule = {}
@@ -534,11 +541,16 @@ export default class extends Controller {
     }
 
     // 4. Записываем в hidden_field чистый JSON (если всё пусто — сохранится "{}" вместо пустых структур)
+    if (this.hasHiddenFieldTarget) {
     this.hiddenFieldTarget.value = JSON.stringify(schedule)
-
-    // 5. Обновляем текстовую сводку и отладчик
-    this.updateSummary()
-    this.updateDebugField()
+    }
+    // 5. Обновляем текстовую сводку и отладчик (с проверкой наличия методов/таргетов)
+    if (typeof this.updateSummary === 'function') {
+      this.updateSummary()
+    }
+    if (typeof this.updateDebugField === 'function') {
+      this.updateDebugField()
+    }
   }
 
 

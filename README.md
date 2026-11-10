@@ -7,7 +7,7 @@ Built on top of [ice_cube](https://github.com/ice-cube-ruby/ice_cube), it provid
 [![Gem Version](https://img.shields.io/gem/v/recurrence_ui.svg)](https://rubygems.org/gems/recurrence_ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## ✨ Features
+## Features
 
 - **Form integration:** Ready-to-use components for adding recurrence rule editors to model creation and editing forms.
 - **Human-readable descriptions:** Converts `ice_cube` recurrence rules into readable descriptions.
@@ -18,16 +18,16 @@ Built on top of [ice_cube](https://github.com/ice-cube-ruby/ice_cube), it provid
 - **Light and dark themes:** Customize the appearance to match your application.
 - **Flexible model attribute mapping:** Use custom database column names for recurrence rules, time zones, durations, and event start and end times.
 
-## 📦 Requirements
+## Requirements
 
 Recurrence UI depends on the following components:
 
-- **Ruby on Rails** >= 7.0
+- **Ruby on Rails** >= 8.0
 - **[ice_cube](https://github.com/ice-cube-ruby/ice_cube)** ~> 0.16 — recurrence rule management.
 - **[ViewComponent](https://viewcomponent.org/)** >= 2.0 — reusable, encapsulated UI components.
-- **Tailwind CSS** — styling, integrated through `tailwindcss-rails` or your host application's Tailwind CSS setup.
+- **Tailwind CSS ** >= 4.0 — styling, integrated through `tailwindcss-rails` or your host application's Tailwind CSS setup.
 
-## 🚀 Installation
+## Installation and configuration
 
 Add the gem to your application's `Gemfile`:
 
@@ -40,10 +40,71 @@ Then install the dependencies:
 ```bash
 bundle install
 ```
+### Automatic Installation
 
-### Importing styles
+Run the installation generator to automatically create the initializer configuration and wire up the JavaScript components:
+```bash
+bin/rails g recurrence_ui:install
+```
+### Manual Setup (Alternative)
 
-For Tailwind CSS v4, add the following imports to your application's stylesheet, such as `app/assets/stylesheets/application.tailwind.css`:
+If you prefer to configure the gem manually:
+1. Create an initializer at config/initializers/recurrence_ui.rb:
+```ruby
+require "recurrence_ui"
+RecurrenceUi.configure do |config|
+  # default locale, time_zone and week_start for all RecurrencePickerComponents in app
+  # Could be redefined in RecurrencePickerComponent
+  config.locale = :en
+  config.time_zone = "UTC"
+  config.week_start = 1
+  config.start_time = "06:00" # Default start time for events (if no start_time is passed to the component or column does not configured in model)
+  config.end_time = "16:00" # Default end time for events (if no end_time is passed to the component or column does not configured in model)
+  config.duration = 3600 # Default duration in seconds for events (if no duration is passed to the component or column does not configured in model)
+ 
+  #---- This is default UI options for all RecurrencePickerComponents in app that could be redefined in RecurrencePickerComponent --- #
+  config.enabled_rule_types = %w[
+     never
+     daily
+     weekly
+     monthly_by_day_of_month
+     monthly_by_weekday
+     yearly_by_day_of_month
+     yearly_by_weekday
+   ]
+  config.allow_multiple_rules = true     # Show only one rule(false) or multyple rules (true)
+  config.show_duration = true            # Show/Hide duration fields in form
+  config.show_start_date_time = true     # Show/Hide start date and time fields in form
+  config.show_time_zone = true           # Show/Hide time zone in form
+  config.show_end_date_time = false      # Show/Hide end date and time fields in form
+  config.show_exceptions = true          # Show/Hide exceptions fields in form
+  config.show_rdates = true              # Show/Hide additional dates fields in form
+  config.show_termination = true         # Show/Hide termination fields in form
+end
+```
+Available settings:
+
+- locale — the default interface locale, such as :en, :ru, :uk, :be, or :ja.
+- week_start — the first day of the week: 0 for Sunday or 1 for Monday.
+- time_zone — if record dosen't have this field uses: ActiveSupport::TimeZone[zone_name] || Time.zone || ActiveSupport::TimeZone[Rails.application.config.time_zone]
+- start_time — if record dosen't have this field uses DEFAULT_START_TIME = '09:00'.freeze from gem configuration.
+- duration — if record dosen't have this field uses DEFAULT_DURATION = 0  from gem configuration. 
+- end_time — if record dosen't have this field uses    DEFAULT_END_TIME = '17:00'.freeze
+- allow_multiple_rules — show only one rule (false) or multiple rules (true).
+- show_duration — show/hide duration fields in the form.
+- show_start_date_time — show/hide start date and time fields in the form.
+- show_time_zone — show/hide time zone in the form.
+- show_end_date_time — show/hide end date and time fields in the form.
+- show_exceptions — show/hide exceptions fields in the form.
+- show_rdates — show/hide additional dates fields in the form.
+- show_termination — show/hide termination fields in the form.
+
+
+2. Import JavaScript: Add the following import to your application's main JavaScript file (app/javascript/application.js):
+```javascript
+import "recurrence_ui"
+```
+3. Import styles: For Tailwind CSS v4, add the style imports to your stylesheet (e.g., app/assets/stylesheets/application.tailwind.css):
 
 ```css
 @import "tailwindcss";
@@ -52,29 +113,12 @@ For Tailwind CSS v4, add the following imports to your application's stylesheet,
 
 Make sure the stylesheet is included in your application's asset pipeline and that your Tailwind CSS setup is compatible with the gem's styles.
 
-## ⚙️ Configuration
 
-Create an initializer at `config/initializers/recurrence_ui.rb` to configure the default settings:
-
-```ruby
-RecurrenceUi.configure do |config|
-  config.locale = :en
-  config.time_zone = "UTC"
-  config.week_start = 1
-end
-```
-
-Available settings:
-
-- `locale` — the default interface locale, such as `:en`, `:ru`, `:uk`, `:be`, or `:ja`.
-- `time_zone` — the default time zone.
-- `week_start` — the first day of the week: `0` for Sunday or `1` for Monday.
-
-The values above are examples. Adjust them to match your application's requirements.
-
-## 🛠 Model Integration
+### Model Integration
 
 Include `RecurrenceUi::HasRecurrence` in your model and configure the mapping between the gem's attributes and your database columns.
+If you dont configure some fields for your model, they will not connect to your base.
+But some of them could uses default value if not configured. Could be redefined for all app in config/initializers/recurrence_ui.rb such as time_zone, start_time, duration and end_time.
 
 For example:
 
@@ -82,15 +126,13 @@ For example:
 class Event < ApplicationRecord
   include RecurrenceUi::HasRecurrence
 
-  has_recurrence rules:      :recurring_rules,
-                 start_time: :start_at,
-                 end_time:   :end_at,
-                 time_zone:  :time_zone
+  has_recurrence rules:      :recurring_rules, #  This column is needed for gem,
+                 start_time: :start_at,        #  others - optional. Format:
+                 end_time:   :end_at,          #  name_in_gem: :name_in_your_db_schema 
+                 time_zone:  :time_zone,       # for default values see Configuration
                  duration:   :duration
 end
 ```
-
-### Using custom attribute names
 
 You can configure different attribute names for different models:
 
@@ -105,19 +147,39 @@ end
 
 Use the attribute names that match your application's database schema and the attributes supported by your model integration.
 
-## 🎨 View Integration
+Add required params to controller of your Model.
+```erb
+def event_params
+      params.require(:event).permit(
+         #other params of your model
+         *Event.recurrence_permitted_params # add this with name of your Model 
+         )
+    end
+```
+
+
+### View Integration
 
 Render the recurrence editor inside a Rails form using `RecurrenceUi::RecurrencePickerComponent`:
 
 ```erb
 <%= form_with model: @event do |form| %>
-  <%= render RecurrenceUi::RecurrencePickerComponent.new(
-        form: form,
-        record: @event,
-        locale: params[:locale],
-        time_zone: params[:time_zone],
-        week_start: params[:week_start]
-      ) %>
+<%= render RecurrenceUi::RecurrencePickerComponent.new(
+      form: form,
+      record: @event, 
+      allow_multiple_rules: true,
+      show_duration: true,
+      show_start_date_time: true,
+      show_time_zone: true,
+      show_end_date_time: true,
+      show_exceptions: true,
+      show_rdates: true,
+      show_termination: true,
+      locale: params[:locale],
+      time_zone: params[:time_zone],
+      week_start: params[:week_start]
+      )
+    %>
 
   <%= form.submit "Save" %>
 <% end %>
@@ -125,47 +187,7 @@ Render the recurrence editor inside a Rails form using `RecurrenceUi::Recurrence
 
 The `locale`, `time_zone`, and `week_start` options can be supplied dynamically when needed. If omitted, the component can use the applicable defaults provided by your integration.
 
-Add required params to controller of your Model.
-```erb
-def event_params
-      params.require(:event).permit(
-         #other params
-         *Event.recurrence_permitted_params # add this with name of your Model 
-         )
-    end
-```
-Configure gem:
-```erb
-# config/initializers/recurrence_ui.rb
-require "recurrence_ui"
-RecurrenceUi.configure do |config|
-  config.locale = :en # Default locale for all components of the gem (if no locale is passed to the component)
-  config.time_zone = "Asia/Tokyo" # Default time zone for all components of the gem (if no time_zone is passed to the component)
-  config.week_start = 1 # Week starts on Monday
-
-  # Configuration for the enabled rule types in the UI:
-  config.enabled_rule_types = %w[
-    never
-    weekly
-    daily
-    monthly_by_day_of_month
-  ]
-  # All other options will be filtered out, and the order will be preserved as specified above.
-  # config.enabled_rule_types = %w[
-  #   never
-  #   daily
-  #   weekly
-  #   monthly_by_day_of_month
-  #   monthly_by_weekday
-  #   yearly_by_day_of_month
-  #   yearly_by_weekday
-  # ]
-end
-```
-
-
-
-## 🌍 Internationalization
+## Internationalization
 
 Recurrence UI currently supports the following locales:
 
@@ -187,7 +209,7 @@ For example, to add German (`de`):
 
 Make sure the translation file follows the structure expected by the gem's existing locale files.
 
-## 🌓 Themes and Customization
+## Themes and Customization
 
 Recurrence UI uses CSS custom properties (design tokens) to control its color palette.
 
@@ -210,14 +232,14 @@ For example:
 
 Use the CSS variables supported by the gem to customize the interface. The example above illustrates the approach; available tokens and theme selectors depend on the styles provided by your version of Recurrence UI.
 
-## 🚀 Example Application
+## Example Application
 
 If you want to see `recurrence_ui` in action, check out the [rails-recurrence-ui-dummy](https://github.com/assoly/rails-recurrence-ui-dummy) repository. It demonstrates a fully configured Ruby on Rails application featuring:
 - Database models with `HasRecurrence` integration.
 - Form views using `ViewComponent` and Tailwind CSS.
 - Initializer and internationalization (i18n) setup.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, bug reports, and feature requests are welcome!
 
@@ -240,7 +262,7 @@ To get started:
 
 Please make sure your changes are covered by tests where appropriate.
 
-## 🧪 Testing
+## Testing
 
 *Note: The test suite is currently under active development. Contributions are very welcome!*
 

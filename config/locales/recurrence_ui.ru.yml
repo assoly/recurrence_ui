@@ -116,7 +116,7 @@ ru:
       recurrence: Повторение
       select_dates: Выбрать даты
       start_at: Начало
-      termination: Завершение
+      termination: Завершение повторений
       time_zone: Часовой пояс
       times: раз
       week: неделю

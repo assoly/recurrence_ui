@@ -64,9 +64,9 @@ be:
       - снежань
     days_of_month_fmt: "%{list} ліку"
     duration:
-      form_days: "Дні"
-      form_hours: "Гадзіны" 
-      form_minutes: "Хвіліны"
+      form_days: "д."
+      form_hours: "г."
+      form_minutes: "хв."
       days:
         few: "%{count} дні"
         many: "%{count} дзен"
@@ -105,7 +105,7 @@ be:
       choose_month: Выберыце месяц
       day: дзень
       duration: Працягласць
-      end_at: Час заканчэння аднаго выпадку
+      end_at: Час заканчэння
       every: Кожны
       exceptions: Выключэнні
       frequency: Чакласць
@@ -115,8 +115,8 @@ be:
       rdates: Дадатковыя даты
       recurrence: Повторение
       select_dates: Выбраць даты
-      start_at: Start at
-      termination: Завяршэнне задачы
+      start_at: Пачатак
+      termination: Завяршэнне паўтарэння
       time_zone: Часовой пояс
       times: раз
       week: тыдзень

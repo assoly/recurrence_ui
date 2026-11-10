@@ -64,9 +64,9 @@ uk:
       - грудень
     days_of_month_fmt: "%{list} числа"
     duration:
-      form_days: "Дні"
-      form_hours: "Години"
-      form_minutes: "Хвилини"
+      form_days: "д."
+      form_hours: "г."
+      form_minutes: "хв."
       days:
         few: "%{count} дні"
         many: "%{count} днів"
@@ -104,8 +104,8 @@ uk:
     labels:
       choose_month: Оберіть місяць
       day: день
-      duration: Тривалість одного випадку
-      end_at: Час завершення одного випадку
+      duration: Тривалість
+      end_at: Час завершення
       every: Кожен
       exceptions: Винятки
       frequency: Частота
@@ -115,8 +115,8 @@ uk:
       rdates: Додаткові дати
       recurrence: Повторение
       select_dates: Обрати дати
-      start_at: Дата початку першого випадку та час одного випадку
-      termination: Завершення завдання
+      start_at: Початок
+      termination: Завершення повторення
       time_zone: Часовий пояс
       times: разів
       week: тиждень

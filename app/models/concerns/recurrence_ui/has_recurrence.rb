@@ -270,7 +270,7 @@ module RecurrenceUi
       end
 
       if form_duration_mode == 'end_at' && form_end_date.present?
-        end_time_str = form_end_time.presence || '09:00'
+        end_time_str = form_end_time.presence || DEFAULT_END_TIME
         parsed_end = tz.parse("#{form_end_date} #{end_time_str}")
 
         if parsed_end.present?

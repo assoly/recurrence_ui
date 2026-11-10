@@ -1,4 +1,4 @@
-import RecurrenceUiController from "recurrence_ui/recurrence_ui_controller"
+import RecurrenceUiController from "./recurrence_ui_controller"
 
 export function registerRecurrenceUiController(application) {
   if (application) {

@@ -6,11 +6,11 @@ module RecurrenceUi
     isolate_namespace RecurrenceUi
 
     # 1. Add importmap support for the gem
-    initializer "recurrence_ui.importmap", before: "importmap" do |app|
-      if app.config.respond_to?(:importmap)
-        app.config.importmap.paths << Engine.root.join("config/importmap.rb")
-      end
-    end
+    #initializer "recurrence_ui.importmap", before: "importmap" do |app|
+    #  if app.config.respond_to?(:importmap)
+    #    app.config.importmap.paths << Engine.root.join("config/importmap.rb")
+    #  end
+    #end
 
     # 2. Assets (только стили и картинки, если нужны, т.к. JS обслуживает Importmap)
     initializer "recurrence_ui.assets" do |app|

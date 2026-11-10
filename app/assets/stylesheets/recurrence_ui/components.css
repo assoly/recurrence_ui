@@ -220,7 +220,7 @@
 
   /* Edit Icon wrapper */
   .rui-summary-icon {
-    @apply opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-400 dark:text-gray-500;
+    @apply opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[var(--app-text-muted)] dark:text-gray-500;
   }
   /* Rule Accordion Card Container */
   .rui-card-container {

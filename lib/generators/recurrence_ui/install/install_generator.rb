@@ -3,53 +3,48 @@ module RecurrenceUi
     class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path("templates", __dir__)
 
-      desc "Installs RecurrenceUi importmap, JS controller registration, and Tailwind CSS styles"
-
-      def add_importmap_pin
-        importmap_file = "config/importmap.rb"
-        if File.exist?(importmap_file)
-          pin_code = "\npin \"recurrence_ui\", to: \"recurrence_ui/index.js\"\n"
-          if File.read(importmap_file).include?("recurrence_ui")
-            say "RecurrenceUi pin already exists in #{importmap_file}", :blue
-          else
-            append_to_file importmap_file, pin_code
-            say "Added recurrence_ui pin to #{importmap_file}", :green
-          end
-        else
-          say "Could not find #{importmap_file}. Importmap configuration skipped.", :yellow
-        end
-      end
+      desc "Installs RecurrenceUi Stimulus controller registration and Tailwind CSS styles"
 
       def register_controller
-        app_js_paths = [
-          Rails.root.join("app/javascript/application.js"),
-          Rails.root.join("app/javascript/packs/application.js")
-        ]
+        say "1. Installing RecurrenceUi Stimulus controller registration", :green
 
-        target_js = app_js_paths.find { |path| File.exist?(path) }
+        app_js_path = Rails.root.join("app/javascript/application.js")
 
-        if target_js
-          content = File.read(target_js)
-          
-          if content.include?("recurrence_ui")
-            say "RecurrenceUi is already registered in #{target_js.relative_path_from(Rails.root)}", :blue
-          else
-            append_to_file target_js, <<~JS
+        unless File.exist?(app_js_path)
+          say "Could not find app/javascript/application.js. Please register RecurrenceUi manually.", :red
+          return
+        end
 
-              // Register RecurrenceUi Stimulus controller
-              import { registerRecurrenceUiController } from "recurrence_ui"
-              if (typeof window.Stimulus !== "undefined") {
-                registerRecurrenceUiController(window.Stimulus)
-              }
-            JS
-            say "Added RecurrenceUi registration to #{target_js.relative_path_from(Rails.root)}", :green
-          end
+        content = File.read(app_js_path)
+        additions = []
+
+        application_import = 'import { application } from "controllers/application"'
+        recurrence_import = 'import { registerRecurrenceUiController } from "recurrence_ui"'
+        recurrence_registration = "registerRecurrenceUiController(application)"
+
+        unless content.include?(application_import)
+          additions << application_import
+        end
+
+        unless content.include?(recurrence_import)
+          additions << recurrence_import
+        end
+
+        unless content.include?(recurrence_registration)
+          additions << recurrence_registration
+        end
+
+        if additions.empty?
+          say "RecurrenceUi controller is already registered", :blue
         else
-          say "Could not find application.js. Please register RecurrenceUi manually.", :red
+          append_to_file app_js_path, "\n\n#{additions.join("\n")}\n"
+          say "Added RecurrenceUi controller registration to application.js", :green
         end
       end
 
       def register_styles
+        say "2. Installing RecurrenceUi Tailwind CSS styles", :green
+
         tailwind_css_paths = [
           Rails.root.join("app/assets/tailwind/application.css"),
           Rails.root.join("app/assets/stylesheets/application.tailwind.css"),
@@ -58,23 +53,26 @@ module RecurrenceUi
 
         target_css = tailwind_css_paths.find { |path| File.exist?(path) }
 
-        if target_css
-          content = File.read(target_css)
-          import_line = '@import "recurrence_ui/application.css";'
-
-          if content.include?(import_line)
-            say "RecurrenceUi styles import already exists in #{target_css.relative_path_from(Rails.root)}", :blue
-          else
-            if content.include?('@import "tailwindcss";')
-              inject_into_file target_css, "\n#{import_line}", after: '@import "tailwindcss";'
-            else
-              prepend_to_file target_css, "#{import_line}\n"
-            end
-            say "Added RecurrenceUi styles import to #{target_css.relative_path_from(Rails.root)}", :green
-          end
-        else
-          say "Tailwind CSS file not found. Please add `@import \"recurrence_ui/application.css\";` manually.", :yellow
+        unless target_css
+          say 'Tailwind CSS file not found. Please add `@import "recurrence_ui/application.css";` manually.', :yellow
+          return
         end
+
+        content = File.read(target_css)
+        import_line = '@import "recurrence_ui/application.css";'
+
+        if content.include?(import_line)
+          say "RecurrenceUi styles are already imported in #{target_css.relative_path_from(Rails.root)}", :blue
+          return
+        end
+
+        if content.include?('@import "tailwindcss";')
+          inject_into_file target_css, "\n#{import_line}", after: '@import "tailwindcss";'
+        else
+          prepend_to_file target_css, "#{import_line}\n"
+        end
+
+        say "Added RecurrenceUi styles import to #{target_css.relative_path_from(Rails.root)}", :green
       end
     end
   end

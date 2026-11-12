@@ -1,4 +1,5 @@
     <%# app/views/recurrence_ui/_start_at.html.erb %>
+    <% default_start_time = rec_ui.start_time || RecurrenceUi.config.resolved_start_time %>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     
     <!-- 1. Дата и время начала (всегда на одной строке, не тянутся) -->
@@ -11,7 +12,7 @@
                     data: { "#{identifier}_target": "startDate", 
                     action: "change->#{identifier}#calculateEndDateFromDuration" } %>
                 <%= form.time_field :form_start_time, 
-                        value: form.object.start_time_in_zone(:event)&.strftime('%H:%M') || RecurrenceUi::RecurrencePickerComponent::DEFAULT_START_TIME.strftime('%H:%M'), 
+                        value: form.object.start_time_in_zone(:event)&.strftime('%H:%M') || default_start_time, 
                         class: "rui-input w-24 shrink-0",
                         data: { "#{identifier}_target": "startTime", 
                         action: "change->#{identifier}#calculateEndDateFromDuration" } 

@@ -74,6 +74,19 @@ module RecurrenceUi
 
         say "Added RecurrenceUi styles import to #{target_css.relative_path_from(Rails.root)}", :green
       end
+      def create_initializer
+        say "3. Adding RecurrenceUi initializer", :green
+
+        initializer_path = "config/initializers/recurrence_ui.rb"
+        if File.exist?(initializer_path)
+          say "RecurrenceUi initializer already exists", :blue
+          return
+        end
+
+        template "recurrence_ui.rb", initializer_path
+        say "Created RecurrenceUi initializer at #{initializer_path}", :green
+      end
+
     end
   end
 end

@@ -23,13 +23,13 @@
     
     <%# Specific End Date Input %>
     <input type="date" 
-           class="rui-input hidden text-xs" 
+           class="rui-input rui-hidden text-xs" 
            data-item="endDateInput" 
            data-<%= identifier %>-target="endDate"
            data-action="change-><%= identifier %>#onCardInputChanged">
     
     <%# Count Input Field %>
-    <div data-item="endCount" data-<%= identifier %>-target="endCount" class="hidden flex items-center gap-2">
+    <div data-item="endCount" data-<%= identifier %>-target="endCount" class="rui-hidden flex items-center gap-2">
       <input type="number" min="1" placeholder="10" 
              class="rui-input w-20 text-xs" 
              data-item="endCountInput" 

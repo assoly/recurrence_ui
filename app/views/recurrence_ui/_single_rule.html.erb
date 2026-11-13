@@ -1,35 +1,31 @@
 <%# app/views/recurrence_ui/_single_rule.html.erb %>
-<div class="space-y-4" data-<%= identifier %>-target="ruleCard">
+<div class="rui-container" data-<%= identifier %>-target="ruleCard">
   
   <%# Frequency Selector Block %>
   <div>
     
     <%# Живое превью правила сверху селекта %>
-    <div class="mb-2">
       <span data-item="cardSummary" class="rui-inline-label">
         <%= t('recurrence_ui.labels.new_rule', default: 'New rule') %>
       </span>
-    </div>
 
     <select data-item="ruleType" 
             data-action="change-><%= identifier %>#toggleCardFields change-><%= identifier %>#onCardInputChanged" 
-            class="rui-select w-full">
+            class="rui-select">
       <% rec_ui.rule_options.each do |label, value| %>
         <option value="<%= value %>" <%= "selected" if rec_ui.current_rule_type == value %>><%= label %></option>
       <% end %>
     </select>
   </div>
-
-  <%# Dynamic Specific Rule Fields (используем data-item="specificFields", как в мультиправилах) %>
   <% rec_ui.rule_options.map(&:last).each do |rule| %>
-    <div data-item="specificFields" data-rule="<%= rule %>" class="hidden space-y-3">
+    <div data-item="specificFields" data-rule="<%= rule %>" class="rui-hidden" style="display: flex; flex-direction: column; gap: 0.75rem;">
       <%= render "recurrence_ui/#{rule}", form: form, identifier: identifier, days_for_ui: rec_ui.days_for_ui, rec_ui: rec_ui %>
     </div>
   <% end %>
 
   <%# Termination Settings Section %>
   <% if rec_ui.show_termination %>
-    <div class="pt-2 border-t border-[var(--rui-border-color)]">
+    <div style="padding-top: 0.5rem; border-top: 1px solid var(--rui-border-color);">
       <%= render "recurrence_ui/termination", form: form, identifier: identifier, rec_ui: rec_ui %>
     </div>
   <% end %>

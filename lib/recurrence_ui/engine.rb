@@ -8,7 +8,8 @@ module RecurrenceUi
     initializer "recurrence_ui.assets" do |app|
       if app.config.respond_to?(:assets)
         app.config.assets.paths << root.join("app/javascript")
-        app.config.assets.precompile += %w(recurrence_ui/application.css)
+        app.config.assets.paths << root.join("app/assets/stylesheets")
+        #app.config.assets.precompile += %w(recurrence_ui/application.css)
       end
     end
 

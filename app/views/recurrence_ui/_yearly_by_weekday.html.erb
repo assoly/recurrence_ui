@@ -2,17 +2,16 @@
 <%# Yearly Recurrence Rule Options (By Weekday / Nth Day) %>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
 
-<div class="space-y-3" data-item="specificFields" data-rule="yearly_by_weekday">
+<div class="rui-monthly-container" data-item="specificFields" data-rule="yearly_by_weekday">
   <%# Interval Input Header %>
-  <div class="flex items-center space-x-2">
+  <div class="rui-monthly-interval-row">
     <span class="rui-inline-label">
       <%= t("recurrence_ui.labels.every", default: "Every") %>
     </span>
 
     <%= number_field_tag nil, rec_ui.initial_interval, 
-          value: 1,      
           min: 1, 
-          class: "rui-input w-16 text-center",
+          class: "rui-input rui-monthly-interval-input",
           data: { 
             item: "interval", 
             action: "input->#{identifier}#onCardInputChanged" 
@@ -24,15 +23,15 @@
   </div>
 
   <%# Month Selector %>
-  <div data-<%= identifier %>-target="monthSelector" class="flex items-center gap-3">
-    <label class="rui-inline-label whitespace-nowrap">
+  <div data-<%= identifier %>-target="monthSelector" class="rui-month-selector-row">
+    <label class="rui-inline-label rui-nowrap">
       <%= t("recurrence_ui.labels.choose_month", default: "Choose month") %>:
     </label>
 
     <select data-<%= identifier %>-target="monthInput" 
             data-item="month" 
             data-action="change-><%= identifier %>#onCardInputChanged" 
-            class="rui-select w-full sm:w-auto">
+            class="rui-select rui-month-select">
       <% (1..12).each do |m| %>
         <% month_name = I18n.t("recurrence_ui.date.standalone_month_names", default: t("recurrence_ui.date.month_names"))[m] %>
         <option value="<%= m %>"><%= month_name %></option>
@@ -41,18 +40,18 @@
   </div>
 
   <%# Grid of Nth Days (1st, 2nd, 3rd, 4th, 5th, Last) %>
-  <div class="space-y-1">
+  <div class="rui-nth-container">
     <% %w[1 2 3 4 5 -1].each do |val| %>
-      <div class="grid grid-cols-8 gap-1 items-center">
+      <div class="rui-nth-row">
         <%# Row Label (Ordinal Name) %>
-        <div class="col-span-1 text-[10px] text-right pr-1">
-          <span class="rui-label mb-0 text-[10px] font-bold">
+        <div class="rui-nth-label-col">
+          <span class="rui-label rui-nth-label">
             <%= t("recurrence_ui.nth_names.#{val}") %>
           </span>
         </div>
         
         <%# Day Buttons Grid %>
-        <div class="col-span-7 grid grid-cols-7 gap-1">
+        <div class="rui-nth-grid">
           <% days_for_ui.each do |day_idx| %>
             <% is_selected = selected_nth_days[val.to_s]&.include?(day_idx) %>
             <button type="button" 

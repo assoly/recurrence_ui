@@ -1,5 +1,5 @@
 <%# Time zone %>
-<div class="rui-timezone-container">
+<div class="rui-field-group rui-timezone-container">
   <%= form.label :time_zone, t('recurrence_ui.labels.time_zone'), class: "rui-label" %>
   <%= form.time_zone_select :time_zone, 
         ActiveSupport::TimeZone.all, 

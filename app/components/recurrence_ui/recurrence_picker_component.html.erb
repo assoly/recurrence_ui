@@ -78,9 +78,7 @@
           <%= t('recurrence_ui.labels.recurrence') %>
         </span>
       </div>
-      <div>
         <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
-      </div>
     </div>
 
     <!-- Режим редактирования -->
@@ -115,23 +113,22 @@
             <%= render "recurrence_ui/single_rule", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: self, rule_options: rule_options %>
           </div>
         <% end %>
-
-        <div class="rui-grid-2 rui-divider rui-pt-2">
-          <% if show_rdates %>
-            <div data-<%= identifier %>-target="rdatesBlock" >
-              <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+        <% if show_rdates || show_exceptions %>
+            <div class="rui-grid-2">
+              <% if show_rdates %>
+                <div data-<%= identifier %>-target="rdatesBlock" >
+                  <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+                </div>
+              <% end %>
+              <% if show_exceptions %>
+                <div data-<%= identifier %>-target="exceptionsBlock" >
+                  <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
+                </div>            
+              <% end %>
             </div>
-          <% end %>
-          <% if show_exceptions %>
-            <div data-<%= identifier %>-target="exceptionsBlock" >
-              <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
-            </div>            
-          <% end %>
-        </div>
+            <% end %>
 
-        <div class="rui-pt-2">
           <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
-        </div>
       </div>
 
       <div data-<%= identifier %>-target="codeEditor" class="rui-hidden rui-visual-editor-stack">

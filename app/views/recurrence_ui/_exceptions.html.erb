@@ -1,12 +1,29 @@
 <%# app/views/recurrence_ui/_exceptions.html.erb %>
 <%# Excluded Dates (EXDATES) Section %>
-<div class="rui-exceptions-container">
+<div class="rui-exceptions-container rui-divider ">
   <%# 1. Section Label %>
   <label class="rui-label rui-exceptions-label">
-    <span>🚫</span> <%= t("recurrence_ui.labels.exceptions", locale: locale, default: "Exceptions") %>
+    <%= t("recurrence_ui.labels.exceptions", locale: locale, default: "Exceptions") %>
   </label>
 
-  <%# 2. Container for EXDATE Chips %>
+  <%# 2. Date Input and Add Button (теперь первыми) %>
+  <div class="rui-exceptions-input-group ">
+    <input type="date" 
+           data-<%= identifier %>-target="exdateInput" 
+           data-action="input-><%= identifier %>#onDateInputChange change-><%= identifier %>#onDateInputChange"
+           class="rui-input rui-input-date rui-exceptions-date-input">
+    
+    <button type="button" 
+            data-<%= identifier %>-target="addExdateBtn"
+            data-action="click-><%= identifier %>#addExdate" 
+            disabled
+            title="<%= t('recurrence_ui.actions.add_exdate', default: 'Add exception') %>"
+            class="rui-btn rui-btn-primary rui-exceptions-add-btn">
+      +
+    </button>
+  </div>
+
+  <%# 3. Container for EXDATE Chips (теперь под инпутом) %>
   <div data-<%= identifier %>-target="exdatesContainer" class="rui-chip-container">
     <% exdates.each do |exdate| %>
       <% date_str = exdate.is_a?(Date) || exdate.is_a?(Time) ? exdate.strftime("%Y-%m-%d") : exdate.to_s %>
@@ -18,23 +35,6 @@
         <span><%= rec_ui._formatDate(date_str) rescue date_str %></span>
       </span>
     <% end %>
-  </div>
-
-  <%# 3. Date Input and Add Button %>
-  <div class="rui-exceptions-input-group">
-    <input type="date" 
-           data-<%= identifier %>-target="exdateInput" 
-           data-action="input-><%= identifier %>#onDateInputChange"
-           class="rui-input rui-exceptions-date-input">
-    
-    <button type="button" 
-            data-<%= identifier %>-target="addExdateBtn"
-            data-action="click-><%= identifier %>#addExdate" 
-            disabled
-            title="<%= t('recurrence_ui.actions.add_exdate', default: 'Add exception') %>"
-            class="rui-btn rui-btn-primary rui-exceptions-add-btn">
-      +
-    </button>
   </div>
 </div>
 

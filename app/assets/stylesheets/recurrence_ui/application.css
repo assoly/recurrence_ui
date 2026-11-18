@@ -2,47 +2,54 @@
    RecurrenceUI CSS Manifest & Design Tokens
    ========================================================================== */
 
-/* 1. Светлая тема (Значения по умолчанию) */
+/* ==========================================================================
+   1. Design Tokens & Theme Configuration
+   ========================================================================== */
+
+/* Light Theme (Default Values) */
 :root {
-  /* Фоны и тексты */
+  /* Backgrounds & Text */
   --rui-bg-main: #ffffff;
   --rui-text-main: #111827;       /* gray-900 */
   --rui-text-muted: #6b7280;      /* gray-500 */
   --rui-border-color: #d1d5db;    /* gray-300 */
   
-  /* Формы и поля */
+  /* Forms & Inputs */
   --rui-input-bg: #ffffff;
   --rui-input-disabled-bg: #f3f4f6;
 
-  /* Акценты (Primary) */
+  /* Primary Accents */
   --rui-primary-bg: #2563eb;      /* blue-600 */
   --rui-primary-hover: #1d4ed8;   /* blue-700 */
   --rui-primary-active: #1e40af;  /* blue-800 */
   --rui-primary-text: #ffffff;
 
-  /* Второстепенные элементы (Secondary) */
+  /* Secondary Elements */
   --rui-secondary-bg: #f3f4f6;    /* gray-100 */
   --rui-secondary-hover: #e5e7eb; /* gray-200 */
   --rui-secondary-text: #374151;  /* gray-700 */
   --rui-secondary-border: #d1d5db;
 
-  /* Интерактив и состояния */
+  /* Interactivity & States */
   --rui-hover-bg-soft: #eff6ff;   /* blue-50 */
   --rui-error-text: #dc2626;      /* red-600 */
 
-  /* Специфичные тексты правил */
+  /* Rule-specific Text Colors */
   --rui-rule-main-text: #1e293b;
   --rui-rule-exception-text: #b91c1c;  /* red-700 */
   --rui-rule-rdate-text: #047857;      /* emerald-700 */
+  /* Chips */
+  --rui-chip-exdate-border: #fecaca;  /* red-300 */
+  --rui-chip-exdate-bg: #fef2f2;      /* red-50 */
+  --rui-chip-rdate-border: #a7f3d0;   /* emerald-300 */
+  --rui-chip-rdate-bg: #ecfdf5;       /* emerald-50 */
 
-  /* Радиус скругления по умолчанию (если не задан в хост-приложении) */
+  /* Border Radii */
   --rui-radius: 0.375rem;
   --rui-radius-lg: 0.5rem;
 }
 
-/* 2. Тёмная тема (Системная по умолчанию или ручное переключение) */
-
-/* Случай А: Системная темная тема (когда явно не выбран светлый режим) */
+/* Dark Theme (System Preference or Manual Toggle) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-rui-theme="light"]) {
     --is-dark: true;
@@ -70,7 +77,6 @@
   }
 }
 
-/* Случай Б: Класс .dark добавлен хост-сайтом на <html> (или принудительный data-rui-theme="dark") */
 html.dark:not([data-rui-theme="light"]), 
 .dark:not([data-rui-theme="light"]), 
 [data-rui-theme="dark"] {
@@ -95,9 +101,17 @@ html.dark:not([data-rui-theme="light"]),
   --rui-rule-main-text: #f8fafc;       /* slate-50 */
   --rui-rule-exception-text: #fca5a5;  /* red-300 */
   --rui-rule-rdate-text: #6ee7b7;      /* emerald-300 */
+
+  /* Chips */
+  --rui-chip-exdate-border: #fca5a5;  /* red-300 */
+  --rui-chip-exdate-bg: #1f2937;      /* red-50 */
+  --rui-chip-rdate-border: #6ee7b7;   /* emerald-300 */
+  --rui-chip-rdate-bg: #1f2937;       /* emerald-50 */
+
+
 }
 
-/* 3. Принудительный режим "Только светлая тема" (высший приоритет) */
+/* Forced Light Theme (Highest Priority) */
 [data-rui-theme="light"] {
   --rui-bg-main: #ffffff;
   --rui-text-main: #111827;
@@ -122,10 +136,9 @@ html.dark:not([data-rui-theme="light"]),
 
 
 /* ==========================================================================
-   Component Styles (Используют только переменные, код чистый и сухой)
+   2. Layout & Containers
    ========================================================================== */
 
-/* Главный контейнер */
 .rui-container {
   background-color: var(--rui-bg-main);
   color: var(--rui-text-main);
@@ -138,42 +151,65 @@ html.dark:not([data-rui-theme="light"]),
   box-sizing: border-box;
 }
 
-/* Общие стили полей ввода */
-.rui-input, .rui-select, .rui-textarea {
-  background-color: var(--rui-input-bg);
-  color: var(--rui-text-main);
-  border: 1px solid var(--rui-border-color);
-  border-radius: var(--rui-radius);
-  font-size: 0.875rem;
-  padding: 0.375rem 0.625rem;
-  width: 100%;
+.rui-grid-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rui-grid-col {
+  flex: 1 1 280px;
+  min-width: 280px;
+  padding: 0.5rem;
   box-sizing: border-box;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.rui-input:focus, .rui-select:focus, .rui-textarea:focus {
-  outline: none;
-  border-color: var(--rui-primary-bg);
-  box-shadow: 0 0 0 1px var(--rui-primary-bg);
+.rui-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch; 
 }
 
-.rui-input:disabled, .rui-select:disabled, .rui-textarea:disabled {
-  background-color: var(--rui-input-disabled-bg);
-  opacity: 0.5;
-  cursor: not-allowed;
+@media (min-width: 900px) {
+  .rui-grid-2 { 
+    grid-template-columns: repeat(2, minmax(0, 1fr)); 
+  }
 }
 
-.rui-textarea {
-  font-family: monospace;
-  font-size: 0.75rem;
+.rui-duration-end-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
-.rui-input-error {
-  border-color: var(--rui-error-text) !important;
-  box-shadow: 0 0 0 1px var(--rui-error-text) !important;
+.rui-edit-mode-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
 }
 
-/* Типографика и заголовки */
+.rui-visual-editor-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rui-display-mode-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+
+/* ==========================================================================
+   3. Typography & Headers
+   ========================================================================== */
+
 .rui-label {
   color: var(--rui-text-muted);
   display: block;
@@ -193,15 +229,108 @@ html.dark:not([data-rui-theme="light"]),
 }
 
 .rui-panel-header {
-  border-bottom: 1px solid var(--rui-border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.75rem;
 }
 
-/* Кнопки */
+
+/* ==========================================================================
+   4. Form Controls & Inputs
+   ========================================================================== */
+
+.rui-field-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.rui-input, 
+.rui-select, 
+.rui-textarea {
+  background-color: var(--rui-input-bg);
+  color: var(--rui-text-main);
+  border: 1px solid var(--rui-border-color);
+  border-radius: var(--rui-radius);
+  font-size: 0.875rem;
+  height: 2.25rem; 
+  padding: 0 0.625rem; 
+  line-height: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rui-input-date, 
+.rui-input-time {
+  box-sizing: border-box;
+}
+
+.rui-input-date { width: 9rem; flex-shrink: 0; }
+.rui-input-time { width: 6rem; flex-shrink: 0; }
+
+.rui-input:focus, 
+.rui-select:focus, 
+.rui-textarea:focus {
+  outline: none;
+  border-color: var(--rui-primary-bg);
+  box-shadow: 0 0 0 1px var(--rui-primary-bg);
+}
+
+.rui-input:disabled, 
+.rui-select:disabled, 
+.rui-textarea:disabled {
+  background-color: var(--rui-input-disabled-bg);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rui-textarea {
+  font-family: monospace;
+  font-size: 0.75rem;
+}
+
+.rui-input-error {
+  border-color: var(--rui-error-text) !important;
+  box-shadow: 0 0 0 1px var(--rui-error-text) !important;
+}
+
+.rui-daily-input { width: 4rem; }
+
+.rui-start-at-row,
+.rui-end-at-row,
+.rui-daily-row,
+.rui-timezone-at-row
+ {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rui-timezone-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.rui-timezone-select {
+  width: 100%;
+  cursor: pointer;
+}
+
+.rui-radio {
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+  accent-color: var(--rui-primary-bg);
+}
+
+
+/* ==========================================================================
+   5. Buttons & Actions
+   ========================================================================== */
+
 .rui-btn-primary {
   background-color: var(--rui-primary-bg);
   color: var(--rui-primary-text);
@@ -234,7 +363,6 @@ html.dark:not([data-rui-theme="light"]),
   background-color: var(--rui-secondary-hover);
 }
 
-/* Ссылки-действия */
 .rui-link-action {
   color: var(--rui-primary-bg);
   background: none;
@@ -252,7 +380,27 @@ html.dark:not([data-rui-theme="light"]),
   opacity: 0.8;
 }
 
-/* Саммари блок */
+.rui-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* Disabled button state styling */
+.rui-btn-primary:disabled,
+.rui-btn-secondary:disabled,
+.rui-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none; /* Предотвращает любые клики на заблокированную кнопку */
+}
+
+/* ==========================================================================
+   6. Summary Component
+   ========================================================================== */
+
 .rui-summary-wrapper {
   cursor: pointer;
   padding: 0.125rem 0;
@@ -295,73 +443,13 @@ html.dark:not([data-rui-theme="light"]),
   background-color: var(--rui-secondary-hover);
 }
 
-/* Специфичные блоки: Start At, Timezone, Duration, End At, Termination */
-.rui-start-at-row,
-.rui-end-at-row,
-.rui-daily-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
-}
 
-.rui-input-date { width: 9rem; flex-shrink: 0; }
-.rui-input-time { width: 6rem; flex-shrink: 0; }
-.rui-daily-input { width: 4rem; }
+/* ==========================================================================
+   7. Cards & Rule Containers
+   ========================================================================== */
 
-.rui-timezone-container,
-.rui-frequency-block,
-.rui-termination-container,
-.rui-daily-container,
-.rui-weekly-container,
-.rui-exceptions-container,
-.rui-rdates-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.rui-timezone-container { width: 100%; }
-.rui-timezone-select { width: 100%; cursor: pointer; }
-
-.rui-duration-container {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.rui-duration-field-group {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;
-}
-
-.rui-duration-days-group,
-.rui-duration-hours-group,
-.rui-duration-minutes-group,
-.rui-termination-count-input {
-  width: 5rem;
-  text-align: center;
-}
-
-.rui-duration-unit,
-.rui-termination-times-label {
-  color: var(--rui-text-muted);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.rui-termination-container { padding-top: 0.75rem; }
-.rui-termination-label { margin-bottom: 0.5rem; }
-.rui-termination-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
-.rui-termination-select { width: auto; flex-grow: 1; }
-.rui-termination-date { font-size: 0.75rem; }
-.rui-termination-count-group { display: flex; align-items: center; gap: 0.5rem; }
-
-/* Карточка правила (_rule_card.html.erb) */
 .rui-card-group { width: 100%; }
+
 .rui-card-container {
   background-color: var(--rui-bg-main);
   border: 1px solid var(--rui-border-color);
@@ -418,220 +506,32 @@ html.dark:not([data-rui-theme="light"]),
   background-color: var(--rui-secondary-hover);
 }
 
-/* Сетка недели */
-.rui-weekly-interval-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-.rui-weekly-interval-input { width: 4rem; text-align: center; }
-.rui-weekly-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 0.25rem;
-}
- /* Toggle Day Button Grid Item */
-.rui-day-btn {
-  background-color: var(--rui-bg-main);
-  color: var(--rui-secondary-text);
-  border-color: var(--rui-border-color);
-  
-  /* Замена @apply w-full py-1.5 rounded-md text-xs font-medium border transition-all */
-  width: 100%;
-  padding-top: 0.375rem; /* 6px (эквивалент py-1.5) */
-  padding-bottom: 0.375rem;
-  border-radius: var(--rui-radius, 0.375rem);
-  font-size: 0.75rem;    /* text-xs */
-  font-weight: 500;      /* font-medium */
-  border-width: 1px;
-  border-style: solid;
-  transition: all 0.15s ease;
-  cursor: pointer;
-  
-  /* Дополнительно для центрирования текста, если нужно */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-}
-
-.rui-day-btn:hover {
-  background-color: var(--rui-hover-bg-soft);
-  color: var(--rui-text-main);
-}
-
-.rui-day-btn[data-selected='true'] {
-  background-color: var(--rui-primary-bg);
-  color: var(--rui-primary-text);
-  border-color: var(--rui-primary-bg);
-}
-/* --- Стили для месячного выбора по дням (_monthly_by_day_of_month.html.erb) --- */
-
-.rui-monthly-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem; /* аналог space-y-3 */
-}
-
-.rui-monthly-interval-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem; /* аналог space-x-2 */
-}
-
-.rui-monthly-interval-input {
-  width: 4rem; /* аналог w-16 */
-  text-align: center;
-}
-
-.rui-monthly-days-label {
-  margin-bottom: 0.5rem; /* аналог mb-2 */
-}
-
-.rui-monthly-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr)); /* 7 колонок для дней недели */
-  gap: 0.25rem; /* аналог gap-1 */
-}
-/* --- Стили для выбора по неделям/порядковым дням (_monthly_by_weekday.html.erb и _yearly_by_weekday.html.erb) --- */
-
-.rui-nth-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem; /* аналог space-y-2 */
-}
-
-.rui-nth-row {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr)); /* сетка на 8 колонок (1 для подписи, 7 для дней) */
-  gap: 0.25rem; /* аналог gap-1 */
-  align-items: center;
-}
-
-.rui-nth-label-col {
-  grid-column: span 1 / span 1;
-  text-align: right;
-  padding-right: 0.25rem; /* pr-1 */
-}
-
-.rui-nth-label {
-  font-size: 0.625rem; /* text-[10px] */
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 0;
-}
-
-.rui-nth-grid {
-  grid-column: span 7 / span 7;
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 0.25rem;
-}
-
-
-/* --- Стили для выбора месяца в годовых правилах --- */
-.rui-month-selector-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.rui-month-select {
-  width: 100%;
-}
-
-
-/* --- Стили для главного компонента recurrence_picker_component.html.erb --- */
-
-.rui-start-time-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--rui-border-color);
-  margin-bottom: 1rem;
-}
-
-.rui-duration-end-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.rui-duration-card {
-  flex: 1;
-  min-width: 280px;
+.rui-card-option {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: var(--rui-radius-lg);
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
 
-.rui-duration-card:hover {
-  background-color: var(--rui-hover-bg-soft);
-}
+.rui-card-option:hover { background-color: var(--rui-hover-bg-soft); }
 
-.rui-radio-spacing {
-  margin-top: 0.25rem;
-  flex-shrink: 0;
-}
-
-.rui-card-content {
+.rui-duration-card {
   flex: 1;
-  min-width: 0;
-}
-
-
-.rui-subcontent-spacing {
-  margin-top: 0.25rem;
+  min-width: 280px;
+  margin-top: 0.3rem;
 }
 
 .rui-single-option-block {
   flex: 1;
   min-width: 280px;
-  padding: 0.5rem;
 }
 
-.rui-block-label {
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.rui-display-mode-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.rui-edit-mode-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding-top: 0.5rem;
-}
-
-.rui-flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.rui-code-btn {
-  font-family: monospace;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-}
-
-.rui-visual-editor-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.rui-card-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .rui-multiple-rules-wrapper {
@@ -650,34 +550,130 @@ html.dark:not([data-rui-theme="light"]),
   padding-top: 0.25rem;
 }
 
-.rui-font-bold {
-  font-weight: bold;
-}
 
-.rui-pt-2 {
-  padding-top: 0.5rem;
-}
+/* ==========================================================================
+   8. Recurrence Rule Builders (Weekly, Monthly, Yearly, Duration)
+   ========================================================================== */
 
-.rui-code-textarea {
-  font-family: monospace;
-  font-size: 0.75rem;
-  width: 100%;
-}
-
-.rui-flex-end-gap {
+/* Weekly Recurrence */
+.rui-weekly-interval-row {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.rui-weekly-interval-input { width: 4rem; text-align: center; }
+
+.rui-weekly-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+/* Day Toggle Button Component */
+.rui-day-btn {
+  background-color: var(--rui-bg-main);
+  color: var(--rui-secondary-text);
+  border-color: var(--rui-border-color);
+  width: 100%;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  border-radius: var(--rui-radius, 0.375rem);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-width: 1px;
+  border-style: solid;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.rui-day-btn:hover {
+  background-color: var(--rui-hover-bg-soft);
+  color: var(--rui-text-main);
+}
+
+.rui-day-btn[data-selected='true'] {
+  background-color: var(--rui-primary-bg);
+  color: var(--rui-primary-text);
+  border-color: var(--rui-primary-bg);
+}
+
+/* Monthly Recurrence (By Day of Month) */
+.rui-monthly-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rui-monthly-interval-row {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.rui-timezone-container {
+.rui-monthly-interval-input {
+  width: 4rem;
+  text-align: center;
+}
+
+.rui-monthly-days-label {
+  margin-bottom: 0.5rem;
+}
+
+.rui-monthly-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+/* Monthly & Yearly Recurrence (By Weekday / Nth Day) */
+.rui-nth-container {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
-.rui-timezone-select {
+
+.rui-nth-row {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.rui-nth-label-col {
+  grid-column: span 1 / span 1;
+  text-align: right;
+  padding-right: 0.25rem;
+}
+
+.rui-nth-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+.rui-nth-grid {
+  grid-column: span 7 / span 7;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+/* Month Selector */
+.rui-month-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rui-month-select {
   width: 100%;
-  cursor: pointer;
 }
 
 @media (min-width: 640px) {
@@ -686,17 +682,92 @@ html.dark:not([data-rui-theme="light"]),
   }
 }
 
-.rui-nowrap {
-  white-space: nowrap;
+/* Duration Component */
+.rui-duration-container {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* Исключения и Rdates (Чипсы) */
-.rui-exceptions-container, .rui-rdates-container { gap: 0.375rem; }
-.rui-exceptions-label, .rui-rdates-label { display: flex; align-items: center; gap: 0.25rem; }
-.rui-chip-container { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-.rui-exceptions-input-group, .rui-rdates-input-group { display: flex; align-items: center; gap: 0.375rem; padding-top: 0.25rem; }
-.rui-exceptions-date-input, .rui-rdates-date-input { width: 100%; font-size: 0.75rem; padding: 0.25rem 0.5rem; }
-.rui-exceptions-add-btn, .rui-rdates-add-btn { padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: bold; flex-shrink: 0; }
+.rui-duration-field-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.rui-duration-days-group,
+.rui-duration-hours-group,
+.rui-duration-minutes-group,
+.rui-termination-count-input {
+  width: 5rem;
+  text-align: center;
+}
+
+.rui-duration-unit,
+.rui-termination-times-label {
+  color: var(--rui-text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Termination Section */
+.rui-termination-container { padding-top: 0.75rem; }
+.rui-termination-label { margin-bottom: 0.5rem; }
+.rui-termination-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.rui-termination-select {
+  width: 14rem; 
+  flex-grow: 0;  
+}.rui-termination-date { font-size: 0.75rem; }
+.rui-termination-count-group { display: flex; align-items: center; gap: 0.5rem; }
+
+
+/* ==========================================================================
+   9. Exceptions & Rdates (Chips Component)
+   ========================================================================== */
+
+.rui-exceptions-container, 
+.rui-rdates-container { 
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem; 
+}
+
+.rui-exceptions-label, 
+.rui-rdates-label { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.25rem; 
+}
+
+.rui-chip-container { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 0.25rem; 
+}
+
+.rui-exceptions-input-group, 
+.rui-rdates-input-group { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.375rem; 
+}
+
+.rui-exceptions-date-input, 
+.rui-rdates-date-input { 
+  font-size: 0.75rem; 
+  padding: 0.25rem 0.5rem; 
+}
+
+.rui-exceptions-add-btn, 
+.rui-rdates-add-btn { 
+  padding: 0.25rem 0.5rem; 
+  font-size: 0.75rem; 
+  font-weight: bold; 
+  flex-shrink: 0; 
+}
 
 .rui-chip {
   display: inline-flex;
@@ -730,73 +801,62 @@ html.dark:not([data-rui-theme="light"]),
   font-size: 0.875rem;
   transition: opacity 150ms ease-in-out;
 }
+
 .rui-chip__remove-btn:hover { opacity: 0.75; }
 
-/* Футер и макетные сетки */
-.rui-footer-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding-top: 0.75rem;
-  margin-top: 0.75rem;
-}
 
-.rui-grid-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
+/* ==========================================================================
+   10. Utilities & Helpers
+   ========================================================================== */
 
-.rui-grid-col {
-  flex: 1 1 280px;
-  min-width: 280px;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-
-.rui-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr; /* По умолчанию всегда 1 колонка */
-}
-
-/* Переключаем на 2 колонки только когда экран действительно широкий (например, от 900px или 1024px) */
-@media (min-width: 900px) {
-  .rui-grid-2 { 
-    grid-template-columns: repeat(2, minmax(0, 1fr)); 
-  }
-}
-
-.rui-card-option {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  border-radius: var(--rui-radius-lg);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-.rui-card-option:hover { background-color: var(--rui-hover-bg-soft); }
-.rui-field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-.rui-radio {
-  margin-top: 0.25rem;
-  flex-shrink: 0;
-  accent-color: var(--rui-primary-bg);
-}
-
-/* Утилиты */
 .rui-hidden { display: none !important; }
 .rui-w-full { width: 100%; }
 .rui-select-none { user-select: none; }
+.rui-nowrap { white-space: nowrap; }
+.rui-font-bold { font-weight: bold; }
+.rui-pt-2 { padding-top: 0.5rem; }
+
 .rui-divider {
   border-top: 1px solid var(--rui-border-color);
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.rui-code-textarea {
+  font-family: monospace;
+  font-size: 0.75rem;
+  width: 100%;
+}
+
+.rui-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rui-flex-end-gap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.rui-code-btn {
+  font-family: monospace;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.rui-block-label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.rui-subcontent-spacing {
+  margin-top: 0.25rem;
+}
+
+.rui-radio-spacing {
+  margin-top: 0.25rem;
+  flex-shrink: 0;
 }

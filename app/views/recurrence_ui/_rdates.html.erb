@@ -1,12 +1,29 @@
 <%# app/views/recurrence_ui/_rdates.html.erb %>
 <%# Additional Dates (RDATES) Section %>
-<div class="rui-rdates-container">
+<div class="rui-rdates-container rui-divider ">
   <%# 1. Section Label %>
   <label class="rui-label rui-rdates-label">
-    <span>✅</span> <%= t("recurrence_ui.labels.rdates", locale: locale, default: "Additional Dates") %>
+  <%= t("recurrence_ui.labels.rdates", locale: locale, default: "Additional Dates") %>
   </label>
 
-  <%# 2. Container for RDATE Chips %>
+  <%# 2. Date Input and Add Button (теперь первыми) %>
+  <div class="rui-rdates-input-group">
+    <input type="date" 
+           data-<%= identifier %>-target="rdateInput" 
+           data-action="input-><%= identifier %>#onDateInputChange change-><%= identifier %>#onDateInputChange"
+           class="rui-input rui-input-date rui-rdates-date-input">
+    
+    <button type="button" 
+            data-<%= identifier %>-target="addRdateBtn"
+            data-action="click-><%= identifier %>#addRdate" 
+            disabled
+            title="<%= t('recurrence_ui.actions.add_rdate', default: 'Add date') %>"
+            class="rui-btn rui-btn-primary rui-rdates-add-btn">
+      +
+    </button>
+  </div>
+
+  <%# 3. Container for RDATE Chips (теперь под инпутом) %>
   <div data-<%= identifier %>-target="rdatesContainer" class="rui-chip-container">
     <% rdates.each do |rdate| %>
       <% date_str = rdate.is_a?(Date) || rdate.is_a?(Time) ? rdate.strftime("%Y-%m-%d") : rdate.to_s %>
@@ -18,23 +35,6 @@
         <span><%= rec_ui._formatDate(date_str) rescue date_str %></span>
       </span>
     <% end %>
-  </div>
-
-  <%# 3. Date Input and Add Button %>
-  <div class="rui-rdates-input-group">
-    <input type="date" 
-           data-<%= identifier %>-target="rdateInput" 
-           data-action="input-><%= identifier %>#onDateInputChange"
-           class="rui-input rui-rdates-date-input">
-    
-    <button type="button" 
-            data-<%= identifier %>-target="addRdateBtn"
-            data-action="click-><%= identifier %>#addRdate" 
-            disabled
-            title="<%= t('recurrence_ui.actions.add_rdate', default: 'Add date') %>"
-            class="rui-btn rui-btn-primary rui-rdates-add-btn">
-      +
-    </button>
   </div>
 </div>
 

@@ -188,7 +188,7 @@ ru:
         other: Каждый %{count_f} день %{until}
       monthly_by_day_of_month:
         one: 'Каждый месяц: %{days_of_month} %{until}'
-        other: 'Каждые %{count_f} месяц: %{days_of_month} %{until}'
+        other: 'Каждый %{count_f} месяц: %{days_of_month} %{until}'
       monthly_by_weekday:
         one: 'Каждый месяц: %{weekdays} %{until}'
         other: 'Каждый %{count_f} месяц: %{weekdays} %{until}'
@@ -209,7 +209,7 @@ ru:
       daily: Ежедневно
       monthly_by_day_of_month: Ежемесячно (по дню месяца)
       monthly_by_weekday: Ежемесячно (по дню недели)
-      never: Без повторения
+      never: Без регулярного повторения
       weekly: Еженедельно
       yearly_by_day_of_month: Ежегодно (по дню месяца)
       yearly_by_weekday: Ежегодно (по дню недели)

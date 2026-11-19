@@ -40,13 +40,13 @@ export default class extends Controller {
     this.initializeDurationMode()
     // Принудительно инициализируем видимость полей для режима «Одно правило»
 
-    this.element.querySelectorAll('select[data-action*="toggleCardFields"]').forEach(select => {
-      this.toggleCardFields({ currentTarget: select })
-    })
+    this.element.querySelectorAll('select[data-item="ruleType"]').forEach(select => {
+    this.toggleCardFields({ currentTarget: select })
+  })
     this.isInitializing = false
   }
 
-// ==========================================
+  // ==========================================
   // INITIALIZATION & STATE MANAGEMENT
   // ==========================================
 
@@ -65,8 +65,15 @@ export default class extends Controller {
         const rules = schedule.rrules || (schedule.rule_type ? [schedule] : [])
 
         if (rules.length > 0) {
-          rules.forEach(ruleHash => this._createRuleCardFromHash(ruleHash))
-        } else if (this.hasRuleCardTemplateTarget) {
+          if (this.hasRulesContainerTarget && this.hasRuleCardTemplateTarget) {
+            rules.forEach(ruleHash => this._createRuleCardFromHash(ruleHash))
+          } else {
+            const singleCard = this.element.querySelector(`[data-${this.identifier}-target="ruleCard"]`)
+            if (singleCard) {
+              this._applyRuleHashToCard(singleCard, rules[0])
+            }
+          }
+        } else if (this.hasRulesContainerTarget && this.hasRuleCardTemplateTarget) {
           this.addRule()
         }
 
@@ -79,9 +86,9 @@ export default class extends Controller {
         }
       } catch (e) {
         console.error("[RecurrenceUi] JSON Parsing error:", e)
-        if (this.hasRuleCardTemplateTarget) this.addRule()
+        if (this.hasRulesContainerTarget && this.hasRuleCardTemplateTarget) this.addRule()
       }
-    } else if (this.hasRuleCardTemplateTarget) {
+    } else if (this.hasRulesContainerTarget && this.hasRuleCardTemplateTarget) {
       this.addRule()
     }
 
@@ -698,16 +705,11 @@ export default class extends Controller {
     if (Object.keys(ruleHash.validations).length === 0) delete ruleHash.validations
     return ruleHash
   }
+  
+  _applyRuleHashToCard(card, ruleHash) {
+    if (!card || !ruleHash) return
 
-  _createRuleCardFromHash(ruleHash) {
-
-    if (!this.hasRuleCardTemplateTarget) return
-    const content = this.ruleCardTemplateTarget.innerHTML
-    this.rulesContainerTarget.insertAdjacentHTML('beforeend', content)
-
-    const card = this.rulesContainerTarget.lastElementChild
     const ruleType = this._determineRuleType(ruleHash)
-    
     const typeSelect = card.querySelector('[data-item="ruleType"]')
     if (typeSelect) typeSelect.value = ruleType
 
@@ -729,16 +731,24 @@ export default class extends Controller {
     }
 
     this._fillTerminationFieldsForCard(card, ruleHash)
+    this.updateCardSummary(card)
+  }
+
+  _createRuleCardFromHash(ruleHash) {
+    if (!this.hasRuleCardTemplateTarget) return
+    const content = this.ruleCardTemplateTarget.innerHTML
+    this.rulesContainerTarget.insertAdjacentHTML('beforeend', content)
+
+    const card = this.rulesContainerTarget.lastElementChild
+    this._applyRuleHashToCard(card, ruleHash)
+
     // Card should be collapsed by default, so we don't show the body unless the user expands it
     const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
     if (body) {
       body.classList.add('hidden')
     }
-    // Update header summary text for the card based on JSON data
-    this.updateCardSummary(card)
   }
-    
-
+  
   _buildRuleSummaryText(hash) {
     const type = this._determineRuleType(hash)
     const interval = hash.interval || 1

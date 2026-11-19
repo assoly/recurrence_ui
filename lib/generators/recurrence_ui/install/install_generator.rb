@@ -3,7 +3,7 @@ module RecurrenceUi
     class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path("templates", __dir__)
 
-      desc "Installs RecurrenceUi Stimulus controller registration and Tailwind CSS styles"
+      desc "Installs RecurrenceUi Stimulus controller registration, CSS styles, and initializer"
 
       def register_controller
         say "1. Installing RecurrenceUi Stimulus controller registration", :green
@@ -22,17 +22,9 @@ module RecurrenceUi
         recurrence_import = 'import { registerRecurrenceUiController } from "recurrence_ui"'
         recurrence_registration = "registerRecurrenceUiController(application)"
 
-        unless content.include?(application_import)
-          additions << application_import
-        end
-
-        unless content.include?(recurrence_import)
-          additions << recurrence_import
-        end
-
-        unless content.include?(recurrence_registration)
-          additions << recurrence_registration
-        end
+        additions << application_import unless content.include?(application_import)
+        additions << recurrence_import unless content.include?(recurrence_import)
+        additions << recurrence_registration unless content.include?(recurrence_registration)
 
         if additions.empty?
           say "RecurrenceUi controller is already registered", :blue
@@ -43,37 +35,39 @@ module RecurrenceUi
       end
 
       def register_styles
-        say "2. Installing RecurrenceUi Tailwind CSS styles", :green
+        say "2. Installing RecurrenceUi CSS styles", :green
 
-        tailwind_css_paths = [
-          Rails.root.join("app/assets/tailwind/application.css"),
-          Rails.root.join("app/assets/stylesheets/application.tailwind.css"),
-          Rails.root.join("app/assets/stylesheets/application.css")
+        stylesheet_paths = [
+          Rails.root.join("app/assets/stylesheets/application.css"),
+          Rails.root.join("app/assets/stylesheets/application.scss"),
+          Rails.root.join("app/assets/stylesheets/application.sass")
         ]
 
-        target_css = tailwind_css_paths.find { |path| File.exist?(path) }
+        target_css = stylesheet_paths.find { |path| File.exist?(path) }
 
         unless target_css
-          say 'Tailwind CSS file not found. Please add `@import "recurrence_ui/application.css";` manually.', :yellow
+          say 'Stylesheet not found. Please import "recurrence_ui/application" in your main stylesheet manually.', :yellow
           return
         end
 
         content = File.read(target_css)
-        import_line = '@import "recurrence_ui/application.css";'
+        import_line = '@import "recurrence_ui/application";'
 
-        if content.include?(import_line)
+        if content.include?("recurrence_ui/application")
           say "RecurrenceUi styles are already imported in #{target_css.relative_path_from(Rails.root)}", :blue
           return
         end
 
-        if content.include?('@import "tailwindcss";')
-          inject_into_file target_css, "\n#{import_line}", after: '@import "tailwindcss";'
+        if content.include?("*= require_tree .") || content.include?("*= require_self")
+          # Для Sprockets-манифестов с директивами *=
+          inject_into_file target_css, "\n *= require recurrence_ui/application", after: "*= require_self"
         else
           prepend_to_file target_css, "#{import_line}\n"
         end
 
         say "Added RecurrenceUi styles import to #{target_css.relative_path_from(Rails.root)}", :green
       end
+
       def create_initializer
         say "3. Adding RecurrenceUi initializer", :green
 
@@ -86,7 +80,6 @@ module RecurrenceUi
         template "recurrence_ui.rb", initializer_path
         say "Created RecurrenceUi initializer at #{initializer_path}", :green
       end
-
     end
   end
 end

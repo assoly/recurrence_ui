@@ -2,17 +2,14 @@
 <%# Weekly Recurrence Rule Options %>
 <% selected_days = local_assigns[:selected_weekly_days] || rec_ui.selected_weekly_days %>
 
-<div class="space-y-3" data-item="specificFields" data-rule="weekly">
+<div class="rui-weekly-container" data-item="specificFields" data-rule="weekly">
   <%# Interval Input Header %>
-  <div class="flex items-center space-x-2">
-    <span class="rui-inline-label">
-      <%= t("recurrence_ui.every_week", default: "Every") %>
-    </span>
+  <div class="rui-weekly-interval-row">
+    <span class="rui-inline-label"><%= t("recurrence_ui.every_week", default: "Every") %></span>
     
-    <%= number_field_tag nil, rec_ui.initial_interval,
-          value: 1, 
+    <%= number_field_tag nil, rec_ui.initial_interval, 
           min: 1, 
-          class: "rui-input w-16 text-center",
+          class: "rui-input rui-weekly-interval-input",
           data: { 
             item: "interval",
             action: "input->#{identifier}#onCardInputChanged"
@@ -24,21 +21,19 @@
   </div>
 
   <%# Days of Week Selection Grid %>
-  <div>
-    <div class="grid grid-cols-7 gap-1">
-      <% days_for_ui.each do |day_idx| %>
-        <%# Abbreviated day name based on current locale %>
-        <% day_name = t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %>
-        
-        <button type="button" 
-                class="rui-day-btn"
-                data-value="<%= day_idx %>" 
-                data-selected="<%= selected_days.include?(day_idx) %>"
-                data-action="click-><%= identifier %>#toggleDay" 
-                data-<%= identifier %>-target="dayButton">
-          <%= day_name %>
-        </button>
-      <% end %>
-    </div>
+  <div class="rui-weekly-grid">
+    <% days_for_ui.each do |day_idx| %>
+      <%# Abbreviated day name based on current locale %>
+      <% day_name = t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %>
+      
+      <button type="button" 
+              class="rui-day-btn"
+              data-value="<%= day_idx %>" 
+              data-selected="<%= selected_days.include?(day_idx) %>"
+              data-action="click-><%= identifier %>#toggleDay" 
+              data-<%= identifier %>-target="dayButton">
+        <%= day_name %>
+      </button>
+    <% end %>
   </div>
 </div>

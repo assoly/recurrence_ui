@@ -7,134 +7,136 @@
        class="rui-container"
        data-rui-theme="<%= RecurrenceUi.configuration.theme_mode %>">  
 
-    <%# 1. Секция полей времени начала и часового пояса %>
-    <div class="flex flex-wrap gap-4 my-4">
-      <% if show_start_date_time? %>
-        <div class="flex-1 min-w-[280px] p-2">
-          <%= render "recurrence_ui/start_at", form: form, identifier: identifier, rec_ui: self %>
-        </div>
-      <% end %>
+    <%# 1. Единая секция верхних полей (Начало, Часовой пояс, Длительность, Окончание) %>
+    <% if show_start_date_time || show_time_zone || show_duration || show_end_date_time %>
+      <div class="rui-top-fields-section">
+        <div class="rui-grid-2">
+          
+          <%# Время начала %>
+          <% if show_start_date_time %>
+              <%= render "recurrence_ui/start_at", form: form, identifier: identifier, rec_ui: self %>
+          <% end %>
+          <% if show_time_zone %>
+              <%= render "recurrence_ui/time_zone", form: form, identifier: identifier, rec_ui: self %>
+          <% end %>
+          <%# Длительность и Окончание (если оба включены, они могут рендериться как две карточки с радиокнопками) %>
+          <% if show_duration && show_end_date_time %>
+            <!-- Карточка Длительности -->
+            <label class="rui-card-option rui-duration-card">
+              <%= form.radio_button :form_duration_mode, :duration, 
+                    checked: (initial_form_duration_mode == :duration), 
+                    class: "rui-radio rui-radio-spacing",
+                    data: { "#{identifier}_target": "modeDuration", action: "change->#{identifier}#toggleDurationEndMode" } %>
+              <div class="rui-card-content">
+                <span class="rui-label"><%= t('recurrence_ui.labels.duration') %></span>
+                <div class="rui-subcontent-spacing" onclick="event.stopPropagation()">
+                  <%= render "recurrence_ui/duration", form: form, identifier: identifier, rec_ui: self %>
+                </div>
+              </div>
+            </label>
 
-      <% if show_time_zone? %>
-        <div  class="flex-1 min-w-[280px] p-2" >
-          <%= render "recurrence_ui/time_zone", form: form, identifier: identifier, rec_ui: self %>
-        </div>
-      <% end %>
-      
-      <%# 2. Блок выбора: Длительность и/или Окончание %>
-      <% if show_duration? && show_end_date_time? %>
-        <div class="flex flex-wrap gap-4 my-4">
-        
-          <!-- Карточка Длительности -->
-          <label class="flex-1 min-w-[280px] flex items-start space-x-3 p-2 rounded-lg transition-colors cursor-pointer hover:bg-[var(--rui-hover-bg-soft)]">
-            <%= form.radio_button :form_duration_mode, :duration, 
-                  checked: (initial_form_duration_mode == :duration), 
-                  class: "mt-1 shrink-0",
-                  data: { "#{identifier}_target": "modeDuration", action: "change->#{identifier}#toggleDurationEndMode" } %>
-            <div class="flex-1 min-w-0">
-              <span class="rui-label font-medium select-none"><%= t('recurrence_ui.labels.duration') %></span>
-              <div class="mt-1" onclick="event.stopPropagation()">
+            <!-- Карточка Окончания -->
+            <label class="rui-card-option rui-duration-card">
+              <%= form.radio_button :form_duration_mode, :end_at, 
+                    checked: (initial_form_duration_mode == :end_at), 
+                    class: "rui-radio rui-radio-spacing",
+                    data: { "#{identifier}_target": "modeEnd", action: "change->#{identifier}#toggleDurationEndMode" } %>
+              <div class="rui-card-content">
+                <span class="rui-label"><%= t('recurrence_ui.labels.end_at') %></span>  
+                <div class="rui-subcontent-spacing" onclick="event.stopPropagation()">
+                  <%= render "recurrence_ui/end_at", form: form, identifier: identifier, rec_ui: self %>
+                </div>
+              </div>
+            </label>
+
+          <% else %>
+            <%# Если включена только длительность %>
+            <% if show_duration %>
+              <div class="rui-single-option-block">
+                <span class="rui-label"><%= t('recurrence_ui.labels.duration') %></span>
                 <%= render "recurrence_ui/duration", form: form, identifier: identifier, rec_ui: self %>
               </div>
-            </div>
-          </label>
+            <% end %>
 
-          <!-- Карточка Окончания -->
-          <label class="flex-1 min-w-[280px] flex items-start space-x-3 p-2 rounded-lg transition-colors cursor-pointer hover:bg-[var(--rui-hover-bg-soft)]">
-            <%= form.radio_button :form_duration_mode, :end_at, 
-                  checked: (initial_form_duration_mode == :end_at), 
-                  class: "mt-1 shrink-0",
-                  data: { "#{identifier}_target": "modeEnd", action: "change->#{identifier}#toggleDurationEndMode" } %>
-            <div class="flex-1 min-w-0">
-              <span class="rui-label font-medium select-none"><%= t('recurrence_ui.labels.end_at') %></span>  
-              <div class="mt-1" onclick="event.stopPropagation()">
+            <%# Если включено только окончание %>
+            <% if show_end_date_time %>
+              <div class="rui-single-option-block">
+                <span class="rui-label"><%= t('recurrence_ui.labels.end_at') %></span>  
                 <%= render "recurrence_ui/end_at", form: form, identifier: identifier, rec_ui: self %>
               </div>
-            </div>
-          </label>
+            <% end %>
+          <% end %>
+
         </div>
-      <% elsif show_duration? %>
-        <div class="flex-1 min-w-[280px] p-2">
-          <span class="rui-label font-medium select-none block mb-1"><%= t('recurrence_ui.labels.duration') %></span>
-          <%= render "recurrence_ui/duration", form: form, identifier: identifier, rec_ui: self %>
-        </div>
-      <% elsif show_end_date_time? %>
-        <div class="flex-1 min-w-[280px] p-2">
-          <span class="rui-label font-medium select-none block mb-1"><%= t('recurrence_ui.labels.end_at') %></span>  
-          <%= render "recurrence_ui/end_at", form: form, identifier: identifier, rec_ui: self %>
-        </div>
-      <% end %>
-    </div>
-    <!-- 3. Саммари -->
-    <div data-<%= identifier %>-target="displayMode" class="space-y-1">
+      </div>
+    <% end %>
+
+    <!-- 2. Саммари -->
+    <div data-<%= identifier %>-target="displayMode" class="rui-display-mode-section">
       <div class="rui-panel-header">
         <span class="rui-label">
           <%= t('recurrence_ui.labels.recurrence') %>
         </span>
       </div>
-      <div>
         <%= render "recurrence_ui/summary_link", form: form, identifier: identifier, rec_ui: self %>
-      </div>
     </div>
 
     <!-- Режим редактирования -->
-    <div data-<%= identifier %>-target="editMode" class="hidden space-y-3 pt-2">  
-      <div class="rui-panel-header flex items-center justify-between">
-        <span class="rui-header-title">
+    <div data-<%= identifier %>-target="editMode" class="rui-hidden rui-edit-mode-container">  
+      <div class="rui-panel-header rui-flex-between">
+        <span class="rui-label">
           <%= t('recurrence_ui.labels.recurrence') %>
         </span>
         <button type="button" 
                 data-action="click-><%= identifier %>#toggleCodeEditor" 
                 title="<%= t('recurrence_ui.actions.code_mode') %>"
-                class="rui-btn-secondary font-mono text-xs px-2 py-1">
+                class="rui-btn-secondary rui-code-btn">
           &lt;/&gt;
         </button>
       </div>
 
-      <div data-<%= identifier %>-target="visualEditor" class="space-y-3">
+      <div data-<%= identifier %>-target="visualEditor" class="rui-visual-editor-stack">
         
         <% if allow_multiple_rules %>
-          <div class="space-y-1">
-            <div data-<%= identifier %>-target="rulesContainer" class="space-y-2"></div>
-            <div class="pt-1">
+          <div class="rui-multiple-rules-wrapper">
+            <div data-<%= identifier %>-target="rulesContainer" class="rui-rules-container"></div>
+            <div class="rui-add-rule-wrapper">
               <button type="button" 
                       data-action="click-><%= identifier %>#addRule" 
                       class="rui-link-action">
-                <span class="font-bold">+</span> <%= t('recurrence_ui.actions.add_rule', default: 'Add rule') %>
+                <span class="rui-font-bold">+</span> <%= t('recurrence_ui.actions.add_rule', default: 'Add rule') %>
               </button>
             </div>
           </div>
         <% else %>
-        
-          <div class="space-y-3">
+          <div class="rui-visual-editor-stack">
             <%= render "recurrence_ui/single_rule", form: form, identifier: identifier, days_for_ui: days_for_ui, rec_ui: self, rule_options: rule_options %>
           </div>
         <% end %>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 rui-divider">
-          <% if show_rdates %>
-            <div data-<%= identifier %>-target="rdatesBlock" class="hidden">
-              <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+        <% if show_rdates || show_exceptions %>
+            <div class="rui-grid-2">
+              <% if show_rdates %>
+                <div data-<%= identifier %>-target="rdatesBlock" >
+                  <%= render "recurrence_ui/rdates", form: form, identifier: identifier, rec_ui: self, rdates: rules[:rdates] || [] %>
+                </div>
+              <% end %>
+              <% if show_exceptions %>
+                <div data-<%= identifier %>-target="exceptionsBlock" >
+                  <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
+                </div>            
+              <% end %>
             </div>
-          <% end %>
-          <% if show_exceptions %>
-            <div data-<%= identifier %>-target="exceptionsBlock" class="hidden">
-              <%= render "recurrence_ui/exceptions", form: form, identifier: identifier, rec_ui: self, exdates: rules[:exdates] || [] %>
-            </div>            
-          <% end %>
-        </div>
+            <% end %>
 
-        <div class="pt-2">
           <%= render "recurrence_ui/footer_actions", form: form, identifier: identifier, rec_ui: self %>
-        </div>
       </div>
 
-      <div data-<%= identifier %>-target="codeEditor" class="hidden space-y-3">
+      <div data-<%= identifier %>-target="codeEditor" class="rui-hidden rui-visual-editor-stack">
         <div>
           <label class="rui-label"><%= t('recurrence_ui.labels.raw_json', default: 'Raw JSON') %></label>
-          <textarea data-<%= identifier %>-target="iceCubeField" rows="6" class="rui-textarea font-mono text-xs w-full"></textarea>
+          <textarea data-<%= identifier %>-target="iceCubeField" rows="6" class="rui-textarea rui-code-textarea"></textarea>
         </div>
-        <div class="flex items-center justify-end space-x-2">
+        <div class="rui-flex-end-gap">
           <button type="button" data-action="click-><%= identifier %>#toggleCodeEditor" class="rui-btn-secondary">
             <%= t('recurrence_ui.actions.cancel') %>
           </button>

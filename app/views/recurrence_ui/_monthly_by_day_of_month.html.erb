@@ -2,9 +2,9 @@
 <%# Monthly Recurrence Rule Options (By Day of Month) %>
 <% selected_days_for_monthly = local_assigns.fetch(:selected_days_for_monthly, {}) %>
 
-<div class="space-y-3" data-item="specificFields" data-rule="monthly_by_day_of_month">
+<div class="rui-monthly-container" data-item="specificFields" data-rule="monthly_by_day_of_month">
   <%# Interval Input Header %>
-  <div class="flex items-center space-x-2">
+  <div class="rui-monthly-interval-row">
     <span class="rui-inline-label">
       <%= t("recurrence_ui.labels.every", default: "Every") %>
     </span>
@@ -12,7 +12,7 @@
     <%= number_field_tag nil, rec_ui.initial_interval,
           value: 1, 
           min: 1, 
-          class: "rui-input w-16 text-center",
+          class: "rui-input rui-monthly-interval-input",
           data: { 
             item: "interval", 
             action: "input->#{identifier}#onCardInputChanged" 
@@ -25,11 +25,11 @@
 
   <%# Month Days Selection Section %>
   <div data-<%= identifier %>-target="monthlyDays">
-    <label class="rui-label mb-2">
+    <label class="rui-label rui-monthly-days-label">
       <%= t("recurrence_ui.labels.select_dates", default: "Select dates") %>:
     </label>
     
-    <div class="grid grid-cols-7 gap-1">
+    <div class="rui-monthly-grid">
       <% (1..31).each do |day| %>
         <% is_selected = selected_days_for_monthly.to_a.include?(day) %> 
         

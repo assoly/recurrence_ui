@@ -2,14 +2,14 @@
 
 RecurrenceUi.configure do |config|
   # General settings
-  config.locale = :ru
-  config.time_zone = "Europe/Moscow"
-  config.week_start = 1
+  config.locale = :en # Default locale for the RecurrenceUi component. Supported locales: :en, :uk, :ja, :ru, :be
+  config.time_zone = "Asia/Tokyo"
+  config.week_start = 0 # 0 = Sunday, 1 = Monday
 
   # Default event settings
-  config.start_time = "06:00"
-  config.end_time = "16:00"
-  config.duration = 3600
+  config.start_time = "06:00" # Default start time for events, string in "HH:MM" format
+  config.end_time = "16:00" # Default end time for events, string in "HH:MM" format
+  config.duration = 3600 # Default duration for events in seconds (1 hour = 3600 seconds)
 
   # UI options
   config.allow_multiple_rules = true
@@ -23,9 +23,18 @@ RecurrenceUi.configure do |config|
 
   # Enabled recurrence rule types
   config.enabled_rule_types = %w[
-    never
+    monthly_by_day_of_month
     weekly
     daily
-    monthly_by_day_of_month
-  ]
+    monthly_by_day_of_week]
+
+  # Supported rule types for the recurrence UI
+  #config.supported_rule_types = %w[
+  #  daily
+  #  weekly
+  #  monthly_by_day_of_month
+  #  monthly_by_day_of_week
+  #  yearly_by_day_of_month
+  #  yearly_by_day_of_week
+  #]
 end

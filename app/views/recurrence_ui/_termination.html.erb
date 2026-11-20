@@ -1,19 +1,20 @@
 <%# app/views/recurrence_ui/_termination.html.erb %>
 <%# Termination / End Condition Section for Recurrence Rules %>
-<div data-item="termination">
-  <label class="rui-label mb-2">
+<div data-item="termination" class="rui-termination-container">
+  <label class="rui-label rui-termination-label">
     <%= t("recurrence_ui.labels.termination", default: "Ends") %>
   </label>
   
-  <div class="flex flex-wrap items-center gap-2">
-    <%# Termination Type Selector %>
+  <div class="rui-termination-row">
+    <%# 1. Селект фиксированной ширины %>
+    <%# Добавили класс rui-input-date или можно задать ширину через инлайн-стиль / спец.класс, если нужно точное значение %>
     <%= select_tag :end_type, 
         options_for_select([
           [t("recurrence_ui.termination_types.never", default: "Never"), 'never'], 
           [t("recurrence_ui.termination_types.until", default: "On date"), 'until'], 
           [t("recurrence_ui.termination_types.count", default: "After number of times"), 'count']
         ]), 
-        class: "rui-select", 
+        class: "rui-select rui-termination-select", 
         data: { 
           item: "endType", 
           "#{identifier}_target": "endType",
@@ -21,22 +22,22 @@
         } 
     %>
     
-    <%# Specific End Date Input %>
+    <%# 2. Поле для даты (появляется напротив селекта благодаря .rui-termination-row) %>
     <input type="date" 
-           class="rui-input hidden text-xs" 
+           class="rui-input rui-hidden rui-termination-date rui-input-date" 
            data-item="endDateInput" 
            data-<%= identifier %>-target="endDate"
-           data-action="change-><%= identifier %>#onCardInputChanged">
+           data-action="change->#{identifier}#onCardInputChanged">
     
-    <%# Count Input Field %>
-    <div data-item="endCount" data-<%= identifier %>-target="endCount" class="hidden flex items-center gap-2">
+    <%# 2. Поле для количества (появляется напротив селекта) %>
+    <div data-item="endCount" data-<%= identifier %>-target="endCount" class="rui-hidden rui-termination-count-group">
       <input type="number" min="1" placeholder="10" 
-             class="rui-input w-20 text-xs" 
+             class="rui-input rui-termination-count-input" 
              data-item="endCountInput" 
              data-<%= identifier %>-target="endCountInput"
              data-action="input-><%= identifier %>#onCardInputChanged">
       
-      <span class="rui-inline-label text-xs uppercase font-semibold">
+      <span class="rui-termination-times-label">
         <%= t("recurrence_ui.labels.times", default: "times") %>
       </span>
     </div>

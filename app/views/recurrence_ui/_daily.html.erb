@@ -1,7 +1,7 @@
 <%# app/views/recurrence_ui/_daily.html.erb %>
 <%# Daily Recurrence Rule Options %>
-<div class="space-y-3" data-item="specificFields" data-rule="daily">
-  <div class="flex items-center space-x-2">
+<div class="rui-daily-container" data-item="specificFields" data-rule="daily">
+  <div class="rui-daily-row">
     <span class="rui-inline-label">
       <%= t("recurrence_ui.labels.every", default: "Every") %>
     </span>
@@ -9,7 +9,7 @@
     <%= number_field_tag nil, rec_ui.initial_interval, 
           value: 1,
           min: 1, 
-          class: "rui-input w-16 text-center",
+          class: "rui-input rui-daily-input text-center",
           data: { 
             item: "interval", 
             action: "input->#{identifier}#onCardInputChanged" 

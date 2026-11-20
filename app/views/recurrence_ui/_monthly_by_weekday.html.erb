@@ -2,21 +2,20 @@
 <%# Monthly Recurrence Rule Options (By Weekday / Nth Day) %>
 <% selected_nth_days = local_assigns.fetch(:selected_nth_days, {}) %>
 
-<div class="space-y-3" data-item="specificFields" data-rule="monthly_by_weekday">
+<div class="rui-monthly-container" data-item="specificFields" data-rule="monthly_by_weekday">
   <%# Interval Input Header %>
-  <div class="flex items-center space-x-2">
+  <div class="rui-monthly-interval-row">
     <span class="rui-inline-label">
       <%= t("recurrence_ui.labels.every", default: "Every") %>
     </span>
 
-    <%= number_field_tag nil, rec_ui.initial_interval,
-          value: 1,
-          min: 1,  
-          class: "rui-input w-16 text-center",
+    <%= number_field_tag nil, rec_ui.initial_interval, 
+          min: 1, 
+          class: "rui-input rui-monthly-interval-input",
           data: { 
             item: "interval", 
             action: "input->#{identifier}#onCardInputChanged" 
-          } %> 
+          } %>
 
     <span class="rui-inline-label">
       <%= t("recurrence_ui.labels.month", count: rec_ui.initial_interval, default: "month(s)") %>
@@ -24,18 +23,18 @@
   </div>
 
   <%# Grid of Nth Days (1st, 2nd, 3rd, 4th, 5th, Last) %>
-  <div class="space-y-1">
+  <div class="rui-nth-container">
     <% %w[1 2 3 4 5 -1].each do |val| %>
-      <div class="grid grid-cols-8 gap-1 items-center">
+      <div class="rui-nth-row">
         <%# Row Label (Ordinal Name) %>
-        <div class="col-span-1 text-[10px] text-right pr-1">
-          <span class="rui-label mb-0 text-[10px] font-bold">
+        <div class="rui-nth-label-col">
+          <span class="rui-label rui-nth-label">
             <%= t("recurrence_ui.nth_names.#{val}") %>
           </span>
         </div>
         
         <%# Day Buttons Grid %>
-        <div class="col-span-7 grid grid-cols-7 gap-1">
+        <div class="rui-nth-grid">
           <% days_for_ui.each do |day_idx| %>
             <% is_selected = selected_nth_days[val.to_s]&.include?(day_idx) %>
             <button type="button" 
@@ -45,6 +44,7 @@
                     data-<%= identifier %>-target="nthDayBtn"
                     data-selected="<%= !!is_selected %>" 
                     data-action="click-><%= identifier %>#toggleDay">
+              <%# Important: always specify the scope for weekdays to avoid dependency on the default locale %>
               <%= t('recurrence_ui.date.abbr_day_names', locale: I18n.locale)[day_idx] %> 
             </button>
           <% end %>

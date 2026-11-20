@@ -40,13 +40,13 @@ export default class extends Controller {
     this.initializeDurationMode()
     // Принудительно инициализируем видимость полей для режима «Одно правило»
 
-    this.element.querySelectorAll('select[data-action*="toggleCardFields"]').forEach(select => {
-      this.toggleCardFields({ currentTarget: select })
-    })
+    this.element.querySelectorAll('select[data-item="ruleType"]').forEach(select => {
+    this.toggleCardFields({ currentTarget: select })
+  })
     this.isInitializing = false
   }
 
-// ==========================================
+  // ==========================================
   // INITIALIZATION & STATE MANAGEMENT
   // ==========================================
 
@@ -65,8 +65,15 @@ export default class extends Controller {
         const rules = schedule.rrules || (schedule.rule_type ? [schedule] : [])
 
         if (rules.length > 0) {
-          rules.forEach(ruleHash => this._createRuleCardFromHash(ruleHash))
-        } else if (this.hasRuleCardTemplateTarget) {
+          if (this.hasRulesContainerTarget && this.hasRuleCardTemplateTarget) {
+            rules.forEach(ruleHash => this._createRuleCardFromHash(ruleHash))
+          } else {
+            const singleCard = this.element.querySelector(`[data-${this.identifier}-target="ruleCard"]`)
+            if (singleCard) {
+              this._applyRuleHashToCard(singleCard, rules[0])
+            }
+          }
+        } else if (this.hasRulesContainerTarget && this.hasRuleCardTemplateTarget) {
           this.addRule()
         }
 
@@ -79,9 +86,9 @@ export default class extends Controller {
         }
       } catch (e) {
         console.error("[RecurrenceUi] JSON Parsing error:", e)
-        if (this.hasRuleCardTemplateTarget) this.addRule()
+        if (this.hasRulesContainerTarget && this.hasRuleCardTemplateTarget) this.addRule()
       }
-    } else if (this.hasRuleCardTemplateTarget) {
+    } else if (this.hasRulesContainerTarget && this.hasRuleCardTemplateTarget) {
       this.addRule()
     }
 
@@ -169,12 +176,12 @@ export default class extends Controller {
   // Toggle Main Panel Accordion Mode
   toggleMainAccordion() {
     if (!this.hasEditModeTarget) return
-    const isHidden = this.editModeTarget.classList.contains('hidden')
+    const isHidden = this.editModeTarget.classList.contains('rui-hidden')
     
     if (isHidden) {
-      this.editModeTarget.classList.remove('hidden')
+      this.editModeTarget.classList.remove('rui-hidden')
     } else {
-      this.editModeTarget.classList.add('hidden')
+      this.editModeTarget.classList.add('rui-hidden')
       this.updateSummary() // Recalculate summary text on close
     }
   }
@@ -191,13 +198,13 @@ export default class extends Controller {
 
     const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
     if (body) {
-      const isHidden = body.classList.contains('hidden')
+      const isHidden = body.classList.contains('rui-hidden')
       
       if (isHidden) {
-        body.classList.remove('hidden')
+        body.classList.remove('rui-hidden')
         card.classList.add('is-open') // Add active state class
       } else {
-        body.classList.add('hidden')
+        body.classList.add('rui-hidden')
         card.classList.remove('is-open') // Remove active state class
         this.updateCardSummary(card) // Update rule text on collapse
       }
@@ -207,7 +214,7 @@ export default class extends Controller {
   toggleCodeEditor(event) {
     if (event) event.preventDefault()
 
-    const isCodeHidden = this.codeEditorTarget.classList.contains('hidden')
+    const isCodeHidden = this.codeEditorTarget.classList.contains('rui-hidden')
 
     if (isCodeHidden) {
       // Считываем текущий JSON из скрытого поля формы
@@ -223,12 +230,12 @@ export default class extends Controller {
       }
 
       // Переключаем видимость блоков
-      this.visualEditorTarget.classList.add('hidden')
-      this.codeEditorTarget.classList.remove('hidden')
+      this.visualEditorTarget.classList.add('rui-hidden')
+      this.codeEditorTarget.classList.remove('rui-hidden')
     } else {
       // Возврат назад без сохранения
-      this.codeEditorTarget.classList.add('hidden')
-      this.visualEditorTarget.classList.remove('hidden')
+      this.codeEditorTarget.classList.add('rui-hidden')
+      this.visualEditorTarget.classList.remove('rui-hidden')
     }
   }
 
@@ -251,8 +258,8 @@ export default class extends Controller {
       this.initializeState()
 
       // Переключаем обратно в визуальный режим
-      this.codeEditorTarget.classList.add('hidden')
-      this.visualEditorTarget.classList.remove('hidden')
+      this.codeEditorTarget.classList.add('rui-hidden')
+      this.visualEditorTarget.classList.remove('rui-hidden')
 
     } catch (e) {
       alert(this.t('errors.invalid_json', { default: 'Ошибка в синтаксисе JSON' }))
@@ -276,7 +283,7 @@ export default class extends Controller {
     const body = newCard.querySelector(`[data-${this.identifier}-target="cardBody"]`)
     
     // Раскрываем тело новой карточки
-    if (body) body.classList.remove('hidden')
+    if (body) body.classList.remove('rui-hidden')
 
     // Запускаем первичную синхронизацию полей новой карточки
     const select = newCard.querySelector('[data-item="ruleType"]')
@@ -315,7 +322,7 @@ export default class extends Controller {
     
     specificFields.forEach(el => {
       const isCurrent = el.dataset.rule === selectedValue
-      el.classList.toggle('hidden', !isCurrent)
+      el.classList.toggle('rui-hidden', !isCurrent)
 
       // Если выбрали тип с полем (например, daily) и интервал не задан, выставляем 1 по умолчанию
       if (isCurrent) {
@@ -325,7 +332,7 @@ export default class extends Controller {
         }
       }
     })
-
+    if (this.isInitializing) return
     this.updateHiddenHash()
     this.updateCardSummary(card)
   }
@@ -351,9 +358,9 @@ export default class extends Controller {
     const endDate = card.querySelector('[data-item="endDateInput"]')
     const endCount = card.querySelector('[data-item="endCount"]')
 
-    if (endDate) endDate.classList.toggle('hidden', mode !== 'until')
+    if (endDate) endDate.classList.toggle('rui-hidden', mode !== 'until')
     if (endCount) {
-      endCount.classList.toggle('hidden', mode !== 'count')
+      endCount.classList.toggle('rui-hidden', mode !== 'count')
       if (mode === 'count') endCount.classList.add('flex')
     }
 
@@ -361,6 +368,7 @@ export default class extends Controller {
     this.updateCardSummary(card)
   }
   onCardInputChanged(event) {
+    if (this.isInitializing) return
     const card = event.currentTarget.closest(`[data-${this.identifier}-target="ruleCard"]`)
     this.updateHiddenHash()
     if (card) this.updateCardSummary(card)
@@ -389,14 +397,14 @@ export default class extends Controller {
   }
 
   showDisplayMode() {
-    if (this.hasDisplayModeTarget) this.displayModeTarget.classList.remove('hidden')
-    if (this.hasEditModeTarget) this.editModeTarget.classList.add('hidden')
+    if (this.hasDisplayModeTarget) this.displayModeTarget.classList.remove('rui-hidden')
+    if (this.hasEditModeTarget) this.editModeTarget.classList.add('rui-hidden')
     this.updateSummary()
   }
 
   showEditMode() {
-    if (this.hasDisplayModeTarget) this.displayModeTarget.classList.add('hidden')
-    if (this.hasEditModeTarget) this.editModeTarget.classList.remove('hidden')
+    if (this.hasDisplayModeTarget) this.displayModeTarget.classList.add('rui-hidden')
+    if (this.hasEditModeTarget) this.editModeTarget.classList.remove('rui-hidden')
   }
 
   // ==========================================
@@ -697,16 +705,11 @@ export default class extends Controller {
     if (Object.keys(ruleHash.validations).length === 0) delete ruleHash.validations
     return ruleHash
   }
+  
+  _applyRuleHashToCard(card, ruleHash) {
+    if (!card || !ruleHash) return
 
-  _createRuleCardFromHash(ruleHash) {
-
-    if (!this.hasRuleCardTemplateTarget) return
-    const content = this.ruleCardTemplateTarget.innerHTML
-    this.rulesContainerTarget.insertAdjacentHTML('beforeend', content)
-
-    const card = this.rulesContainerTarget.lastElementChild
     const ruleType = this._determineRuleType(ruleHash)
-    
     const typeSelect = card.querySelector('[data-item="ruleType"]')
     if (typeSelect) typeSelect.value = ruleType
 
@@ -728,16 +731,24 @@ export default class extends Controller {
     }
 
     this._fillTerminationFieldsForCard(card, ruleHash)
+    this.updateCardSummary(card)
+  }
+
+  _createRuleCardFromHash(ruleHash) {
+    if (!this.hasRuleCardTemplateTarget) return
+    const content = this.ruleCardTemplateTarget.innerHTML
+    this.rulesContainerTarget.insertAdjacentHTML('beforeend', content)
+
+    const card = this.rulesContainerTarget.lastElementChild
+    this._applyRuleHashToCard(card, ruleHash)
+
     // Card should be collapsed by default, so we don't show the body unless the user expands it
     const body = card.querySelector(`[data-${this.identifier}-target="cardBody"]`)
     if (body) {
       body.classList.add('hidden')
     }
-    // Update header summary text for the card based on JSON data
-    this.updateCardSummary(card)
   }
-    
-
+  
   _buildRuleSummaryText(hash) {
     const type = this._determineRuleType(hash)
     const interval = hash.interval || 1

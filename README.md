@@ -2,7 +2,7 @@
 
 **Recurrence UI** is a plug-and-play UI component library for Ruby on Rails that makes it easy to create, edit, and display human-readable recurrence rules for recurring events.
 
-Built on top of [ice_cube](https://github.com/ice-cube-ruby/ice_cube), it provides reusable UI components powered by [ViewComponent](https://viewcomponent.org/) and styled with Tailwind CSS.
+Built on top of [ice_cube](https://github.com/ice-cube-ruby/ice_cube), it provides reusable UI components powered by [ViewComponent](https://viewcomponent.org/).
 
 [![Gem Version](https://img.shields.io/gem/v/recurrence_ui.svg)](https://rubygems.org/gems/recurrence_ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -25,9 +25,7 @@ Recurrence UI depends on the following components:
 - **Ruby on Rails** >= 8.0
 - **[ice_cube](https://github.com/ice-cube-ruby/ice_cube)** ~> 0.16
 - **[ViewComponent](https://viewcomponent.org/)** >= 2.0
-- **Tailwind CSS** >= 4.0
 
-Tailwind CSS can be integrated through `tailwindcss-rails` or your host application's existing Tailwind CSS setup.
 
 ## Installation and Configuration
 
@@ -85,7 +83,6 @@ RecurrenceUi.configure do |config|
 
   # UI options
   config.enabled_rule_types = %w[
-    never
     daily
     weekly
     monthly_by_day_of_month
@@ -121,13 +118,6 @@ application.register("recurrence-ui", RecurrenceUiController)
 Use the controller's actual import path and identifier provided by the gem.
 
 **Step 3. Import the stylesheet**
-
-For Tailwind CSS v4, add the following imports to your application's stylesheet, for example `app/assets/stylesheets/application.tailwind.css`:
-
-```css
-@import "tailwindcss";
-@import "recurrence_ui/application.css";
-```
 
 Make sure the stylesheet is included in your application's asset pipeline.
 
@@ -280,8 +270,12 @@ You can override these properties in your application's stylesheet:
   --rui-text-main: #f9fafb;
 }
 ```
-
 Use the CSS variables supported by the gem to customize its appearance.
+Also you can find more variables in file of gem: 
+
+```bash
+recurrence_ui/app/assets/stylesheets/recurrence_ui/application.css
+```
 
 ## Example Application
 

@@ -1,17 +1,22 @@
+# lib/generators/recurrence_ui/install/install_generator.rb
 module RecurrenceUi
   module Generators
     class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path("templates", __dir__)
+
+      APP_JS_PATH = "app/javascript/application.js"
+      APP_LAYOUT_PATHS = ["app/views/layouts/application.html.erb"]
+      STYLESHEET_ASSET = "recurrence_ui/application".freeze
 
       desc "Installs RecurrenceUi Stimulus controller registration, CSS styles, and initializer"
 
       def register_controller
         say "1. Installing RecurrenceUi Stimulus controller registration", :green
 
-        app_js_path = Rails.root.join("app/javascript/application.js")
+        app_js_path = Rails.root.join(APP_JS_PATH)
 
         unless File.exist?(app_js_path)
-          say "Could not find app/javascript/application.js. Please register RecurrenceUi manually.", :red
+          say "Could not find #{APP_JS_PATH}. Please register RecurrenceUi manually.", :red
           return
         end
 
@@ -30,49 +35,47 @@ module RecurrenceUi
           say "RecurrenceUi controller is already registered", :blue
         else
           append_to_file app_js_path, "\n\n#{additions.join("\n")}\n"
-          say "Added RecurrenceUi controller registration to application.js", :green
+          say "Added RecurrenceUi controller registration to #{APP_JS_PATH}", :green
         end
       end
 
-      def register_styles
-        say "2. Installing RecurrenceUi CSS styles", :green
+      def add_stylesheet_link_tag
+        say "2. Installing RecurrenceUi stylesheet link into application layout", :green
 
-        stylesheet_paths = [
-          Rails.root.join("app/assets/stylesheets/application.css"),
-          Rails.root.join("app/assets/stylesheets/application.scss"),
-          Rails.root.join("app/assets/stylesheets/application.sass")
-        ]
+        APP_LAYOUT_PATHS.each do |lo_path|
+          layout_path = Rails.root.join(lo_path)
+          unless File.exist?(layout_path)
+            say "Could not find #{layout_path.relative_path_from(Rails.root)}. Please add `<%= stylesheet_link_tag \"#{STYLESHEET_ASSET}\", \"data-turbo-track\": \"reload\" %>` manually.", :yellow
+            next
+          end
 
-        target_css = stylesheet_paths.find { |path| File.exist?(path) }
+          content = File.read(layout_path)
 
-        unless target_css
-          say 'Stylesheet not found. Please import "recurrence_ui/application" in your main stylesheet manually.', :yellow
-          return
+          if content.include?(STYLESHEET_ASSET)
+            say "RecurrenceUi stylesheet already included in #{layout_path.relative_path_from(Rails.root)}", :blue
+            next
+          end
+
+          tag = %(    <%= stylesheet_link_tag "#{STYLESHEET_ASSET}", "data-turbo-track": "reload" %>\n)
+
+          if content.match?(/^\s*<%=\s*stylesheet_link_tag\b.*%>/)
+            inject_into_file layout_path, tag, after: /^\s*<%=\s*stylesheet_link_tag\b.*%>\n/
+          elsif content.include?("</head>")
+            inject_into_file layout_path, tag, before: /\s*<\/head>/
+          else
+            say "Could not find a suitable place in #{layout_path.relative_path_from(Rails.root)}. Please add:\n#{tag}", :yellow
+            next
+          end
+
+          say "Added #{STYLESHEET_ASSET} stylesheet to #{layout_path.relative_path_from(Rails.root)}", :green
         end
-
-        content = File.read(target_css)
-        import_line = '@import "recurrence_ui/application";'
-
-        if content.include?("recurrence_ui/application")
-          say "RecurrenceUi styles are already imported in #{target_css.relative_path_from(Rails.root)}", :blue
-          return
-        end
-
-        if content.include?("*= require_tree .") || content.include?("*= require_self")
-          # Для Sprockets-манифестов с директивами *=
-          inject_into_file target_css, "\n *= require recurrence_ui/application", after: "*= require_self"
-        else
-          prepend_to_file target_css, "#{import_line}\n"
-        end
-
-        say "Added RecurrenceUi styles import to #{target_css.relative_path_from(Rails.root)}", :green
       end
 
       def create_initializer
         say "3. Adding RecurrenceUi initializer", :green
 
         initializer_path = "config/initializers/recurrence_ui.rb"
-        if File.exist?(initializer_path)
+        if File.exist?(Rails.root.join(initializer_path))
           say "RecurrenceUi initializer already exists", :blue
           return
         end
